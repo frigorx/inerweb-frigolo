@@ -14,6 +14,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700&display=swap" rel="stylesheet">
     
     <style>
+/* Police Calibri pour lisibilite */
+body,html{font-family:Calibri,"Segoe UI",system-ui,-apple-system,sans-serif!important}
         /* ========== VARIABLES CSS ========== */
         :root {
             --primary: #FF6B35;
@@ -918,7 +920,7 @@ document.addEventListener("selectstart",function(e){if(e.target.tagName\!=="INPU
                     <span>📄</span>
                     <span>Voir PDF</span>
                 </button>
-                <a href="index_accueil_securite.html" class="btn-nav">
+                <a href="index.html" class="btn-nav">
                     <span>🏠</span>
                     <span>Retour</span>
                 </a>
@@ -1683,7 +1685,7 @@ document.addEventListener("selectstart",function(e){if(e.target.tagName\!=="INPU
                 showNotification('🎉 Séance validée ! Tu sais maintenant quels travaux sont interdits.', 'success');
                 document.getElementById('btnValidate').innerHTML = '<span>➡️</span><span>Séance suivante</span>';
                 document.getElementById('btnValidate').onclick = () => {
-                    window.location.href = 'seance4_obligations_atelier.html';
+                    window.location.href = 'seance4.html';
                 };
             } else {
                 showNotification('💪 Score insuffisant. Relis le cours et réessaye !', 'warning');

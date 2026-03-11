@@ -7,6 +7,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=OpenDyslexic:wght@400;700&display=swap" rel="stylesheet">
     <style>
+/* Police Calibri pour lisibilite */
+body,html{font-family:Calibri,"Segoe UI",system-ui,-apple-system,sans-serif!important}
         /* ========== CHARTE GRAPHIQUE ÉLECTRICITÉ ÉNERWEB ========== */
         :root {
             /* Couleurs Sécurité Électrique */
@@ -1782,7 +1784,7 @@ document.addEventListener("selectstart",function(e){if(e.target.tagName\!=="INPU
         // Autres fonctions
         function goToNextChapter() {
             if (chapterProgress.completed) {
-                window.location.href = 'chapter5_interventions_env.html';
+                window.location.href = 'tp5.html';
             } else {
                 showToast('Veuillez terminer toutes les activités du chapitre', 'warning');
             }

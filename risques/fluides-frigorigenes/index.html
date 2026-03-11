@@ -7,6 +7,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=OpenDyslexic:wght@400;700&display=swap" rel="stylesheet">
     <style>
+/* Police Calibri pour lisibilite */
+body,html{font-family:Calibri,"Segoe UI",system-ui,-apple-system,sans-serif!important}
         :root {
             --primary: #6B73FF;
             --secondary: #9C88FF;
@@ -661,12 +663,12 @@ document.addEventListener("selectstart",function(e){if(e.target.tagName\!=="INPU
     <script>
         // ========== CONFIGURATION ========== 
         const CHAPTERS = [
-            { id: 1, name: 'Chapitre1_Introduction.html', title: 'Introduction' },
-            { id: 2, name: 'Chapitre2_Risques pour la santé.html', title: 'Risques pour la santé' },
-            { id: 3, name: 'Chapitre3_Environnement.html', title: 'Environnement' },
-            { id: 4, name: 'Chapitre4_Transport et stockage.html', title: 'Transport et stockage' },
-            { id: 5, name: 'Chapitre5_Fuites et environnement.html', title: 'Fuites et environnement' },
-            { id: 6, name: 'Chapitre6_Évaluation finale_les fluides frigo.html', title: 'Évaluation finale - Fluides frigorigènes' }
+            { id: 1, name: 'chapitre1.html', title: 'Introduction' },
+            { id: 2, name: 'chapitre2.html', title: 'Risques pour la santé' },
+            { id: 3, name: 'chapitre3.html', title: 'Environnement' },
+            { id: 4, name: 'chapitre4.html', title: 'Transport et stockage' },
+            { id: 5, name: 'chapitre5.html', title: 'Fuites et environnement' },
+            { id: 6, name: 'chapitre6.html', title: 'Évaluation finale - Fluides frigorigènes' }
         ];
 
         const FORMATIONS_CONFIG = {
@@ -909,13 +911,13 @@ document.addEventListener("selectstart",function(e){if(e.target.tagName\!=="INPU
             // Redirection ou affichage selon progression
             const progress = calculateGlobalProgress();
             if (progress === 100) {
-                window.location.href = 'synthese-resultats.html';
+                window.location.href = 'index.html';
             } else {
                 const nextChapter = findNextChapter();
                 if (nextChapter) {
                     window.location.href = nextChapter.name;
                 } else {
-                    window.location.href = 'Chapitre1_Introduction.html';
+                    window.location.href = 'chapitre1.html';
                 }
             }
         }

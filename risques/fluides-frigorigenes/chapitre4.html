@@ -7,6 +7,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=OpenDyslexic:wght@400;700&display=swap" rel="stylesheet">
     <style>
+/* Police Calibri pour lisibilite */
+body,html{font-family:Calibri,"Segoe UI",system-ui,-apple-system,sans-serif!important}
         :root {
             --primary: #6B73FF; --secondary: #9C88FF; --accent: #4ECDC4; --coral: #FF6B9D;
             --orange: #FFA726; --success: #4CAF50; --warning: #FF9800; --danger: #F44336;
@@ -16,12 +18,12 @@
 
         // Fonctions PDF
         function openPDFFullscreen() {
-            window.open('./pdf/Iris-ST-Depliant-Frigoriste-chauffagistes-Fluides-2016-Internet-100x150-1.pdf', '_blank');
+            window.open('../pdf/Iris-ST-Depliant-Frigoriste-chauffagistes-Fluides-2016-Internet-100x150-1.pdf', '_blank');
         }
 
         function downloadPDF() {
             const link = document.createElement('a');
-            link.href = './pdf/Iris-ST-Depliant-Frigoriste-chauffagistes-Fluides-2016-Internet-100x150-1.pdf';
+            link.href = '../pdf/Iris-ST-Depliant-Frigoriste-chauffagistes-Fluides-2016-Internet-100x150-1.pdf';
             link.download = 'IRIS-ST-Fluides-Frigorigenes.pdf';
             link.click();
         }
@@ -451,7 +453,7 @@ document.addEventListener("selectstart",function(e){if(e.target.tagName\!=="INPU
                     <div class="progress-fill"></div>
                 </div>
                 <p style="font-size: 0.9em; margin-bottom: 10px;">Chapitre 4/6 - Progression globale</p>
-                <a href="enerweb_accueil_corrige.html" class="btn-home">← Accueil</a>
+                <a href="index.html" class="btn-home">← Accueil</a>
             </div>
         </div>
 
@@ -487,10 +489,10 @@ document.addEventListener("selectstart",function(e){if(e.target.tagName\!=="INPU
                         <button class="pdf-btn" onclick="openPDFFullscreen()">🔍 Plein écran</button>
                         <button class="pdf-btn" onclick="downloadPDF()">📥 Télécharger</button>
                     </div>
-                    <iframe id="pdfViewer" src="./pdf/Iris-ST-Depliant-Frigoriste-chauffagistes-Fluides-2016-Internet-100x150-1.pdf#page=4" 
+                    <iframe id="pdfViewer" src="../pdf/Iris-ST-Depliant-Frigoriste-chauffagistes-Fluides-2016-Internet-100x150-1.pdf#page=4" 
                             width="100%" height="100%" frameborder="0" style="border-radius: 10px;">
                         <p>Votre navigateur ne peut pas afficher ce PDF. 
-                           <a href="./pdf/Iris-ST-Depliant-Frigoriste-chauffagistes-Fluides-2016-Internet-100x150-1.pdf" target="_blank">Cliquez ici pour l'ouvrir</a>
+                           <a href="../pdf/Iris-ST-Depliant-Frigoriste-chauffagistes-Fluides-2016-Internet-100x150-1.pdf" target="_blank">Cliquez ici pour l'ouvrir</a>
                         </p>
                     </iframe>
                 </div>
@@ -759,8 +761,8 @@ document.addEventListener("selectstart",function(e){if(e.target.tagName\!=="INPU
         <!-- Navigation -->
         <div class="navigation">
             <div class="nav-left">
-                <a href="enerweb_accueil_corrige.html" class="btn btn-warning">🏠 Accueil</a>
-                <a href="chapter3_environmental_optimized.html" class="btn" style="background: var(--border); color: var(--dark);">← Chapitre 3</a>
+                <a href="index.html" class="btn btn-warning">🏠 Accueil</a>
+                <a href="chapitre3.html" class="btn" style="background: var(--border); color: var(--dark);">← Chapitre 3</a>
             </div>
             <div>
                 <button id="next-chapter-btn" class="btn btn-success" style="display: none;" onclick="goToNextChapter()">
@@ -1080,17 +1082,17 @@ document.addEventListener("selectstart",function(e){if(e.target.tagName\!=="INPU
         }
 
         function goToNextChapter() {
-            window.location.href = 'chapter5_safety_optimized.html';
+            window.location.href = 'chapitre5.html';
         }
 
         // Fonctions PDF
         function openPDFFullscreen() {
-            window.open('./pdf/Iris-ST-Depliant-Frigoriste-chauffagistes-Fluides-2016-Internet-100x150-1.pdf', '_blank');
+            window.open('../pdf/Iris-ST-Depliant-Frigoriste-chauffagistes-Fluides-2016-Internet-100x150-1.pdf', '_blank');
         }
 
         function downloadPDF() {
             const link = document.createElement('a');
-            link.href = './pdf/Iris-ST-Depliant-Frigoriste-chauffagistes-Fluides-2016-Internet-100x150-1.pdf';
+            link.href = '../pdf/Iris-ST-Depliant-Frigoriste-chauffagistes-Fluides-2016-Internet-100x150-1.pdf';
             link.download = 'IRIS-ST-Fluides-Frigorigenes.pdf';
             link.click();
         }

@@ -7,6 +7,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=OpenDyslexic:wght@400;700&display=swap" rel="stylesheet">
     <style>
+/* Police Calibri pour lisibilite */
+body,html{font-family:Calibri,"Segoe UI",system-ui,-apple-system,sans-serif!important}
         /* ========== CHARTE GRAPHIQUE ÉNERWEB ========== */
         :root {
             --primary: #6B73FF;
@@ -891,7 +893,7 @@ document.addEventListener("selectstart",function(e){if(e.target.tagName\!=="INPU
                     <div class="progress-fill"></div>
                 </div>
                 <p style="font-size: 0.9em; margin-bottom: 10px;">Chapitre 5/6 - Progression : 83.33%</p>
-                <a href="enerweb_accueil_corrige.html" class="btn-home">← Accueil</a>
+                <a href="index.html" class="btn-home">← Accueil</a>
             </div>
         </div>
 
@@ -926,10 +928,10 @@ document.addEventListener("selectstart",function(e){if(e.target.tagName\!=="INPU
                         <button class="pdf-btn" onclick="openPDFFullscreen()">🔍 Plein écran</button>
                         <button class="pdf-btn" onclick="downloadPDF()">📥 Télécharger</button>
                     </div>
-                    <iframe id="pdfViewer" src="./pdf/Iris-ST-Depliant-Frigoriste-chauffagistes-Fluides-2016-Internet-100x150-1.pdf#page=5" 
+                    <iframe id="pdfViewer" src="../pdf/Iris-ST-Depliant-Frigoriste-chauffagistes-Fluides-2016-Internet-100x150-1.pdf#page=5" 
                             width="100%" height="100%" frameborder="0" style="border-radius: 10px;">
                         <p>Votre navigateur ne peut pas afficher ce PDF. 
-                           <a href="./pdf/Iris-ST-Depliant-Frigoriste-chauffagistes-Fluides-2016-Internet-100x150-1.pdf" target="_blank">Cliquez ici pour l'ouvrir</a>
+                           <a href="../pdf/Iris-ST-Depliant-Frigoriste-chauffagistes-Fluides-2016-Internet-100x150-1.pdf" target="_blank">Cliquez ici pour l'ouvrir</a>
                         </p>
                     </iframe>
                 </div>
@@ -2004,18 +2006,18 @@ document.addEventListener("selectstart",function(e){if(e.target.tagName\!=="INPU
 
         function goToNextChapter() { 
             saveProgress(); 
-            window.location.href = 'chapter6_electrical_safety.html'; 
+            window.location.href = 'chapitre6.html'; 
         }
 
         // ========== FONCTIONS PDF ==========
         function openPDFFullscreen() {
-            const pdfUrl = './pdf/Iris-ST-Depliant-Frigoriste-chauffagistes-Fluides-2016-Internet-100x150-1.pdf#page=5';
+            const pdfUrl = '../pdf/Iris-ST-Depliant-Frigoriste-chauffagistes-Fluides-2016-Internet-100x150-1.pdf#page=5';
             window.open(pdfUrl, '_blank');
         }
 
         function downloadPDF() {
             const link = document.createElement('a');
-            link.href = './pdf/Iris-ST-Depliant-Frigoriste-chauffagistes-Fluides-2016-Internet-100x150-1.pdf';
+            link.href = '../pdf/Iris-ST-Depliant-Frigoriste-chauffagistes-Fluides-2016-Internet-100x150-1.pdf';
             link.download = 'IRIS-ST-Fluides-Frigorigenes.pdf';
             link.click();
         }

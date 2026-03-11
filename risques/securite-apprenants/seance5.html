@@ -14,6 +14,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700&display=swap" rel="stylesheet">
     
     <style>
+/* Police Calibri pour lisibilite */
+body,html{font-family:Calibri,"Segoe UI",system-ui,-apple-system,sans-serif!important}
         /* ========== VARIABLES CSS ========== */
         :root {
             --primary: #FF6B35;
@@ -894,7 +896,7 @@ document.addEventListener("selectstart",function(e){if(e.target.tagName\!=="INPU
                     <span>📄</span>
                     <span>Voir PDF</span>
                 </button>
-                <a href="index_accueil_securite.html" class="btn-nav">
+                <a href="index.html" class="btn-nav">
                     <span>🏠</span>
                     <span>Retour</span>
                 </a>
@@ -1690,7 +1692,7 @@ document.addEventListener("selectstart",function(e){if(e.target.tagName\!=="INPU
                 showNotification('🎉 Séance validée ! Tu sais maintenant te protéger et alerter.', 'success');
                 document.getElementById('btnValidate').innerHTML = '<span>🏆</span><span>Passer à l\'évaluation finale</span>';
                 document.getElementById('btnValidate').onclick = () => {
-                    window.location.href = 'seance6_evaluation_finale.html';
+                    window.location.href = 'seance6.html';
                 };
             } else {
                 showNotification('💪 Score insuffisant. Revois les EPI et les procédures d\'alerte !', 'warning');

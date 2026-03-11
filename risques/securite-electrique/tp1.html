@@ -7,6 +7,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=OpenDyslexic:wght@400;700&display=swap" rel="stylesheet">
     <style>
+/* Police Calibri pour lisibilite */
+body,html{font-family:Calibri,"Segoe UI",system-ui,-apple-system,sans-serif!important}
         :root {
             --primary: #6B73FF; --secondary: #9C88FF; --accent: #4ECDC4; --coral: #FF6B9D;
             --orange: #FFA726; --success: #4CAF50; --warning: #FF9800; --danger: #F44336;
@@ -366,10 +368,10 @@ document.addEventListener("selectstart",function(e){if(e.target.tagName\!=="INPU
                         <button class="pdf-btn" onclick="openPDFFullscreen()">🔍 Plein écran</button>
                         <button class="pdf-btn" onclick="downloadPDF()">📥 Télécharger</button>
                     </div>
-                    <iframe id="pdfViewer" src="./pdf/Iris-ST-Risque-Electrique-2015_Internet-100x150-1.pdf#page=2" 
+                    <iframe id="pdfViewer" src="../pdf/Iris-ST-Risque-Electrique-2015_Internet-100x150-1.pdf#page=2" 
                             width="100%" height="100%" frameborder="0" style="border-radius: 10px;">
                         <p>Votre navigateur ne peut pas afficher ce PDF. 
-                           <a href="./pdf/Iris-ST-Risque-Electrique-2015_Internet-100x150-1.pdf" target="_blank">Cliquez ici pour l'ouvrir</a>
+                           <a href="../pdf/Iris-ST-Risque-Electrique-2015_Internet-100x150-1.pdf" target="_blank">Cliquez ici pour l'ouvrir</a>
                         </p>
                     </iframe>
                 </div>
@@ -438,7 +440,7 @@ document.addEventListener("selectstart",function(e){if(e.target.tagName\!=="INPU
             </div>
             
             <div style="text-align: center; margin-top: 20px;">
-                <a href="./pdf/Iris-ST-Risque-Electrique-2015_Internet-100x150-1.pdf" target="_blank" class="btn btn-warning">
+                <a href="../pdf/Iris-ST-Risque-Electrique-2015_Internet-100x150-1.pdf" target="_blank" class="btn btn-warning">
                     📄 Consulter le mémo IRIS-ST complet
                 </a>
             </div>
@@ -938,18 +940,18 @@ document.addEventListener("selectstart",function(e){if(e.target.tagName\!=="INPU
                 iframe.innerHTML = `<div style="padding: 50px; text-align: center; color: #999;">
                     <h3>📄 Document PDF IRIS-ST non disponible</h3>
                     <p>Le mémo "Le risque électrique" n'a pas pu être chargé.</p>
-                    <a href="./pdf/Iris-ST-Risque-Electrique-2015_Internet-100x150-1.pdf" 
+                    <a href="../pdf/Iris-ST-Risque-Electrique-2015_Internet-100x150-1.pdf" 
                        target="_blank" class="btn btn-warning">Télécharger le mémo</a></div>`;
             };
         }
 
         function openPDFFullscreen() {
-            window.open('./pdf/Iris-ST-Risque-Electrique-2015_Internet-100x150-1.pdf', '_blank');
+            window.open('../pdf/Iris-ST-Risque-Electrique-2015_Internet-100x150-1.pdf', '_blank');
         }
 
         function downloadPDF() {
             const link = document.createElement('a');
-            link.href = './pdf/Iris-ST-Risque-Electrique-2015_Internet-100x150-1.pdf';
+            link.href = '../pdf/Iris-ST-Risque-Electrique-2015_Internet-100x150-1.pdf';
             link.download = 'IRIS-ST-Risque-Electrique-2015.pdf';
             link.click();
         }
@@ -980,7 +982,7 @@ document.addEventListener("selectstart",function(e){if(e.target.tagName\!=="INPU
         function showContextualHelp(questionId) {
             chapterProgress.helpUsed[questionId] = true;
             const iframe = document.getElementById('pdfViewer');
-            iframe.src = './pdf/Iris-ST-Risque-Electrique-2015_Internet-100x150-1.pdf#page=2';
+            iframe.src = '../pdf/Iris-ST-Risque-Electrique-2015_Internet-100x150-1.pdf#page=2';
             iframe.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
@@ -1270,7 +1272,7 @@ document.addEventListener("selectstart",function(e){if(e.target.tagName\!=="INPU
             linkElement.click(); showToast('📤 Progression exportée !');
         }
 
-        function goToNextChapter() { saveProgress(); window.location.href = 'tp2_situations_travail.html'; }
+        function goToNextChapter() { saveProgress(); window.location.href = 'tp2.html'; }
         function exportToPDF() { showToast('⚠️ Fonctionnalité PDF en cours de développement', 'warning'); }
 
         // Sauvegarde automatique

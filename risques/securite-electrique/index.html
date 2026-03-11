@@ -7,6 +7,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=OpenDyslexic:wght@400;700&display=swap" rel="stylesheet">
     <style>
+/* Police Calibri pour lisibilite */
+body,html{font-family:Calibri,"Segoe UI",system-ui,-apple-system,sans-serif!important}
         :root {
             /* Couleurs Sécurité Électrique */
             --primary: #FF6B35;
@@ -763,12 +765,12 @@ document.addEventListener("selectstart",function(e){if(e.target.tagName\!=="INPU
     <script>
         // ========== CONFIGURATION SÉANCES - NOMS EXACTS ========== 
         const CHAPTERS = [
-            { id: 1, name: 'seance1_intro_electricite.html', title: 'Introduction à la sécurité électrique' },
-            { id: 2, name: 'seance2_situations_risque.html', title: 'Situations de travail à risque' },
-            { id: 3, name: 'seance3_risques_sante.html', title: 'Risques pour la santé' },
-            { id: 4, name: 'seance4_habilitation.html', title: 'L\'habilitation électrique' },
-            { id: 5, name: 'seance5_interventions_securite.html', title: 'Interventions en sécurité' },
-            { id: 6, name: 'seance6_evaluation_finale.html', title: 'Évaluation finale - Sécurité électrique' }
+            { id: 1, name: 'tp1.html', title: 'Introduction à la sécurité électrique' },
+            { id: 2, name: 'tp2.html', title: 'Situations de travail à risque' },
+            { id: 3, name: 'tp3.html', title: 'Risques pour la santé' },
+            { id: 4, name: 'tp4.html', title: 'L\'habilitation électrique' },
+            { id: 5, name: 'tp5.html', title: 'Interventions en sécurité' },
+            { id: 6, name: 'tp6.html', title: 'Évaluation finale - Sécurité électrique' }
         ];
 
         // ========== FORMATIONS SUPPORTÉES ========== 
@@ -1033,13 +1035,13 @@ document.addEventListener("selectstart",function(e){if(e.target.tagName\!=="INPU
             // Redirection ou affichage selon progression
             const progress = calculateGlobalProgress();
             if (progress === 100) {
-                window.location.href = 'synthese-resultats.html';
+                window.location.href = 'index.html';
             } else {
                 const nextChapter = findNextChapter();
                 if (nextChapter) {
                     window.location.href = nextChapter.name;
                 } else {
-                    window.location.href = 'seance1_intro_electricite.html';
+                    window.location.href = 'tp1.html';
                 }
             }
         }

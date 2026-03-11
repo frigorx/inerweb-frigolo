@@ -14,6 +14,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700&display=swap" rel="stylesheet">
     
     <style>
+/* Police Calibri pour lisibilite */
+body,html{font-family:Calibri,"Segoe UI",system-ui,-apple-system,sans-serif!important}
         /* ========== VARIABLES CSS ========== */
         :root {
             --primary: #FF6B35;
@@ -755,7 +757,7 @@ document.addEventListener("selectstart",function(e){if(e.target.tagName\!=="INPU
                 <h1>Évaluation Finale - Accueil Sécurité 🏆</h1>
             </div>
             <div class="nav-buttons">
-                <a href="index_accueil_securite.html" class="btn-nav">
+                <a href="index.html" class="btn-nav">
                     <span>🏠</span>
                     <span>Retour</span>
                 </a>
@@ -1533,7 +1535,7 @@ document.addEventListener("selectstart",function(e){if(e.target.tagName\!=="INPU
             const studentData = JSON.parse(localStorage.getItem('inerweb_accueil_securite_data') || '{}');
             if (!studentData.student) {
                 alert('⚠️ Aucune donnée étudiant trouvée. Retour à l\'accueil.');
-                window.location.href = 'index_accueil_securite.html';
+                window.location.href = 'index.html';
             }
         }
         
