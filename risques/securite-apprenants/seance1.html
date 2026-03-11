@@ -1,0 +1,1594 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Inerweb - Séance 1 : Introduction aux risques professionnels">
+    <meta name="author" content="F. Henninot">
+    
+    <title>Séance 1 - Les Risques Professionnels</title>
+    
+    <!-- Police Lexend -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ========== VARIABLES CSS ========== */
+        :root {
+            --primary: #FF6B35;
+            --secondary: #FF8E53;
+            --accent: #FFC300;
+            --non-acquis: #ef4444;
+            --en-cours: #f59e0b;
+            --acquis: #3b82f6;
+            --parfait: #10b981;
+            --background: #f8f9fa;
+            --text: #333333;
+            --border: #e0e0e0;
+            --shadow: 0 4px 12px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Lexend', system-ui, -apple-system, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        /* Header avec navigation */
+        .header {
+            background: white;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .snowflake {
+            display: inline-block;
+            animation: snowflakeRotate 4s linear infinite;
+            font-size: 1.5em;
+        }
+        
+        @keyframes snowflakeRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-nav {
+            padding: 8px 16px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn-nav:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+        
+        /* Container principal */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px 40px;
+        }
+        
+        /* Barre de progression locale */
+        .local-progress {
+            background: #e0e0e0;
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .local-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            width: 0%;
+            transition: width 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .local-progress-fill::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        /* Section d'apprentissage */
+        .learning-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .section-icon {
+            font-size: 2.5em;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .section-title {
+            font-size: 1.8em;
+            color: var(--primary);
+        }
+        
+        /* Objectifs pédagogiques */
+        .objectives {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .objectives::before {
+            content: '🎯';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 4em;
+            opacity: 0.1;
+        }
+        
+        .objectives h3 {
+            color: var(--acquis);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .objectives ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .objectives li {
+            padding: 8px 0;
+            padding-left: 30px;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+        
+        .objectives li:hover {
+            transform: translateX(5px);
+        }
+        
+        .objectives li::before {
+            content: '🎯';
+            position: absolute;
+            left: 0;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        /* Contenu pédagogique amélioré */
+        .content-box {
+            background: #f5f5f5;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border-left: 4px solid var(--primary);
+            position: relative;
+        }
+        
+        .content-box::before {
+            content: '💡';
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .warning-box {
+            background: #fff3cd;
+            border-color: #ffc107;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            border: 2px solid #ffc107;
+            animation: warningPulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes warningPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.4); }
+            50% { box-shadow: 0 0 20px 5px rgba(255, 193, 7, 0.2); }
+        }
+        
+        .warning-icon {
+            font-size: 2em;
+            flex-shrink: 0;
+            animation: bounce 1s ease-in-out infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        /* Tooltips améliorés */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 2px dotted var(--primary);
+            cursor: help;
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 250px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -125px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-weight: normal;
+            font-size: 0.9em;
+            line-height: 1.4;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* Activités interactives améliorées */
+        .activity {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border: 2px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .activity::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+            animation: colorWave 3s linear infinite;
+        }
+        
+        @keyframes colorWave {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .activity-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .activity-title {
+            font-size: 1.2em;
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        /* QCM amélioré */
+        .qcm-question {
+            margin-bottom: 20px;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+        
+        .qcm-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 15px;
+        }
+        
+        .qcm-option {
+            padding: 15px 20px;
+            background: #f5f5f5;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .qcm-option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,107,53,0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .qcm-option:hover::before {
+            left: 100%;
+        }
+        
+        .qcm-option:hover {
+            background: #e8e8e8;
+            border-color: var(--primary);
+            transform: translateX(5px);
+        }
+        
+        .qcm-option.selected {
+            background: #e3f2fd;
+            border-color: var(--acquis);
+            font-weight: 600;
+        }
+        
+        .qcm-option.correct {
+            background: #c8e6c9;
+            border-color: var(--parfait);
+            animation: correctPulse 0.5s ease;
+        }
+        
+        @keyframes correctPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .qcm-option.incorrect {
+            background: #ffcdd2;
+            border-color: var(--non-acquis);
+            animation: shake 0.5s ease;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        /* Drag and Drop amélioré */
+        .drag-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .drag-source {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            min-height: 200px;
+        }
+        
+        .drag-source h4 {
+            margin-bottom: 15px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .draggable {
+            background: white;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: move;
+            border: 2px solid var(--border);
+            transition: var(--transition);
+            position: relative;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .draggable::before {
+            content: '✋';
+            font-size: 1.2em;
+            opacity: 0.5;
+        }
+        
+        .draggable:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-color: var(--primary);
+        }
+        
+        .draggable.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+            transform: rotate(2deg);
+        }
+        
+        .drop-zones {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .drop-zone {
+            background: #e8f5e9;
+            padding: 20px;
+            border-radius: 10px;
+            min-height: 120px;
+            border: 2px dashed var(--border);
+            transition: var(--transition);
+            position: relative;
+        }
+        
+        .drop-zone h4 {
+            margin-bottom: 15px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .drop-zone.drag-over {
+            background: #c8e6c9;
+            border-color: var(--parfait);
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .drop-zone .draggable {
+            background: #81c784;
+            border-color: var(--parfait);
+            color: white;
+            font-weight: 600;
+        }
+        
+        /* Zone spécifique pour chaque type de risque */
+        .zone-physique {
+            background: #ffebee;
+            border-color: #ef5350;
+        }
+        
+        .zone-chimique {
+            background: #f3e5f5;
+            border-color: #ab47bc;
+        }
+        
+        .zone-ergonomique {
+            background: #e8f5e9;
+            border-color: #66bb6a;
+        }
+        
+        /* Statistiques animées */
+        .stats-display {
+            background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stats-display::before {
+            content: '📊';
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            font-size: 8em;
+            opacity: 0.1;
+            transform: rotate(-15deg);
+        }
+        
+        .stat-number {
+            font-size: 4em;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 10px 0;
+            display: inline-block;
+        }
+        
+        /* Boutons améliorés */
+        .btn {
+            padding: 12px 24px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .btn-validate {
+            background: var(--parfait);
+        }
+        
+        .btn-validate:hover {
+            background: #059862;
+        }
+        
+        /* Score et feedback */
+        .score-display {
+            background: linear-gradient(135deg, #e1f5fe, #b3e5fc);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .score-number {
+            font-size: 3em;
+            font-weight: 700;
+            color: var(--acquis);
+            animation: countUp 1s ease-out;
+        }
+        
+        @keyframes countUp {
+            from { transform: scale(0); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        /* Contrôles d'accessibilité */
+        .accessibility-controls {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 99;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+        
+        .btn-accessibility {
+            padding: 8px 15px;
+            background: white;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn-accessibility:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-accessibility.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* Mode accessible */
+        body.accessible-mode {
+            font-family: 'OpenDyslexic', 'Comic Sans MS', sans-serif;
+            line-height: 2;
+            letter-spacing: 0.1em;
+        }
+        
+        body.high-contrast {
+            background: #000;
+            color: #fff;
+        }
+        
+        body.high-contrast .learning-section,
+        body.high-contrast .activity,
+        body.high-contrast .header {
+            background: #222;
+            color: #fff;
+            border: 2px solid #fff;
+        }
+        
+        /* Mascotte helper */
+        .helper-mascot {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 70px;
+            height: 70px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2em;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: var(--transition);
+            z-index: 100;
+        }
+        
+        .helper-mascot:hover {
+            transform: scale(1.1) rotate(10deg);
+        }
+        
+        .helper-bubble {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            width: 250px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .helper-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            right: 25px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 10px solid white;
+        }
+        
+        .helper-mascot:hover .helper-bubble {
+            display: block;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+            }
+            
+            .drag-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .accessibility-controls {
+                top: auto;
+                bottom: 100px;
+                flex-direction: row;
+            }
+            
+            .helper-mascot {
+                bottom: 20px;
+                right: 10px;
+                width: 60px;
+                height: 60px;
+                font-size: 1.8em;
+            }
+        }
+    </style>
+<script>/* (c) F. Henninot - inerWeb FRIGOLO - Tous droits reserves */
+document.addEventListener("contextmenu",function(e){e.preventDefault()});
+document.addEventListener("keydown",function(e){if((e.ctrlKey||e.metaKey)&&(e.key==="u"||e.key==="s"||e.key==="c")){e.preventDefault()}});
+document.addEventListener("selectstart",function(e){if(e.target.tagName\!=="INPUT"&&e.target.tagName\!=="TEXTAREA"){e.preventDefault()}});
+</script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <span class="snowflake">❄️</span>
+                <h1>Séance 1 : Les Risques Professionnels ⚡</h1>
+            </div>
+            <div class="nav-buttons">
+                <button class="btn-nav" onclick="viewPDF()">
+                    <span>📄</span>
+                    <span>Voir PDF</span>
+                </button>
+                <a href="index_accueil_securite.html" class="btn-nav">
+                    <span>🏠</span>
+                    <span>Retour</span>
+                </a>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Contrôles d'accessibilité -->
+    <div class="accessibility-controls">
+        <button class="btn-accessibility" onclick="toggleAccessibleMode()" id="btnAccessible">
+            <span>📖</span>
+            <span>Police adaptée</span>
+        </button>
+        <button class="btn-accessibility" onclick="toggleHighContrast()" id="btnContrast">
+            <span>🌓</span>
+            <span>Contraste</span>
+        </button>
+        <button class="btn-accessibility" onclick="changeFontSize()" id="btnFontSize">
+            <span>🔍+</span>
+            <span>Taille</span>
+        </button>
+    </div>
+    
+    <!-- Mascotte helper -->
+    <div class="helper-mascot">
+        <span>🦺</span>
+        <div class="helper-bubble">
+            <strong>Astuce de Sécu ! 💡</strong><br>
+            Les jeunes ont 2,5 fois plus d'accidents que les adultes au travail. Reste vigilant !
+        </div>
+    </div>
+    
+    <!-- Container principal -->
+    <div class="container">
+        <!-- Barre de progression locale -->
+        <div class="local-progress">
+            <div class="local-progress-fill" id="localProgress"></div>
+        </div>
+        
+        <!-- Objectifs pédagogiques -->
+        <div class="objectives">
+            <h3>
+                <span style="font-size: 1.5em;">🎓</span>
+                Objectifs de cette séance
+            </h3>
+            <ul>
+                <li>Identifier les principaux 
+                    <span class="tooltip">risques professionnels
+                        <span class="tooltiptext">Un risque professionnel est un danger qui peut te blesser ou te rendre malade au travail</span>
+                    </span>
+                </li>
+                <li>Comprendre pourquoi tu es plus 
+                    <span class="tooltip">vulnérable
+                        <span class="tooltiptext">Être vulnérable = être plus fragile, avoir plus de chances de se blesser</span>
+                    </span> en tant que jeune
+                </li>
+                <li>Prendre conscience de l'importance de la 
+                    <span class="tooltip">prévention
+                        <span class="tooltiptext">La prévention = les actions pour éviter les accidents avant qu'ils arrivent</span>
+                    </span>
+                </li>
+                <li>T'engager dans une démarche de sécurité active 💪</li>
+            </ul>
+        </div>
+        
+        <!-- Section 1 : Introduction -->
+        <div class="learning-section">
+            <div class="section-header">
+                <span class="section-icon">⚡</span>
+                <h2 class="section-title">Pourquoi parler de sécurité ?</h2>
+            </div>
+            
+            <div class="content-box">
+                <p><strong>Le travail en atelier ou en entreprise t'expose à des risques qu'il ne faut pas négliger.</strong></p>
+                <p>Ces règles de sécurité s'appliquent PARTOUT :</p>
+                <ul style="margin-top: 10px; margin-left: 20px;">
+                    <li>✓ À l'<span class="tooltip">atelier du lycée
+                        <span class="tooltiptext">La salle où tu apprends ton métier avec tes profs</span>
+                    </span></li>
+                    <li>✓ En entreprise pendant tes 
+                        <span class="tooltip">stages
+                            <span class="tooltiptext">Périodes où tu travailles dans une vraie entreprise pour apprendre</span>
+                        </span>
+                    </li>
+                    <li>✓ Sur les 
+                        <span class="tooltip">chantiers
+                            <span class="tooltiptext">Lieux où on construit ou répare (bâtiments, installations...)</span>
+                        </span>
+                    </li>
+                    <li>✓ Dans toute ta future vie professionnelle</li>
+                </ul>
+            </div>
+            
+            <div class="warning-box">
+                <span class="warning-icon">⚠️</span>
+                <div>
+                    <strong>ATTENTION :</strong> Le non-respect de ces règles peut avoir des conséquences graves :
+                    <ul style="margin-top: 10px; margin-left: 20px;">
+                        <li>• <strong>Exclusion définitive</strong> de l'école 🏫❌</li>
+                        <li>• <strong>Rupture du contrat</strong> d'apprentissage 📋❌</li>
+                        <li>• <strong>Licenciement</strong> pour faute grave 💼❌</li>
+                        <li>• <strong>Poursuites judiciaires</strong> en cas d'accident ⚖️</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Activité 1 : QCM sur les statistiques -->
+        <div class="activity">
+            <div class="activity-header">
+                <span style="font-size: 1.5em;">📊</span>
+                <h3 class="activity-title">Activité 1 : Teste tes connaissances !</h3>
+            </div>
+            
+            <div class="qcm-question">
+                <p>❓ <strong>Les jeunes travailleurs (moins de 25 ans) représentent :</strong></p>
+            </div>
+            
+            <div class="qcm-options">
+                <div class="qcm-option" onclick="selectOption(this, 0)">
+                    <span style="margin-right: 10px;">A.</span>
+                    5% des accidents du travail
+                </div>
+                <div class="qcm-option" onclick="selectOption(this, 1)">
+                    <span style="margin-right: 10px;">B.</span>
+                    10% des accidents du travail
+                </div>
+                <div class="qcm-option" onclick="selectOption(this, 2)">
+                    <span style="margin-right: 10px;">C.</span>
+                    20% des accidents du travail
+                </div>
+                <div class="qcm-option" onclick="selectOption(this, 3)">
+                    <span style="margin-right: 10px;">D.</span>
+                    25% des accidents du travail
+                </div>
+            </div>
+            
+            <button class="btn btn-validate" onclick="validateQCM()" style="margin-top: 20px;">
+                <span>✅</span>
+                <span>Valider ma réponse</span>
+            </button>
+            
+            <div id="qcm-feedback" style="margin-top: 15px; display: none;"></div>
+        </div>
+        
+        <!-- Section 2 : Les risques principaux -->
+        <div class="learning-section">
+            <div class="section-header">
+                <span class="section-icon">🚨</span>
+                <h2 class="section-title">Quels sont les principaux risques ?</h2>
+            </div>
+            
+            <div class="content-box">
+                <p>En atelier comme en entreprise, tu es exposé à différents types de risques :</p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px;">
+                    <div style="background: #ffebee; padding: 15px; border-radius: 8px; text-align: center;">
+                        <span style="font-size: 2em;">🔨</span>
+                        <h4 style="color: #ef5350; margin: 10px 0;">Risques physiques</h4>
+                        <p style="font-size: 0.9em;">Chutes, coupures, brûlures...</p>
+                    </div>
+                    <div style="background: #f3e5f5; padding: 15px; border-radius: 8px; text-align: center;">
+                        <span style="font-size: 2em;">⚗️</span>
+                        <h4 style="color: #ab47bc; margin: 10px 0;">Risques chimiques</h4>
+                        <p style="font-size: 0.9em;">Produits toxiques, corrosifs...</p>
+                    </div>
+                    <div style="background: #e8f5e9; padding: 15px; border-radius: 8px; text-align: center;">
+                        <span style="font-size: 2em;">🏋️</span>
+                        <h4 style="color: #66bb6a; margin: 10px 0;">Risques ergonomiques</h4>
+                        <p style="font-size: 0.9em;">Mal de dos, TMS...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Activité 2 : Drag and Drop -->
+            <div class="activity">
+                <div class="activity-header">
+                    <span style="font-size: 1.5em;">🎯</span>
+                    <h3 class="activity-title">Activité 2 : Classe les risques par catégorie !</h3>
+                </div>
+                
+                <p>👆 <strong>Glisse chaque risque dans la bonne catégorie</strong> (clique et maintiens pour déplacer) :</p>
+                
+                <div class="drag-container">
+                    <div class="drag-source" id="risques-list">
+                        <h4>
+                            <span>📦</span>
+                            Risques à classer :
+                        </h4>
+                        <div class="draggable" draggable="true" data-category="physique">
+                            Chutes de hauteur
+                        </div>
+                        <div class="draggable" draggable="true" data-category="chimique">
+                            Brûlures chimiques
+                        </div>
+                        <div class="draggable" draggable="true" data-category="physique">
+                            Coupures
+                        </div>
+                        <div class="draggable" draggable="true" data-category="ergonomique">
+                            Manutentions manuelles
+                        </div>
+                        <div class="draggable" draggable="true" data-category="chimique">
+                            Intoxication
+                        </div>
+                        <div class="draggable" draggable="true" data-category="ergonomique">
+                            Positions inconfortables
+                        </div>
+                        <div class="draggable" draggable="true" data-category="physique">
+                            Glissades
+                        </div>
+                        <div class="draggable" draggable="true" data-category="chimique">
+                            Asphyxie
+                        </div>
+                    </div>
+                    
+                    <div class="drop-zones">
+                        <div class="drop-zone zone-physique" data-category="physique">
+                            <h4>
+                                <span>🔨</span>
+                                Risques physiques
+                            </h4>
+                        </div>
+                        
+                        <div class="drop-zone zone-chimique" data-category="chimique">
+                            <h4>
+                                <span>⚗️</span>
+                                Risques chimiques
+                            </h4>
+                        </div>
+                        
+                        <div class="drop-zone zone-ergonomique" data-category="ergonomique">
+                            <h4>
+                                <span>🏋️</span>
+                                Risques ergonomiques
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn btn-validate" onclick="validateDragDrop()" style="margin-top: 20px;">
+                    <span>🔍</span>
+                    <span>Vérifier mon classement</span>
+                </button>
+                
+                <div id="drag-feedback" style="margin-top: 15px; display: none;"></div>
+            </div>
+        </div>
+        
+        <!-- Section 3 : Pourquoi les jeunes sont plus vulnérables -->
+        <div class="learning-section">
+            <div class="section-header">
+                <span class="section-icon">👤</span>
+                <h2 class="section-title">Pourquoi es-tu plus vulnérable ?</h2>
+            </div>
+            
+            <div class="stats-display">
+                <h3>Statistique choc ! 😱</h3>
+                <div class="stat-number" id="statNumber">0%</div>
+                <p>des accidents du travail concernent les jeunes de moins de 25 ans</p>
+                <p style="margin-top: 10px; font-size: 0.9em; opacity: 0.8;">
+                    Alors qu'ils ne représentent que 10% des travailleurs !
+                </p>
+            </div>
+            
+            <div class="content-box">
+                <p><strong>Les jeunes travailleurs sont plus exposés aux accidents pour plusieurs raisons :</strong></p>
+                <div style="margin-top: 20px;">
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px; padding: 15px; background: #fff3e0; border-radius: 8px;">
+                        <span style="font-size: 2em;">🆕</span>
+                        <div>
+                            <strong>Manque d'expérience</strong>
+                            <p style="font-size: 0.9em; margin: 0;">Tu découvres de nouvelles situations</p>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px; padding: 15px; background: #f3e5f5; border-radius: 8px;">
+                        <span style="font-size: 2em;">❓</span>
+                        <div>
+                            <strong>Méconnaissance des risques</strong>
+                            <p style="font-size: 0.9em; margin: 0;">Tu n'as pas encore tous les réflexes</p>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px; padding: 15px; background: #e3f2fd; border-radius: 8px;">
+                        <span style="font-size: 2em;">🌱</span>
+                        <div>
+                            <strong>Croissance physique</strong>
+                            <p style="font-size: 0.9em; margin: 0;">Ton corps est encore en développement</p>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px; padding: 15px; background: #e8f5e9; border-radius: 8px;">
+                        <span style="font-size: 2em;">💪</span>
+                        <div>
+                            <strong>Envie de bien faire</strong>
+                            <p style="font-size: 0.9em; margin: 0;">Peut te conduire à prendre des risques inutiles</p>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; align-items: center; gap: 15px; padding: 15px; background: #fce4ec; border-radius: 8px;">
+                        <span style="font-size: 2em;">😰</span>
+                        <div>
+                            <strong>Difficulté à dire non</strong>
+                            <p style="font-size: 0.9em; margin: 0;">Peur de décevoir ou de paraître incompétent</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="warning-box" style="background: #e8f5e9; border-color: var(--parfait);">
+                <span class="warning-icon">💡</span>
+                <div>
+                    <strong>BON À SAVOIR :</strong>
+                    <p>Apprentissage du métier, croissance physique... les jeunes travailleurs sont plus vulnérables aux risques professionnels et par conséquent aux accidents du travail.</p>
+                    <p style="margin-top: 10px;"><strong>Alors ouvre l'œil 👁️ et prends en main ta sécurité ! 🛡️</strong></p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Synthèse et validation -->
+        <div class="learning-section">
+            <div class="section-header">
+                <span class="section-icon">✅</span>
+                <h2 class="section-title">À retenir de cette séance</h2>
+            </div>
+            
+            <div class="content-box">
+                <h4 style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 1.5em;">📌</span>
+                    Les points essentiels :
+                </h4>
+                <div style="margin-top: 20px; display: grid; gap: 15px;">
+                    <div style="display: flex; align-items: center; gap: 15px; padding: 15px; background: #e3f2fd; border-radius: 8px;">
+                        <span style="font-size: 1.5em;">📍</span>
+                        <span>Les règles de sécurité s'appliquent <strong>PARTOUT</strong> (lycée, entreprise, chantier)</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px; padding: 15px; background: #fff3e0; border-radius: 8px;">
+                        <span style="font-size: 1.5em;">⚖️</span>
+                        <span>Le non-respect peut entraîner <strong>exclusion ou licenciement</strong></span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px; padding: 15px; background: #fce4ec; border-radius: 8px;">
+                        <span style="font-size: 1.5em;">📊</span>
+                        <span>Les jeunes sont <strong>plus vulnérables</strong> aux accidents (25% des accidents !)</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px; padding: 15px; background: #e8f5e9; border-radius: 8px;">
+                        <span style="font-size: 1.5em;">🛡️</span>
+                        <span>Prendre conscience des risques est la <strong>première étape</strong> de la prévention</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="score-display" id="scoreDisplay" style="display: none;">
+                <p>Ton score pour cette séance :</p>
+                <div class="score-number" id="scoreNumber">0%</div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn" onclick="validateSession()" id="btnValidate">
+                    <span>🏁</span>
+                    <span>Terminer la séance</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal PDF (placeholder) -->
+    <div id="pdfModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000;">
+        <div style="background: white; max-width: 900px; height: 90%; margin: 5% auto; border-radius: 10px; padding: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3>Document de référence - IRIS-ST</h3>
+                <button onclick="closePDF()" style="background: none; border: none; font-size: 1.5em; cursor: pointer;">✕</button>
+            </div>
+            <div style="text-align: center; padding: 40px;">
+                <p><strong>Document PDF</strong><br><br>
+                "Apprenti(e)s et prévention"<br>
+                IRIS-ST - Mémo Sécurité<br><br>
+                <em>Le document PDF s'afficherait ici dans un viewer intégré</em></p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Variables globales
+        let currentScore = 0;
+        let activities = {
+            qcm: { completed: false, score: 0 },
+            dragDrop: { completed: false, score: 0 }
+        };
+        
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeAccessibility();
+            updateLocalProgress();
+            initializeDragAndDrop();
+            animateStatNumber();
+        });
+        
+        // Animation du nombre de statistiques
+        function animateStatNumber() {
+            const statElement = document.getElementById('statNumber');
+            let current = 0;
+            const target = 25;
+            const increment = target / 50;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                statElement.textContent = Math.round(current) + '%';
+            }, 40);
+        }
+        
+        // Gestion du QCM
+        let selectedAnswer = -1;
+        const correctAnswer = 3; // 25% des accidents
+        
+        function selectOption(element, index) {
+            // Retirer la sélection précédente
+            document.querySelectorAll('.qcm-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // Sélectionner la nouvelle option
+            element.classList.add('selected');
+            selectedAnswer = index;
+        }
+        
+        function validateQCM() {
+            if (selectedAnswer === -1) {
+                showNotification('❗ Choisis une réponse avant de valider !', 'warning');
+                return;
+            }
+            
+            const options = document.querySelectorAll('.qcm-option');
+            const feedback = document.getElementById('qcm-feedback');
+            
+            if (selectedAnswer === correctAnswer) {
+                options[selectedAnswer].classList.add('correct');
+                feedback.innerHTML = `
+                    <div style="color: var(--parfait); font-weight: 600; padding: 15px; background: #e8f5e9; border-radius: 8px; display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 2em;">✅</span>
+                        <div>
+                            <strong>Bravo !</strong> Les jeunes représentent effectivement environ <strong>25% des accidents du travail</strong> 
+                            alors qu'ils ne sont que 10% de la population active ! C'est énorme ! 😱
+                        </div>
+                    </div>
+                `;
+                activities.qcm.score = 100;
+            } else {
+                options[selectedAnswer].classList.add('incorrect');
+                options[correctAnswer].classList.add('correct');
+                feedback.innerHTML = `
+                    <div style="color: var(--non-acquis); font-weight: 600; padding: 15px; background: #ffebee; border-radius: 8px; display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 2em;">❌</span>
+                        <div>
+                            <strong>Pas tout à fait !</strong> Les jeunes représentent <strong>25% des accidents du travail</strong>.
+                            C'est 2,5 fois plus que leur proportion dans la population active ! Reste vigilant ! 👀
+                        </div>
+                    </div>
+                `;
+                activities.qcm.score = 0;
+            }
+            
+            feedback.style.display = 'block';
+            activities.qcm.completed = true;
+            updateLocalProgress();
+            
+            // Désactiver les options
+            options.forEach(opt => opt.style.pointerEvents = 'none');
+            document.querySelector('.btn-validate').disabled = true;
+        }
+        
+        // Gestion du Drag and Drop amélioré
+        let draggedElement = null;
+        
+        function initializeDragAndDrop() {
+            const draggables = document.querySelectorAll('.draggable');
+            const dropZones = document.querySelectorAll('.drop-zone');
+            const dragSource = document.getElementById('risques-list');
+            
+            // Pour chaque élément draggable
+            draggables.forEach(draggable => {
+                draggable.addEventListener('dragstart', handleDragStart);
+                draggable.addEventListener('dragend', handleDragEnd);
+                
+                // Support tactile
+                draggable.addEventListener('touchstart', handleTouchStart, {passive: false});
+                draggable.addEventListener('touchmove', handleTouchMove, {passive: false});
+                draggable.addEventListener('touchend', handleTouchEnd);
+            });
+            
+            // Pour chaque zone de drop
+            dropZones.forEach(zone => {
+                zone.addEventListener('dragover', handleDragOver);
+                zone.addEventListener('drop', handleDrop);
+                zone.addEventListener('dragleave', handleDragLeave);
+            });
+            
+            // Pour la zone source aussi
+            dragSource.addEventListener('dragover', handleDragOver);
+            dragSource.addEventListener('drop', handleDrop);
+        }
+        
+        function handleDragStart(e) {
+            draggedElement = e.target;
+            e.target.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', e.target.innerHTML);
+        }
+        
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+        }
+        
+        function handleDragOver(e) {
+            if (e.preventDefault) {
+                e.preventDefault();
+            }
+            e.dataTransfer.dropEffect = 'move';
+            e.currentTarget.classList.add('drag-over');
+            return false;
+        }
+        
+        function handleDragLeave(e) {
+            e.currentTarget.classList.remove('drag-over');
+        }
+        
+        function handleDrop(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            }
+            e.preventDefault();
+            
+            e.currentTarget.classList.remove('drag-over');
+            
+            if (draggedElement && draggedElement !== e.target) {
+                e.currentTarget.appendChild(draggedElement);
+                draggedElement = null;
+            }
+            
+            return false;
+        }
+        
+        // Support tactile pour mobile
+        let touchItem = null;
+        
+        function handleTouchStart(e) {
+            touchItem = e.target;
+            e.target.style.opacity = '0.5';
+        }
+        
+        function handleTouchMove(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+            
+            if (elementBelow && elementBelow.classList.contains('drop-zone')) {
+                elementBelow.classList.add('drag-over');
+            }
+        }
+        
+        function handleTouchEnd(e) {
+            e.target.style.opacity = '1';
+            const touch = e.changedTouches[0];
+            const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+            
+            if (elementBelow && elementBelow.classList.contains('drop-zone')) {
+                elementBelow.classList.remove('drag-over');
+                elementBelow.appendChild(touchItem);
+            }
+            
+            touchItem = null;
+        }
+        
+        function validateDragDrop() {
+            const dropZones = document.querySelectorAll('.drop-zone');
+            let correctCount = 0;
+            let totalCount = 0;
+            
+            dropZones.forEach(zone => {
+                const zoneCategory = zone.dataset.category;
+                const items = zone.querySelectorAll('.draggable');
+                
+                items.forEach(item => {
+                    totalCount++;
+                    if (item.dataset.category === zoneCategory) {
+                        correctCount++;
+                        item.style.background = '#81c784';
+                        item.style.borderColor = 'var(--parfait)';
+                        item.style.color = 'white';
+                        item.innerHTML = '✅ ' + item.textContent;
+                    } else {
+                        item.style.background = '#ef5350';
+                        item.style.borderColor = 'var(--non-acquis)';
+                        item.style.color = 'white';
+                        item.innerHTML = '❌ ' + item.textContent;
+                    }
+                });
+            });
+            
+            const score = Math.round((correctCount / 8) * 100);
+            activities.dragDrop.score = score;
+            activities.dragDrop.completed = true;
+            
+            const feedback = document.getElementById('drag-feedback');
+            feedback.innerHTML = `
+                <div style="color: ${score >= 70 ? 'var(--parfait)' : 'var(--non-acquis)'}; font-weight: 600; padding: 15px; background: ${score >= 70 ? '#e8f5e9' : '#ffebee'}; border-radius: 8px; display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 2em;">${score >= 70 ? '🎉' : '🤔'}</span>
+                    <div>
+                        Score : <strong>${correctCount}/8 corrects (${score}%)</strong><br>
+                        ${score >= 70 ? 'Super travail ! Tu sais reconnaître les différents types de risques !' : 'Pas mal ! Revois les différentes catégories de risques pour mieux les identifier.'}
+                    </div>
+                </div>
+            `;
+            feedback.style.display = 'block';
+            
+            updateLocalProgress();
+        }
+        
+        // Progression locale
+        function updateLocalProgress() {
+            let completedCount = 0;
+            let totalScore = 0;
+            
+            Object.values(activities).forEach(activity => {
+                if (activity.completed) {
+                    completedCount++;
+                    totalScore += activity.score;
+                }
+            });
+            
+            const progress = (completedCount / Object.keys(activities).length) * 100;
+            const avgScore = completedCount > 0 ? totalScore / completedCount : 0;
+            
+            document.getElementById('localProgress').style.width = progress + '%';
+            
+            return avgScore;
+        }
+        
+        // Validation de la séance
+        function validateSession() {
+            const avgScore = updateLocalProgress();
+            
+            if (Object.values(activities).some(a => !a.completed)) {
+                showNotification('📝 Tu dois compléter toutes les activités avant de terminer !', 'warning');
+                return;
+            }
+            
+            // Afficher le score
+            document.getElementById('scoreNumber').textContent = Math.round(avgScore) + '%';
+            document.getElementById('scoreDisplay').style.display = 'block';
+            
+            // Sauvegarder la progression
+            saveProgress(avgScore);
+            
+            // Message de validation
+            if (avgScore >= 70) {
+                showNotification('🎉 Séance validée ! Tu peux passer à la suivante.', 'success');
+                document.getElementById('btnValidate').innerHTML = '<span>➡️</span><span>Séance suivante</span>';
+                document.getElementById('btnValidate').onclick = () => {
+                    window.location.href = 'seance2_accueil_entreprise.html';
+                };
+            } else {
+                showNotification('💪 Score insuffisant. Relis le cours et réessaye !', 'warning');
+            }
+        }
+        
+        // Sauvegarde progression
+        function saveProgress(score) {
+            const moduleData = JSON.parse(localStorage.getItem('inerweb_accueil_securite_data') || '{}');
+            
+            moduleData.progress = moduleData.progress || {};
+            moduleData.progress.seance1 = {
+                completed: true,
+                score: Math.round(score),
+                attempts: (moduleData.progress.seance1?.attempts || 0) + 1,
+                date: new Date().toISOString()
+            };
+            
+            localStorage.setItem('inerweb_accueil_securite_data', JSON.stringify(moduleData));
+        }
+        
+        // Gestion du PDF
+        function viewPDF() {
+            document.getElementById('pdfModal').style.display = 'block';
+        }
+        
+        function closePDF() {
+            document.getElementById('pdfModal').style.display = 'none';
+        }
+        
+        // Accessibilité
+        function toggleAccessibleMode() {
+            document.body.classList.toggle('accessible-mode');
+            document.getElementById('btnAccessible').classList.toggle('active');
+            if (document.body.classList.contains('accessible-mode')) {
+                loadOpenDyslexicFont();
+            }
+        }
+        
+        function toggleHighContrast() {
+            document.body.classList.toggle('high-contrast');
+            document.getElementById('btnContrast').classList.toggle('active');
+        }
+        
+        function changeFontSize() {
+            const currentSize = parseInt(getComputedStyle(document.body).fontSize);
+            const newSize = currentSize >= 20 ? 16 : currentSize + 2;
+            document.body.style.fontSize = newSize + 'px';
+            showNotification(`📏 Taille de police : ${newSize}px`, 'info');
+        }
+        
+        function loadOpenDyslexicFont() {
+            if (!document.getElementById('openDyslexicFont')) {
+                const link = document.createElement('link');
+                link.id = 'openDyslexicFont';
+                link.rel = 'stylesheet';
+                link.href = 'https://fonts.cdnfonts.com/css/open-dyslexic';
+                document.head.appendChild(link);
+            }
+        }
+        
+        function initializeAccessibility() {
+            const savedSettings = JSON.parse(localStorage.getItem('inerweb_accessibility') || '{}');
+            
+            if (savedSettings.accessibleMode) toggleAccessibleMode();
+            if (savedSettings.highContrast) toggleHighContrast();
+            if (savedSettings.fontSize) document.body.style.fontSize = savedSettings.fontSize;
+        }
+        
+        // Notifications améliorées
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                padding: 15px 25px;
+                background: ${type === 'success' ? 'var(--parfait)' : type === 'warning' ? 'var(--en-cours)' : 'var(--acquis)'};
+                color: white;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                z-index: 9999;
+                animation: slideDown 0.3s ease;
+                font-weight: 600;
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideUp 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+        
+        // Animations CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideDown {
+                from { transform: translateX(-50%) translateY(-100px); opacity: 0; }
+                to { transform: translateX(-50%) translateY(0); opacity: 1; }
+            }
+            
+            @keyframes slideUp {
+                from { transform: translateX(-50%) translateY(0); opacity: 1; }
+                to { transform: translateX(-50%) translateY(-100px); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

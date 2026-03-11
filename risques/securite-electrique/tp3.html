@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TP3 - Les équipements de protection individuelle | ÉNERWEB</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=OpenDyslexic:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* ========== CHARTE GRAPHIQUE ÉLECTRICITÉ ÉNERWEB ========== */
+        :root {
+            /* Couleurs Sécurité Électrique */
+            --primary: #FF6B35;
+            --secondary: #FF8E53;
+            --accent: #FFC300;
+            --danger: #FF1744;
+            --warning: #FF9800;
+            --success: #4CAF50;
+            --info: #2196F3;
+            --dark: #2C3E50;
+            --light: #F8FAFC;
+            --border: #E2E8F0;
+            
+            /* Palette Pédagogique COMMUNE */
+            --non-acquis: #ef4444;
+            --en-cours: #f59e0b;
+            --acquis: #3b82f6;
+            --parfait: #10b981;
+            
+            --gradient: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, var(--accent) 100%);
+            --shadow: 0 4px 15px rgba(0,0,0,0.1);
+            --radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Lexend', 'Comic Sans MS', 'OpenDyslexic', 'Segoe UI', sans-serif;
+            font-size: 18px;
+            line-height: 1.8;
+            letter-spacing: 0.5px;
+            background: var(--light);
+            color: var(--dark);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animation de fond OBLIGATOIRE */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 107, 53, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 195, 0, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(255, 107, 53, 0.2) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+        }
+
+        /* ========== MODES ACCESSIBILITÉ ========== */
+        body.accessibility-mode {
+            font-size: 20px;
+            line-height: 2.2;
+            letter-spacing: 1px;
+        }
+
+        body.accessibility-mode .btn {
+            padding: 32px 65px;
+            font-size: 24px;
+        }
+
+        body.police-adaptee {
+            font-family: 'OpenDyslexic', 'Comic Sans MS', 'Lexend', sans-serif;
+            font-size: 22px;
+            line-height: 2.5;
+            letter-spacing: 2px;
+            word-spacing: 0.4em;
+        }
+
+        body.police-adaptee .btn {
+            padding: 32px 65px;
+            font-size: 24px;
+        }
+
+        body.police-adaptee p, body.police-adaptee div, body.police-adaptee span {
+            word-spacing: 0.4em;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* ========== CONTRÔLES ACCESSIBILITÉ ========== */
+        .accessibility-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+            flex-wrap: wrap;
+        }
+
+        .btn-accessibility {
+            background: var(--warning);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .btn-accessibility:hover {
+            background: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        .btn-accessibility.active {
+            background: var(--success);
+        }
+
+        /* ========== HEADER ANIMÉ ========== */
+        .header {
+            background: var(--gradient);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .header::before {
+            content: '⚡';
+            position: absolute;
+            top: 20px;
+            left: 30px;
+            font-size: 3em;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.2); opacity: 1; }
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.3);
+            height: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: white;
+            width: 50%; /* TP3 = 50% */
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+
+        .btn-home {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-home:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* ========== COMPÉTENCE BADGE ========== */
+        .competence-info {
+            background: linear-gradient(135deg, var(--info), var(--accent));
+            color: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            font-size: 0.9em;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        /* ========== SECTIONS PRINCIPALES ========== */
+        .content-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            border-top: 4px solid var(--primary);
+        }
+
+        .content-section h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.8em;
+        }
+
+        /* ========== ACTIVITÉ DRAG & DROP EPI ========== */
+        .epi-activity {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin: 30px 0;
+        }
+
+        .epi-items, .epi-functions {
+            padding: 20px;
+            border-radius: 15px;
+            min-height: 400px;
+        }
+
+        .epi-items {
+            background: linear-gradient(135deg, #FFF3E0, #FFCC80);
+            border: 2px dashed var(--warning);
+        }
+
+        .epi-functions {
+            background: linear-gradient(135deg, #E8F5E8, #C8E6C9);
+            border: 2px dashed var(--success);
+        }
+
+        .epi-item, .epi-function {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            cursor: grab;
+            transition: var(--transition);
+            border: 2px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-weight: 500;
+        }
+
+        .epi-item:hover, .epi-function:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .epi-item.dragging {
+            opacity: 0.5;
+            transform: rotate(5deg);
+        }
+
+        .epi-function.drop-zone {
+            border-color: var(--primary);
+            background: #FFF3E0;
+        }
+
+        .epi-function.matched {
+            background: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+
+        .epi-function.incorrect {
+            background: var(--danger);
+            color: white;
+            border-color: var(--danger);
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .epi-icon {
+            font-size: 1.5em;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        /* ========== QCM SECTION ========== */
+        .qcm-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: var(--shadow);
+            border-left: 5px solid var(--info);
+        }
+
+        .qcm-question {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .qcm-question h3 {
+            color: var(--dark);
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .qcm-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .qcm-option {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            border: 2px solid var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .qcm-option:hover {
+            border-color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .qcm-option.selected {
+            border-color: var(--primary);
+            background: #FFF3E0;
+        }
+
+        .qcm-option.correct {
+            border-color: var(--success);
+            background: #E8F5E8;
+        }
+
+        .qcm-option.incorrect {
+            border-color: var(--danger);
+            background: #FFEBEE;
+        }
+
+        .qcm-progress {
+            background: var(--border);
+            height: 8px;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .qcm-progress-fill {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 4px;
+        }
+
+        /* ========== ÉVALUATION FINALE ========== */
+        .evaluation-section {
+            background: linear-gradient(135deg, #F3E5F5, #E1BEE7);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: var(--shadow);
+            border: 2px solid var(--accent);
+        }
+
+        .competence-evaluation {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 20px;
+            border-left: 5px solid var(--info);
+        }
+
+        .score-display {
+            text-align: center;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 15px;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        .score-non-acquis { background: #FFEBEE; color: var(--non-acquis); }
+        .score-en-cours { background: #FFF8E1; color: var(--en-cours); }
+        .score-acquis { background: #E3F2FD; color: var(--acquis); }
+        .score-parfait { background: #E8F5E8; color: var(--parfait); }
+
+        /* ========== BOUTONS ========== */
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--info);
+        }
+
+        .btn-secondary:hover {
+            background: #1976D2;
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        .btn-success:hover {
+            background: #388E3C;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+        }
+
+        .btn-warning:hover {
+            background: #F57C00;
+        }
+
+        /* ========== ALERTS & NOTIFICATIONS ========== */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #E8F5E8;
+            color: var(--success);
+            border-left: 4px solid var(--success);
+        }
+
+        .alert-danger {
+            background: #FFEBEE;
+            color: var(--danger);
+            border-left: 4px solid var(--danger);
+        }
+
+        .alert-warning {
+            background: #FFF8E1;
+            color: var(--warning);
+            border-left: 4px solid var(--warning);
+        }
+
+        .alert-info {
+            background: #E3F2FD;
+            color: var(--info);
+            border-left: 4px solid var(--info);
+        }
+
+        /* ========== SAFETY ALERT ========== */
+        .safety-alert {
+            background: linear-gradient(135deg, #FF1744, #FF5722);
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 4px 20px rgba(255, 23, 68, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .safety-alert .icon {
+            font-size: 2em;
+            animation: warning 2s infinite;
+        }
+
+        @keyframes warning {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* ========== TOAST NOTIFICATIONS ========== */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--dark);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            .container { padding: 15px; }
+            .header { padding: 25px; font-size: 0.9em; }
+            .header h1 { font-size: 2em; }
+            .epi-activity { grid-template-columns: 1fr; gap: 20px; }
+            .accessibility-controls { position: relative; top: 0; right: 0; justify-content: center; margin-bottom: 20px; }
+            .btn-home { position: static; margin-bottom: 15px; }
+        }
+
+        /* ========== HELP SYSTEM ========== */
+        .help-btn {
+            background: var(--info);
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .help-btn:hover {
+            background: #1976D2;
+            transform: scale(1.1);
+        }
+
+        .iris-link {
+            background: linear-gradient(135deg, var(--warning), var(--accent));
+            color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            margin: 15px 0;
+            transition: var(--transition);
+        }
+
+        .iris-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 152, 0, 0.3);
+        }
+    </style>
+<script>/* (c) F. Henninot - inerWeb FRIGOLO - Tous droits reserves */
+document.addEventListener("contextmenu",function(e){e.preventDefault()});
+document.addEventListener("keydown",function(e){if((e.ctrlKey||e.metaKey)&&(e.key==="u"||e.key==="s"||e.key==="c")){e.preventDefault()}});
+document.addEventListener("selectstart",function(e){if(e.target.tagName\!=="INPUT"&&e.target.tagName\!=="TEXTAREA"){e.preventDefault()}});
+</script>
+</head>
+<body>
+    <!-- Contrôles d'accessibilité -->
+    <div class="accessibility-controls">
+        <button class="btn-accessibility" onclick="toggleAccessibility('police')" id="btn-police">
+            👁️ OpenDyslexic
+        </button>
+        <button class="btn-accessibility" onclick="toggleAccessibility('taille')" id="btn-taille">
+            🔍 Taille +
+        </button>
+        <button class="btn-accessibility" onclick="toggleAccessibility('espacement')" id="btn-espacement">
+            📏 Espacement
+        </button>
+        <button class="btn-accessibility" onclick="toggleAccessibility('lisibilite')" id="btn-lisibilite">
+            📖 Lisibilité
+        </button>
+    </div>
+
+    <div class="container">
+        <!-- Header animé -->
+        <div class="header">
+            <a href="index_securite_electrique.html" class="btn-home">🏠 Accueil</a>
+            <h1>TP3 – Les équipements de protection individuelle</h1>
+            <div class="competence-info" id="competence-display">
+                <strong>Compétence visée :</strong> Adopter une démarche de prévention adaptée aux situations de travail.
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
+
+        <!-- Alerte sécurité -->
+        <div class="safety-alert">
+            <div class="icon">⚠️</div>
+            <div>
+                <strong>SÉCURITÉ ÉLECTRIQUE :</strong> Les EPI sont votre dernière ligne de défense. 
+                Leur choix, leur vérification et leur port correct sont <strong>obligatoires</strong> 
+                pour toute intervention électrique.
+            </div>
+        </div>
+
+        <!-- Introduction -->
+        <div class="content-section">
+            <h2>🛡️ Introduction aux EPI électriques</h2>
+            <p>Les <strong>Équipements de Protection Individuelle (EPI)</strong> électriques sont essentiels pour prévenir les risques de contact direct et indirect. Ils constituent la protection ultime de l'intervenant lorsque les mesures de protection collective ne suffisent pas.</p>
+            
+            <div style="text-align: center; margin: 25px 0;">
+                <div style="font-size: 4em; margin-bottom: 15px;">
+                    🥽 🧤 👷 🦺 👢
+                </div>
+                <p><em>Casque • Gants isolants • Lunettes • Gilet • Chaussures de sécurité</em></p>
+            </div>
+
+            <a href="#" class="iris-link" onclick="showIRISInfo()">
+                📄 Télécharger le guide INRS-ST • EPI électriques
+            </a>
+        </div>
+
+        <!-- Activité principale : Association EPI -->
+        <div class="content-section">
+            <h2>🎯 Activité : Associer chaque EPI à sa fonction</h2>
+            <p>Glissez-déposez chaque équipement vers sa fonction principale de protection :</p>
+            
+            <div class="epi-activity">
+                <div class="epi-items">
+                    <h3 style="text-align: center; margin-bottom: 20px; color: var(--warning);">
+                        🛡️ Équipements de Protection
+                    </h3>
+                    
+                    <div class="epi-item" draggable="true" data-epi="casque">
+                        <div class="epi-icon">⛑️</div>
+                        <div>
+                            <strong>Casque isolant</strong>
+                            <br><small>Classe E (20 kV)</small>
+                        </div>
+                    </div>
+                    
+                    <div class="epi-item" draggable="true" data-epi="gants">
+                        <div class="epi-icon">🧤</div>
+                        <div>
+                            <strong>Gants isolants</strong>
+                            <br><small>Classes 00 à 4</small>
+                        </div>
+                    </div>
+                    
+                    <div class="epi-item" draggable="true" data-epi="lunettes">
+                        <div class="epi-icon">🥽</div>
+                        <div>
+                            <strong>Lunettes de protection</strong>
+                            <br><small>Anti-arc électrique</small>
+                        </div>
+                    </div>
+                    
+                    <div class="epi-item" draggable="true" data-epi="chaussures">
+                        <div class="epi-icon">👢</div>
+                        <div>
+                            <strong>Chaussures isolantes</strong>
+                            <br><small>Semelles diélectriques</small>
+                        </div>
+                    </div>
+                    
+                    <div class="epi-item" draggable="true" data-epi="tapis">
+                        <div class="epi-icon">🟫</div>
+                        <div>
+                            <strong>Tapis isolant</strong>
+                            <br><small>Station de travail</small>
+                        </div>
+                    </div>
+                    
+                    <div class="epi-item" draggable="true" data-epi="ecran">
+                        <div class="epi-icon">🛡️</div>
+                        <div>
+                            <strong>Écran facial</strong>
+                            <br><small>Arc électrique</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="epi-functions">
+                    <h3 style="text-align: center; margin-bottom: 20px; color: var(--success);">
+                        🎯 Fonctions de Protection
+                    </h3>
+                    
+                    <div class="epi-function" data-function="tete" data-correct="casque">
+                        <div class="epi-icon">🧠</div>
+                        <div>
+                            <strong>Protection de la tête</strong>
+                            <br><small>Chocs électriques par la tête</small>
+                        </div>
+                    </div>
+                    
+                    <div class="epi-function" data-function="mains" data-correct="gants">
+                        <div class="epi-icon">✋</div>
+                        <div>
+                            <strong>Protection des mains</strong>
+                            <br><small>Contact direct avec conducteurs</small>
+                        </div>
+                    </div>
+                    
+                    <div class="epi-function" data-function="yeux" data-correct="lunettes">
+                        <div class="epi-icon">👁️</div>
+                        <div>
+                            <strong>Protection des yeux</strong>
+                            <br><small>Rayonnements et projections</small>
+                        </div>
+                    </div>
+                    
+                    <div class="epi-function" data-function="pieds" data-correct="chaussures">
+                        <div class="epi-icon">🦶</div>
+                        <div>
+                            <strong>Isolation des pieds</strong>
+                            <br><small>Contact indirect par le sol</small>
+                        </div>
+                    </div>
+                    
+                    <div class="epi-function" data-function="station" data-correct="tapis">
+                        <div class="epi-icon">🏢</div>
+                        <div>
+                            <strong>Isolation du poste de travail</strong>
+                            <br><small>Améliorer l'isolation au sol</small>
+                        </div>
+                    </div>
+                    
+                    <div class="epi-function" data-function="visage" data-correct="ecran">
+                        <div class="epi-icon">😶</div>
+                        <div>
+                            <strong>Protection du visage</strong>
+                            <br><small>Brûlures par arc électrique</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="alert alert-info" id="epi-result" style="display: none;">
+                <span id="epi-icon"></span>
+                <div id="epi-text-result"></div>
+            </div>
+        </div>
+
+        <!-- Mini QCM -->
+        <div class="qcm-container">
+            <h2>📝 Mini QCM : Règles de port des EPI</h2>
+            
+            <div class="qcm-progress">
+                <div class="qcm-progress-fill" id="qcm-progress"></div>
+            </div>
+            
+            <div class="qcm-question" id="question-1">
+                <h3>1. Avant d'utiliser des gants isolants, vous devez :</h3>
+                <div class="qcm-options">
+                    <div class="qcm-option" data-question="1" data-answer="a">
+                        <span>A)</span> Les enfiler directement
+                    </div>
+                    <div class="qcm-option" data-question="1" data-answer="b">
+                        <span>B)</span> Vérifier leur état et leur classe de tension
+                    </div>
+                    <div class="qcm-option" data-question="1" data-answer="c">
+                        <span>C)</span> Les laver avec de l'eau
+                    </div>
+                </div>
+            </div>
+            
+            <div class="qcm-question" id="question-2" style="display: none;">
+                <h3>2. La fréquence de vérification des EPI électriques est :</h3>
+                <div class="qcm-options">
+                    <div class="qcm-option" data-question="2" data-answer="a">
+                        <span>A)</span> Une fois par an
+                    </div>
+                    <div class="qcm-option" data-question="2" data-answer="b">
+                        <span>B)</span> Avant chaque utilisation
+                    </div>
+                    <div class="qcm-option" data-question="2" data-answer="c">
+                        <span>C)</span> Seulement en cas de doute
+                    </div>
+                </div>
+            </div>
+            
+            <div class="qcm-question" id="question-3" style="display: none;">
+                <h3>3. Un casque isolant de classe E protège jusqu'à :</h3>
+                <div class="qcm-options">
+                    <div class="qcm-option" data-question="3" data-answer="a">
+                        <span>A)</span> 1000 V
+                    </div>
+                    <div class="qcm-option" data-question="3" data-answer="b">
+                        <span>B)</span> 20 000 V
+                    </div>
+                    <div class="qcm-option" data-question="3" data-answer="c">
+                        <span>C)</span> 50 000 V
+                    </div>
+                </div>
+            </div>
+            
+            <div class="alert alert-info" id="qcm-result" style="display: none;">
+                <span id="qcm-icon"></span>
+                <div id="qcm-text-result"></div>
+            </div>
+        </div>
+
+        <!-- Évaluation finale -->
+        <div class="evaluation-section">
+            <h2>📊 Évaluation par compétence</h2>
+            
+            <div class="competence-evaluation">
+                <h3>Compétence évaluée</h3>
+                <p><strong>Adopter une démarche de prévention adaptée aux situations de travail</strong></p>
+                
+                <div class="score-display" id="final-score">
+                    <div id="score-text">Réalisez les activités pour obtenir votre évaluation</div>
+                </div>
+                
+                <h4>Barème d'évaluation :</h4>
+                <ul>
+                    <li><span style="color: var(--non-acquis);">🔴 Non acquis (0/3)</span> : Difficultés importantes dans l'identification des EPI</li>
+                    <li><span style="color: var(--en-cours);">🟠 En cours (1/3)</span> : Connaissances partielles, quelques erreurs</li>
+                    <li><span style="color: var(--acquis);">🔵 Acquis (2/3)</span> : Bonne maîtrise avec erreurs mineures</li>
+                    <li><span style="color: var(--parfait);">🟢 Parfaitement acquis (3/3)</span> : Maîtrise complète des EPI</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Boutons d'action -->
+        <div style="text-align: center; margin: 30px 0;">
+            <button class="btn btn-secondary" onclick="saveProgress()">
+                💾 Sauvegarder ma progression
+            </button>
+            <button class="btn btn-warning" onclick="exportResults()" style="margin-left: 15px;">
+                📄 Télécharger ce TP en PDF
+            </button>
+        </div>
+    </div>
+
+    <!-- Toast pour notifications -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Configuration
+        const CURRENT_CHAPTER_ID = 3;
+        const CHAPTER_TITLE = "Équipements de protection individuelle";
+        
+        // Variables globales
+        let chapterProgress = {
+            epiActivity: false,
+            qcmCompleted: false,
+            qcmScore: 0,
+            qcmCorrectAnswers: 0,
+            qcmTotalQuestions: 3,
+            globalScore: 0,
+            timeSpent: 0,
+            competenceLevel: '',
+            competenceClass: '',
+            helpUsed: {}
+        };
+        
+        let startTime = Date.now();
+        let currentQuestion = 1;
+        let qcmAnswers = {};
+        let studentData = null;
+        let epiMatches = 0;
+
+        // Référentiels par filière
+        const REFERENTIELS = {
+            'CAP_IFCA': 'CAP IFCA - Adopter une démarche de prévention adaptée aux situations de travail',
+            'TNE_2': '2nde TNE - Identifier les risques liés aux équipements électriques et adopter une attitude responsable',
+            'MFER_1': '1ère Bac Pro MFER - Choisir et utiliser les équipements de protection adaptés à une tâche spécifique',
+            'MFER_T': 'Terminale Bac Pro MFER - Vérifier et contrôler l\'adéquation des EPI à la situation professionnelle',
+            'TITRE_PRO_CVC': 'Titre Pro CVC - Mettre en œuvre les moyens de prévention adaptés à l\'environnement de travail'
+        };
+
+        // Réponses correctes du QCM
+        const QCM_ANSWERS = {
+            1: 'b', // Vérifier état et classe
+            2: 'b', // Avant chaque utilisation
+            3: 'b'  // 20 000 V
+        };
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStudentData();
+            setupDragAndDrop();
+            setupQCMListeners();
+            setupTimeCounter();
+            loadAccessibilityPreferences();
+            updateCompetenceDisplay();
+        });
+
+        // Fonctions utilitaires
+        function loadStudentData() {
+            const globalProgress = JSON.parse(localStorage.getItem('enerweb_securite_electrique_progress') || '{}');
+            if (globalProgress.student) {
+                studentData = globalProgress.student;
+                updateCompetenceDisplay();
+            }
+        }
+
+        function updateCompetenceDisplay() {
+            const competenceDisplay = document.getElementById('competence-display');
+            if (studentData && studentData.formation && REFERENTIELS[studentData.formation]) {
+                competenceDisplay.innerHTML = `<strong>Compétence visée :</strong> ${REFERENTIELS[studentData.formation]}`;
+            }
+        }
+
+        // Système Drag & Drop pour EPI
+        function setupDragAndDrop() {
+            const epiItems = document.querySelectorAll('.epi-item');
+            const epiFunctions = document.querySelectorAll('.epi-function');
+
+            epiItems.forEach(item => {
+                item.addEventListener('dragstart', handleDragStart);
+                item.addEventListener('dragend', handleDragEnd);
+            });
+
+            epiFunctions.forEach(func => {
+                func.addEventListener('dragover', handleDragOver);
+                func.addEventListener('drop', handleDrop);
+                func.addEventListener('dragenter', handleDragEnter);
+                func.addEventListener('dragleave', handleDragLeave);
+            });
+        }
+
+        function handleDragStart(e) {
+            this.classList.add('dragging');
+            e.dataTransfer.setData('text/plain', this.dataset.epi);
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+        }
+
+        function handleDragEnter(e) {
+            e.preventDefault();
+            this.classList.add('drop-zone');
+        }
+
+        function handleDragLeave(e) {
+            this.classList.remove('drop-zone');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            this.classList.remove('drop-zone');
+            
+            const droppedEPI = e.dataTransfer.getData('text/plain');
+            const correctEPI = this.dataset.correct;
+            
+            if (droppedEPI === correctEPI) {
+                this.classList.add('matched');
+                epiMatches++;
+                showToast('✅ Bonne association !', 'success');
+                
+                // Masquer l'item correctement associé
+                const draggedItem = document.querySelector(`[data-epi="${droppedEPI}"]`);
+                if (draggedItem) {
+                    draggedItem.style.opacity = '0.3';
+                    draggedItem.draggable = false;
+                }
+                
+                // Vérifier si toutes les associations sont correctes
+                if (epiMatches === 6) {
+                    chapterProgress.epiActivity = true;
+                    showEPIResult(true);
+                    updateGlobalScore();
+                }
+            } else {
+                this.classList.add('incorrect');
+                showToast('❌ Association incorrecte', 'danger');
+                setTimeout(() => {
+                    this.classList.remove('incorrect');
+                }, 1000);
+            }
+        }
+
+        function showEPIResult(success) {
+            const resultDiv = document.getElementById('epi-result');
+            const iconSpan = document.getElementById('epi-icon');
+            const textDiv = document.getElementById('epi-text-result');
+            
+            if (success) {
+                resultDiv.className = 'alert alert-success';
+                iconSpan.textContent = '🎉';
+                textDiv.innerHTML = '<strong>Excellent !</strong> Vous maîtrisez les associations EPI-fonctions. Ces équipements sont essentiels pour votre sécurité.';
+            } else {
+                resultDiv.className = 'alert alert-warning';
+                iconSpan.textContent = '⚠️';
+                textDiv.innerHTML = '<strong>Attention :</strong> Révisez les fonctions de chaque EPI avant de poursuivre.';
+            }
+            
+            resultDiv.style.display = 'flex';
+        }
+
+        // Système QCM
+        function setupQCMListeners() {
+            const options = document.querySelectorAll('.qcm-option');
+            options.forEach(option => {
+                option.addEventListener('click', handleQCMAnswer);
+            });
+        }
+
+        function handleQCMAnswer(e) {
+            const questionNum = parseInt(e.target.closest('.qcm-option').dataset.question);
+            const selectedAnswer = e.target.closest('.qcm-option').dataset.answer;
+            
+            // Désélectionner toutes les autres options de cette question
+            const questionOptions = document.querySelectorAll(`[data-question="${questionNum}"]`);
+            questionOptions.forEach(opt => opt.classList.remove('selected'));
+            
+            // Sélectionner l'option cliquée
+            e.target.closest('.qcm-option').classList.add('selected');
+            
+            // Enregistrer la réponse
+            qcmAnswers[questionNum] = selectedAnswer;
+            
+            // Vérifier si c'est correct
+            const isCorrect = selectedAnswer === QCM_ANSWERS[questionNum];
+            
+            if (isCorrect) {
+                e.target.closest('.qcm-option').classList.add('correct');
+                chapterProgress.qcmCorrectAnswers++;
+                showToast('✅ Bonne réponse !', 'success');
+            } else {
+                e.target.closest('.qcm-option').classList.add('incorrect');
+                showToast('❌ Réponse incorrecte', 'danger');
+                
+                // Montrer la bonne réponse
+                setTimeout(() => {
+                    const correctOption = document.querySelector(`[data-question="${questionNum}"][data-answer="${QCM_ANSWERS[questionNum]}"]`);
+                    if (correctOption) {
+                        correctOption.classList.add('correct');
+                    }
+                }, 1000);
+            }
+            
+            // Passer à la question suivante
+            setTimeout(() => {
+                if (currentQuestion < 3) {
+                    document.getElementById(`question-${currentQuestion}`).style.display = 'none';
+                    currentQuestion++;
+                    document.getElementById(`question-${currentQuestion}`).style.display = 'block';
+                    updateQCMProgress();
+                } else {
+                    completeQCM();
+                }
+            }, 2000);
+        }
+
+        function updateQCMProgress() {
+            const progress = (currentQuestion - 1) / 3 * 100;
+            document.getElementById('qcm-progress').style.width = progress + '%';
+        }
+
+        function completeQCM() {
+            chapterProgress.qcmCompleted = true;
+            chapterProgress.qcmScore = Math.round((chapterProgress.qcmCorrectAnswers / chapterProgress.qcmTotalQuestions) * 100);
+            
+            document.getElementById('qcm-progress').style.width = '100%';
+            
+            showQCMResult();
+            updateGlobalScore();
+        }
+
+        function showQCMResult() {
+            const resultDiv = document.getElementById('qcm-result');
+            const iconSpan = document.getElementById('qcm-icon');
+            const textDiv = document.getElementById('qcm-text-result');
+            
+            const score = chapterProgress.qcmScore;
+            
+            if (score >= 67) {
+                resultDiv.className = 'alert alert-success';
+                iconSpan.textContent = '🎉';
+                textDiv.innerHTML = `<strong>Félicitations !</strong> Score : ${score}% (${chapterProgress.qcmCorrectAnswers}/${chapterProgress.qcmTotalQuestions})`;
+            } else {
+                resultDiv.className = 'alert alert-warning';
+                iconSpan.textContent = '📚';
+                textDiv.innerHTML = `<strong>À améliorer</strong> Score : ${score}% (${chapterProgress.qcmCorrectAnswers}/${chapterProgress.qcmTotalQuestions}). Révisez les règles de port des EPI.`;
+            }
+            
+            resultDiv.style.display = 'flex';
+        }
+
+        // Calcul du score global
+        function updateGlobalScore() {
+            let totalScore = 0;
+            let activitiesCompleted = 0;
+            
+            if (chapterProgress.epiActivity) {
+                totalScore += 100;
+                activitiesCompleted++;
+            }
+            
+            if (chapterProgress.qcmCompleted) {
+                totalScore += chapterProgress.qcmScore;
+                activitiesCompleted++;
+            }
+            
+            if (activitiesCompleted > 0) {
+                chapterProgress.globalScore = Math.round(totalScore / activitiesCompleted);
+                updateCompetenceLevel();
+                updateFinalScoreDisplay();
+            }
+        }
+
+        function updateCompetenceLevel() {
+            const score = chapterProgress.globalScore;
+            
+            if (score >= 90) {
+                chapterProgress.competenceLevel = 'Parfaitement acquis';
+                chapterProgress.competenceClass = 'score-parfait';
+            } else if (score >= 70) {
+                chapterProgress.competenceLevel = 'Acquis';
+                chapterProgress.competenceClass = 'score-acquis';
+            } else if (score >= 50) {
+                chapterProgress.competenceLevel = 'En cours';
+                chapterProgress.competenceClass = 'score-en-cours';
+            } else {
+                chapterProgress.competenceLevel = 'Non acquis';
+                chapterProgress.competenceClass = 'score-non-acquis';
+            }
+        }
+
+        function updateFinalScoreDisplay() {
+            const scoreDisplay = document.getElementById('final-score');
+            const scoreText = document.getElementById('score-text');
+            
+            scoreDisplay.className = `score-display ${chapterProgress.competenceClass}`;
+            scoreText.innerHTML = `
+                <strong>${chapterProgress.competenceLevel}</strong><br>
+                Score global : ${chapterProgress.globalScore}%<br>
+                <small>EPI : ${chapterProgress.epiActivity ? '✅' : '❌'} | QCM : ${chapterProgress.qcmScore}%</small>
+            `;
+        }
+
+        // Gestion du temps
+        function updateTimeSpent() {
+            chapterProgress.timeSpent = Math.floor((Date.now() - startTime) / 60000);
+        }
+
+        function setupTimeCounter() {
+            try {
+                setInterval(updateTimeSpent, 60000);
+            } catch(e) {
+                console.log('Erreur timer:', e);
+            }
+        }
+
+        // Sauvegarde et export
+        function saveProgress() {
+            let globalProgress = JSON.parse(localStorage.getItem('enerweb_securite_electrique_progress') || '{}');
+            
+            globalProgress.chapters = globalProgress.chapters || {};
+            globalProgress.chapters[`tp${CURRENT_CHAPTER_ID}`] = {
+                completed: chapterProgress.globalScore >= 70,
+                score: chapterProgress.globalScore,
+                timeSpent: chapterProgress.timeSpent,
+                lastAccess: new Date().toISOString(),
+                activities: chapterProgress
+            };
+            
+            globalProgress.lastAccess = new Date().toISOString();
+            localStorage.setItem('enerweb_securite_electrique_progress', JSON.stringify(globalProgress));
+            showToast('💾 Progression sauvegardée !', 'success');
+        }
+
+        function exportResults() {
+            showToast('📄 Fonction d\'export en cours de développement', 'info');
+        }
+
+        // Accessibilité
+        function toggleAccessibility(type) {
+            const body = document.body;
+            const btn = document.getElementById(`btn-${type}`);
+            
+            switch(type) {
+                case 'police':
+                    body.classList.toggle('police-adaptee');
+                    btn.classList.toggle('active');
+                    break;
+                case 'taille':
+                    body.classList.toggle('accessibility-mode');
+                    btn.classList.toggle('active');
+                    break;
+                case 'espacement':
+                case 'lisibilite':
+                    body.classList.toggle('police-adaptee');
+                    btn.classList.toggle('active');
+                    break;
+            }
+            
+            // Sauvegarder les préférences
+            const preferences = {
+                police: body.classList.contains('police-adaptee'),
+                taille: body.classList.contains('accessibility-mode')
+            };
+            localStorage.setItem('accessibility_preferences', JSON.stringify(preferences));
+        }
+
+        function loadAccessibilityPreferences() {
+            const preferences = JSON.parse(localStorage.getItem('accessibility_preferences') || '{}');
+            
+            if (preferences.police) {
+                document.body.classList.add('police-adaptee');
+                document.getElementById('btn-police').classList.add('active');
+            }
+            
+            if (preferences.taille) {
+                document.body.classList.add('accessibility-mode');
+                document.getElementById('btn-taille').classList.add('active');
+            }
+        }
+
+        // Aide INRS
+        function showIRISInfo() {
+            showToast('📚 Guide INRS-ST disponible sur inrs.fr', 'info');
+        }
+
+        // Toast notifications
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast show ${type}`;
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

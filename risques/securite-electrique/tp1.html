@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TP1 - Introduction à la sécurité électrique | ÉNERWEB</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=OpenDyslexic:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6B73FF; --secondary: #9C88FF; --accent: #4ECDC4; --coral: #FF6B9D;
+            --orange: #FFA726; --success: #4CAF50; --warning: #FF9800; --danger: #F44336;
+            --dark: #2C3E50; --light: #F8FAFC; --border: #E2E8F0;
+            --shadow: 0 4px 15px rgba(0,0,0,0.1); --radius: 12px; --transition: all 0.3s ease;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Lexend', sans-serif; font-size: 18px; line-height: 1.8;
+            letter-spacing: 0.5px; background: var(--light); color: var(--dark);
+        }
+        body.accessibility-mode { font-size: 20px; line-height: 2.2; letter-spacing: 1px; }
+        body.police-adaptee {
+            font-family: 'OpenDyslexic', 'Comic Sans MS', 'Lexend', sans-serif;
+            font-size: 22px; line-height: 2.5; letter-spacing: 2px; word-spacing: 0.4em;
+        }
+        body.police-adaptee .btn { padding: 32px 65px; font-size: 24px; }
+        body.police-adaptee p, body.police-adaptee div, body.police-adaptee span { word-spacing: 0.4em; }
+
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+
+        /* Tooltips */
+        .tooltip {
+            position: relative; cursor: help; color: var(--primary); font-weight: 600;
+            border-bottom: 2px dotted var(--primary); transition: var(--transition);
+        }
+        .tooltip:hover { color: var(--secondary); border-bottom-color: var(--secondary); }
+        .tooltip .tooltip-content {
+            visibility: hidden; background: white; color: var(--dark); text-align: left;
+            border-radius: 8px; padding: 15px; position: absolute; z-index: 1000;
+            bottom: 125%; left: 50%; margin-left: -200px; width: 400px; opacity: 0;
+            transition: opacity 0.3s; border: 2px solid var(--primary); box-shadow: var(--shadow);
+            font-size: 16px; line-height: 1.6; font-weight: 400; word-spacing: normal;
+        }
+        .tooltip .tooltip-content::after {
+            content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px;
+            border-width: 5px; border-style: solid; border-color: var(--primary) transparent transparent;
+        }
+        .tooltip:hover .tooltip-content { visibility: visible; opacity: 1; }
+
+        /* Header */
+        .header {
+            background: linear-gradient(45deg, var(--primary) 0%, var(--orange) 50%, var(--accent) 100%);
+            border-radius: 15px; padding: 25px 35px; margin-bottom: 30px; color: white;
+            display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow);
+            position: relative; overflow: hidden;
+        }
+        .header::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float { 0%, 100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-20px) rotate(180deg); } }
+        .logo-section { display: flex; align-items: center; gap: 20px; z-index: 2; position: relative; }
+        .logo-enerweb { display: flex; align-items: center; gap: 15px; }
+        .electric-icon { font-size: 2.5em; animation: pulse 2s linear infinite; filter: drop-shadow(0 0 10px rgba(255,255,255,0.5)); }
+        @keyframes pulse { from { opacity: 0.8; } to { opacity: 1; } }
+        .logo-text { font-size: 2.2em; font-weight: 700; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.3); letter-spacing: 2px; }
+        .chapter-info h1 { font-size: 1.6em; font-weight: 600; margin-bottom: 5px; }
+        .chapter-info .subtitle { font-size: 1em; opacity: 0.9; }
+        .progress-section { text-align: right; z-index: 2; position: relative; }
+        .progress-bar { width: 250px; height: 8px; background: rgba(255,255,255,0.3); border-radius: 4px; overflow: hidden; margin-bottom: 8px; }
+        .progress-fill { height: 100%; background: white; width: 16.67%; transition: width 0.3s; border-radius: 4px; }
+        .btn-home {
+            background: rgba(255,255,255,0.2); color: white; border: 2px solid white;
+            padding: 12px 20px; border-radius: 10px; text-decoration: none; font-weight: 500;
+            transition: var(--transition); margin-left: 20px;
+        }
+        .btn-home:hover { background: white; color: var(--primary); }
+
+        /* Accessibility */
+        .accessibility-controls {
+            position: fixed; top: 20px; right: 20px; display: flex; flex-direction: column;
+            gap: 10px; z-index: 1000; background: white; padding: 15px; border-radius: 10px; box-shadow: var(--shadow);
+        }
+        .btn-accessibility {
+            background: var(--warning); color: white; border: none; padding: 8px 15px;
+            border-radius: 6px; font-size: 12px; cursor: pointer; transition: var(--transition); font-weight: 500;
+        }
+        .btn-accessibility:hover { background: var(--orange); transform: translateY(-1px); }
+        .btn-accessibility.active { background: var(--success); }
+
+        /* Sections */
+        .content-section {
+            background: white; border-radius: 20px; padding: 30px; margin-bottom: 30px;
+            box-shadow: var(--shadow); border-top: 4px solid var(--primary);
+        }
+        .content-section.intro-section { border-top-color: var(--orange); }
+        .content-section.activity-section { border-top-color: var(--accent); }
+        .content-section.evaluation-section { border-top-color: var(--coral); }
+        .content-section h2 { color: var(--primary); margin-bottom: 20px; display: flex; align-items: center; gap: 15px; font-size: 1.8em; }
+
+        /* Introduction */
+        .introduction { display: flex; align-items: center; gap: 30px; padding: 40px; }
+        .intro-content { flex: 1; }
+        .intro-text {
+            font-size: 1.1em; line-height: 1.7; background: rgba(255, 167, 38, 0.08);
+            padding: 20px; border-radius: var(--radius); border-left: 4px solid var(--orange);
+        }
+        .intro-icon { font-size: 5em; color: var(--danger); text-align: center; filter: drop-shadow(0 0 10px rgba(244, 67, 54, 0.3)); }
+
+        /* PDF */
+        .pdf-container { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 25px; }
+        .pdf-viewer { border: 2px solid var(--border); border-radius: var(--radius); overflow: hidden; height: 500px; position: relative; }
+        .pdf-controls { position: absolute; top: 10px; right: 10px; z-index: 10; display: flex; gap: 5px; }
+        .pdf-btn { background: rgba(0,0,0,0.7); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+        .pdf-btn:hover { background: rgba(0,0,0,0.9); }
+
+        /* Points clés */
+        .points-cles-hybrid { display: grid; grid-template-columns: 1fr; gap: 20px; margin: 25px 0; }
+        .point-card {
+            background: white; border-radius: var(--radius); padding: 25px; box-shadow: var(--shadow);
+            border-left: 5px solid var(--primary); transition: var(--transition);
+        }
+        .point-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+        .point-card.risque-sante { border-left-color: var(--danger); background: linear-gradient(135deg, rgba(244, 67, 54, 0.05) 0%, white 100%); }
+        .point-card.risque-technique { border-left-color: var(--warning); background: linear-gradient(135deg, rgba(255, 152, 0, 0.05) 0%, white 100%); }
+        .point-card.cas-particulier { border-left-color: var(--coral); background: linear-gradient(135deg, rgba(255, 107, 157, 0.05) 0%, white 100%); }
+        .point-card.premiers-secours { border-left-color: var(--success); background: linear-gradient(135deg, rgba(76, 175, 80, 0.05) 0%, white 100%); }
+        .point-card.nouvelles-regles { border-left-color: var(--accent); background: linear-gradient(135deg, rgba(78, 205, 196, 0.05) 0%, white 100%); }
+        .point-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+        .point-icon { font-size: 2.5em; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
+        .point-header h4 { font-size: 1.3em; font-weight: 600; color: var(--dark); }
+        .point-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+        .point-item { background: rgba(255,255,255,0.8); padding: 12px 16px; border-radius: 8px; border: 1px solid var(--border); font-weight: 500; }
+
+        /* Seuils électriques */
+        .seuils-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; margin: 20px 0; }
+        .seuil-card { padding: 20px; border-radius: var(--radius); border-left: 4px solid var(--orange); position: relative; cursor: pointer; transition: var(--transition); text-align: center; }
+        .seuil-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+        .seuil-card.perception { background: rgba(76, 175, 80, 0.08); border-left-color: var(--success); }
+        .seuil-card.non-lacher { background: rgba(255, 152, 0, 0.08); border-left-color: var(--warning); }
+        .seuil-card.paralysie { background: rgba(255, 107, 157, 0.08); border-left-color: var(--coral); }
+        .seuil-card.fibrillation { background: rgba(244, 67, 54, 0.08); border-left-color: var(--danger); }
+        .seuil-card.arret { background: rgba(44, 62, 80, 0.08); border-left-color: var(--dark); }
+        .seuil-card h3 { margin-bottom: 10px; font-size: 1.4em; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .seuil-card .current-value { font-size: 2em; font-weight: bold; color: var(--primary); margin: 10px 0; }
+        .technical-link { color: var(--primary); cursor: pointer; font-weight: 600; text-decoration: underline; position: relative; }
+        .technical-link:hover { color: var(--secondary); }
+        .technical-link::after { content: "🔬"; margin-left: 5px; font-size: 0.8em; }
+
+        /* Popup */
+        .technical-popup {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7);
+            z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 20px;
+        }
+        .popup-content {
+            background: white; border-radius: 15px; padding: 30px; max-width: 800px; max-height: 90vh;
+            overflow-y: auto; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .popup-close { position: absolute; top: 15px; right: 20px; background: none; border: none; font-size: 24px; cursor: pointer; color: #999; }
+        .popup-close:hover { color: var(--danger); }
+        .popup-content h3 { margin-bottom: 20px; color: var(--primary); font-size: 1.4em; border-bottom: 2px solid var(--border); padding-bottom: 10px; }
+        .risque-section { margin-bottom: 20px; padding: 15px; border-radius: 8px; border-left: 4px solid var(--border); }
+        .risque-section.critique { background: rgba(244, 67, 54, 0.05); border-left-color: var(--danger); }
+        .risque-section.urgence { background: rgba(255, 152, 0, 0.05); border-left-color: var(--warning); }
+        .risque-section h4 { margin-bottom: 10px; color: var(--dark); display: flex; align-items: center; gap: 8px; }
+        .risque-section ul { margin-left: 0; padding-left: 0; }
+        .risque-section li { margin-bottom: 8px; list-style: none; padding-left: 20px; position: relative; }
+        .risque-section li::before { content: "▸"; position: absolute; left: 0; color: var(--primary); font-weight: bold; }
+
+        /* Activities */
+        .activity-instructions { background: rgba(107, 115, 255, 0.08); border-left: 4px solid var(--primary); padding: 15px; border-radius: 8px; margin-bottom: 25px; }
+        .activity-instructions h3 { color: var(--primary); margin-bottom: 10px; font-size: 1.1em; }
+
+        /* Drag & Drop */
+        .association-game { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin: 25px 0; }
+        .symbols-column, .risks-column { min-height: 300px; padding: 20px; border-radius: var(--radius); }
+        .symbols-column { background: rgba(255, 107, 157, 0.08); border: 2px solid rgba(255, 107, 157, 0.2); }
+        .risks-column { background: rgba(78, 205, 196, 0.08); border: 2px solid rgba(78, 205, 196, 0.2); }
+        .symbols-column h4, .risks-column h4 { text-align: center; margin-bottom: 20px; color: var(--dark); font-weight: 600; }
+        .draggable-item, .drop-zone {
+            background: white; border: 2px solid var(--border); border-radius: 10px; padding: 15px;
+            margin-bottom: 10px; cursor: move; transition: var(--transition); display: flex;
+            align-items: center; gap: 10px; min-height: 60px;
+        }
+        .draggable-item:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: var(--coral); }
+        .drop-zone { cursor: default; background: rgba(78, 205, 196, 0.05); border-style: dashed; justify-content: center; border-color: var(--accent); }
+        .drop-zone.dragover { background: rgba(78, 205, 196, 0.15); border-color: var(--accent); }
+        .drop-zone.filled { background: rgba(76, 175, 80, 0.15); border-color: var(--success); border-style: solid; }
+
+        /* Fill text */
+        .fill-text {
+            background: rgba(255, 167, 38, 0.05); padding: 25px; border-radius: var(--radius);
+            margin: 25px 0; line-height: 2; font-size: 1.1em; border: 2px solid rgba(255, 167, 38, 0.2);
+        }
+        .fill-blank {
+            display: inline-block; min-width: 120px; padding: 5px 10px; background: white;
+            border: 2px solid var(--border); border-radius: 6px; margin: 0 5px; cursor: pointer; transition: var(--transition);
+        }
+        .fill-blank:hover { border-color: var(--primary); background: rgba(107, 115, 255, 0.05); }
+        .fill-blank.filled { background: var(--orange); color: white; border-color: var(--orange); }
+        .word-bank {
+            display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; padding: 20px;
+            background: rgba(78, 205, 196, 0.08); border-radius: var(--radius); border: 2px solid rgba(78, 205, 196, 0.2);
+        }
+        .word-option {
+            background: var(--accent); color: white; padding: 8px 16px; border-radius: 20px;
+            cursor: pointer; transition: var(--transition); user-select: none; font-weight: 500;
+        }
+        .word-option:hover { background: var(--secondary); transform: translateY(-2px); }
+        .word-option.used { background: #bbb; cursor: not-allowed; opacity: 0.6; }
+
+        /* QCM */
+        .qcm-section { background: white; border-radius: 20px; padding: 30px; margin-bottom: 30px; box-shadow: var(--shadow); border-top: 4px solid var(--coral); }
+        .competence-badge { background: rgba(255, 107, 157, 0.08); border: 2px solid var(--coral); border-radius: var(--radius); padding: 15px; margin-bottom: 20px; font-weight: 500; }
+        .qcm-question { background: var(--light); padding: 25px; border-radius: var(--radius); margin-bottom: 20px; border-left: 4px solid var(--warning); position: relative; }
+        .qcm-question h3 { color: var(--dark); margin-bottom: 15px; font-size: 1.2em; display: flex; align-items: center; gap: 10px; }
+        .help-system { position: absolute; top: 15px; right: 15px; }
+        .help-btn {
+            background: var(--primary); color: white; border: none; border-radius: 50%; width: 40px; height: 40px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px;
+            transition: var(--transition); position: relative;
+        }
+        .help-btn:hover { background: var(--secondary); transform: scale(1.1); }
+        .help-badge {
+            position: absolute; top: -5px; right: -5px; background: var(--warning); color: white;
+            border-radius: 50%; width: 20px; height: 20px; font-size: 12px; display: flex; align-items: center; justify-content: center;
+        }
+        .qcm-options { display: grid; gap: 12px; }
+        .qcm-option {
+            background: white; border: 2px solid var(--border); padding: 18px; border-radius: 10px;
+            cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 12px;
+        }
+        .qcm-option:hover { border-color: var(--primary); transform: translateY(-2px); background: rgba(107, 115, 255, 0.05); }
+        .qcm-option.selected { background: var(--primary); color: white; border-color: var(--primary); }
+        .qcm-option.correct { background: var(--success); color: white; border-color: var(--success); }
+        .qcm-option.incorrect { background: var(--danger); color: white; border-color: var(--danger); }
+
+        /* Results */
+        .recapitulatif-resultats { background: rgba(76, 175, 80, 0.08); border: 2px solid var(--success); border-radius: var(--radius); padding: 20px; margin: 20px 0; }
+        .feedback { background: var(--light); border-radius: var(--radius); padding: 20px; margin: 20px 0; border-left: 4px solid var(--border); }
+        .feedback.niveau-vert { background: rgba(76, 175, 80, 0.08); border-left-color: var(--success); color: var(--success); }
+        .feedback.niveau-bleu { background: rgba(107, 115, 255, 0.08); border-left-color: var(--primary); color: var(--primary); }
+        .feedback.niveau-orange { background: rgba(255, 152, 0, 0.08); border-left-color: var(--warning); color: var(--warning); }
+        .feedback.niveau-rouge { background: rgba(244, 67, 54, 0.08); border-left-color: var(--danger); color: var(--danger); }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex; align-items: center; gap: 12px; padding: 18px 30px; background: var(--primary);
+            color: white; border: none; border-radius: var(--radius); font-size: 16px; font-weight: 500;
+            cursor: pointer; transition: var(--transition); text-decoration: none; justify-content: center;
+        }
+        .btn:hover { background: var(--secondary); transform: translateY(-2px); box-shadow: 0 4px 15px rgba(107, 115, 255, 0.3); }
+        .btn:disabled { background: #ccc; cursor: not-allowed; transform: none; box-shadow: none; }
+        .btn-success { background: var(--success); }
+        .btn-warning { background: var(--warning); }
+        .btn-danger { background: var(--danger); }
+
+        /* Navigation */
+        .navigation {
+            display: flex; justify-content: space-between; align-items: center; margin-top: 40px;
+            padding: 25px; background: white; border-radius: 20px; box-shadow: var(--shadow); border-top: 4px solid var(--accent);
+        }
+        .nav-left { display: flex; gap: 15px; }
+
+        /* Alerts */
+        .alert { border-radius: var(--radius); padding: 18px; margin: 20px 0; display: flex; align-items: center; gap: 12px; }
+        .alert-success { background: rgba(76, 175, 80, 0.08); border: 2px solid var(--success); color: var(--success); }
+        .alert-warning { background: rgba(255, 152, 0, 0.08); border: 2px solid var(--warning); color: var(--warning); }
+        .alert-danger { background: rgba(244, 67, 54, 0.08); border: 2px solid var(--danger); color: var(--danger); }
+
+        .toast {
+            position: fixed; top: 20px; right: 20px; background: var(--success); color: white;
+            padding: 18px 25px; border-radius: var(--radius); box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transform: translateX(100%); transition: transform 0.3s; z-index: 1000;
+        }
+        .toast.show { transform: translateX(0); }
+
+        .credits {
+            background: white; border-radius: 15px; padding: 20px; margin-top: 20px;
+            box-shadow: var(--shadow); border-top: 4px solid var(--primary); font-size: 0.9em; color: #666;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .pdf-container, .association-game, .seuils-grid { grid-template-columns: 1fr; }
+            .pdf-viewer { height: 400px; }
+            .accessibility-controls { position: relative; top: auto; right: auto; margin-bottom: 20px; flex-direction: row; }
+        }
+        @media (max-width: 768px) {
+            .container { padding: 15px; }
+            .header { flex-direction: column; gap: 20px; text-align: center; }
+            .progress-bar { width: 100%; }
+            .introduction { flex-direction: column; text-align: center; }
+            .navigation { flex-direction: column; gap: 15px; }
+            .nav-left { flex-direction: column; width: 100%; }
+            .logo-enerweb { flex-direction: column; gap: 10px; }
+            .logo-text { font-size: 1.8em; }
+            .point-grid { grid-template-columns: 1fr; }
+            .tooltip .tooltip-content { width: 300px; margin-left: -150px; }
+        }
+    </style>
+<script>/* (c) F. Henninot - inerWeb FRIGOLO - Tous droits reserves */
+document.addEventListener("contextmenu",function(e){e.preventDefault()});
+document.addEventListener("keydown",function(e){if((e.ctrlKey||e.metaKey)&&(e.key==="u"||e.key==="s"||e.key==="c")){e.preventDefault()}});
+document.addEventListener("selectstart",function(e){if(e.target.tagName\!=="INPUT"&&e.target.tagName\!=="TEXTAREA"){e.preventDefault()}});
+</script>
+</head>
+<body>
+    <!-- Contrôles d'accessibilité -->
+    <div class="accessibility-controls">
+        <button class="btn-accessibility" onclick="toggleAccessibility()" id="btnAccessibility">🔍 Mode accessibilité</button>
+        <button class="btn-accessibility" onclick="togglePoliceAdaptee()" id="btnPoliceAdaptee">📖 Police adaptée</button>
+    </div>
+    
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo-section">
+                <div class="logo-enerweb">
+                    <span class="electric-icon">⚡</span>
+                    <span class="logo-text">ÉNERWEB</span>
+                </div>
+                <div class="chapter-info">
+                    <h1>TP1 - Introduction à la <span class="tooltip">sécurité électrique<span class="tooltip-content"><strong>Sécurité électrique :</strong> Ensemble des mesures de prévention contre les accidents d'origine électrique. Concerne tous les métiers du BTP selon l'INRS et l'IRIS-ST. Formation obligatoire pour toute manipulation d'installations électriques.</span></span></h1>
+                    <p class="subtitle">Comprendre les effets du courant sur le corps humain</p>
+                    <p style="font-size: 0.85em; opacity: 0.8; margin-top: 5px;">💡 Basé sur les recommandations INRS - IRIS-ST 2015</p>
+                </div>
+            </div>
+            <div class="progress-section">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="globalProgress"></div>
+                </div>
+                <p style="font-size: 0.9em; margin-bottom: 10px;">TP1/6 - Progression globale</p>
+                <a href="index.html" class="btn-home">← Accueil</a>
+            </div>
+        </div>
+
+        <!-- Affichage données élève -->
+        <div id="student-display" class="content-section" style="display: none; background: rgba(76, 175, 80, 0.08); border-top-color: var(--success);">
+            <h2>👤 Session en cours</h2>
+            <div id="student-info-display"></div>
+        </div>
+
+        <!-- Introduction -->
+        <div class="content-section intro-section introduction">
+            <div class="intro-content">
+                <h2>⚡ Bienvenue dans la formation à la <span class="tooltip">sécurité électrique<span class="tooltip-content"><strong>Formation obligatoire :</strong> Selon le Code du travail, toute personne travaillant sur ou à proximité d'installations électriques doit être formée aux risques électriques et posséder une habilitation électrique appropriée.</span></span></h2>
+                <div class="intro-text">
+                    L'<strong>électricité est un danger invisible</strong> présent partout dans notre environnement professionnel. Elle ne se voit pas, ne s'entend pas, n'a pas d'odeur mais peut avoir des <span class="tooltip">conséquences graves<span class="tooltip-content"><strong>Statistiques accidents :</strong> En France, on dénombre environ 200 accidents d'origine électrique par an dans le BTP, dont 15 à 20 mortels. 30% des électrocutions touchent des non-électriciens.</span></span> sur votre <span class="tooltip">santé<span class="tooltip-content"><strong>Effets sur la santé :</strong> Brûlures superficielles et profondes, contractures musculaires, contusions, électrisation, électrocution. Les effets varient selon l'intensité du courant et la durée de contact.</span></span>.
+                    <br><br>
+                    À la fin de ce TP, vous saurez identifier les <strong>seuils critiques du courant électrique</strong> et vous comprendrez 
+                    pourquoi les <span class="tooltip">règles de sécurité<span class="tooltip-content"><strong>Règles fondamentales :</strong> Travail hors tension, vérification absence tension (VAT), consignation, port d'EPI adaptés, respect des distances de sécurité. Ces règles sauvent des vies.</span></span> sont vitales dans tous les métiers du BTP.
+                </div>
+            </div>
+            <div class="intro-icon">⚡</div>
+        </div>
+
+        <!-- Lecture dirigée avec PDF -->
+        <div class="content-section">
+            <h2>📖 Lecture dirigée : Les risques <span class="tooltip">électriques<span class="tooltip-content"><strong>Document IRIS-ST :</strong> IRIS-ST est l'Institut de recherche et de sécurité pour la prévention des accidents du travail et des maladies professionnelles dans le BTP. Leurs mémos font référence en sécurité.</span></span></h2>
+            
+            <div class="pdf-container">
+                <div class="pdf-viewer">
+                    <div class="pdf-controls">
+                        <button class="pdf-btn" onclick="openPDFFullscreen()">🔍 Plein écran</button>
+                        <button class="pdf-btn" onclick="downloadPDF()">📥 Télécharger</button>
+                    </div>
+                    <iframe id="pdfViewer" src="./pdf/Iris-ST-Risque-Electrique-2015_Internet-100x150-1.pdf#page=2" 
+                            width="100%" height="100%" frameborder="0" style="border-radius: 10px;">
+                        <p>Votre navigateur ne peut pas afficher ce PDF. 
+                           <a href="./pdf/Iris-ST-Risque-Electrique-2015_Internet-100x150-1.pdf" target="_blank">Cliquez ici pour l'ouvrir</a>
+                        </p>
+                    </iframe>
+                </div>
+                
+                <div class="points-cles-hybrid">
+                    <div class="point-card risque-sante">
+                        <div class="point-header">
+                            <div class="point-icon">🩺</div>
+                            <h4>Risques pour la santé</h4>
+                        </div>
+                        <div class="point-grid">
+                            <div class="point-item"><span class="tooltip">Brûlures superficielles (1er au 3ème degré)<span class="tooltip-content"><strong>Brûlures électriques :</strong> Causées par l'arc électrique ou l'échauffement des tissus. 1er degré = rougeur, 2ème = cloques, 3ème = destruction profonde nécessitant parfois une greffe.</span></span></div>
+                            <div class="point-item"><span class="tooltip">Contractures musculaires violentes<span class="tooltip-content"><strong>Tétanisation :</strong> Contraction involontaire et maintenue des muscles traversés par le courant. Empêche de lâcher le conducteur (seuil 10 mA). Peut provoquer des fractures.</span></span></div>
+                            <div class="point-item"><span class="tooltip">Électrisation / Électrocution<span class="tooltip-content"><strong>Électrisation :</strong> Passage non mortel du courant dans le corps. <strong>Électrocution :</strong> Électrisation mortelle. Distinction importante pour les secours et le pronostic médical.</span></span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="point-card risque-technique">
+                        <div class="point-header">
+                            <div class="point-icon">⚡</div>
+                            <h4>Situations à risque dans le BTP</h4>
+                        </div>
+                        <div class="point-grid">
+                            <div class="point-item"><span class="tooltip">Travaux sur installations électriques<span class="tooltip-content"><strong>Interventions directes :</strong> Pose, dépose, raccordement d'appareillage électrique, intervention sur tableau électrique. Nécessite une habilitation électrique adaptée (B1, B2, etc.).</span></span></div>
+                            <div class="point-item"><span class="tooltip">Proximité lignes aériennes/souterraines<span class="tooltip-content"><strong>Voisinage :</strong> Conduite d'engins, travaux en toiture, échafaudages. Distances de sécurité : 3m (< 50kV), 5m (> 50kV) pour lignes aériennes, 1,5m pour lignes enterrées.</span></span></div>
+                            <div class="point-item"><span class="tooltip">Utilisation équipements électriques<span class="tooltip-content"><strong>Outillage électroportatif :</strong> Perceuses, meuleuses, scies. Vérification avant usage, protection différentielle 30mA obligatoire sur chantier.</span></span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="point-card cas-particulier">
+                        <div class="point-header">
+                            <div class="point-icon">🔒</div>
+                            <h4>Règle d'or : <span class="tooltip">Travail hors tension<span class="tooltip-content"><strong>Travail hors tension :</strong> Principe fondamental de sécurité. Seule méthode garantissant la protection contre l'électrocution. Le travail sous tension est exceptionnel et réservé aux experts habilités.</span></span></h4>
+                        </div>
+                        <div class="point-grid">
+                            <div class="point-item"><span class="tooltip">Consignation obligatoire<span class="tooltip-content"><strong>Consignation :</strong> Ensemble d'opérations pour mettre et maintenir hors tension une installation : sectionnement, condamnation, identification, vérification absence tension.</span></span></div>
+                            <div class="point-item"><span class="tooltip">Vérification VAT<span class="tooltip-content"><strong>VAT :</strong> Vérificateur d'Absence de Tension. Contrôle obligatoire avec appareil étalonné avant toute intervention. Procédure : tester VAT → contrôler → tester VAT.</span></span></div>
+                            <div class="point-item"><span class="tooltip">EPI adaptés obligatoires<span class="tooltip-content"><strong>EPI électriques :</strong> Gants isolants, écrans faciaux, casques, chaussures de sécurité isolantes, vêtements isolants. Vérification périodique obligatoire.</span></span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="point-card premiers-secours">
+                        <div class="point-header">
+                            <div class="point-icon">🚨</div>
+                            <h4><span class="tooltip">Premiers secours<span class="tooltip-content"><strong>Conduite d'urgence :</strong> Couper le courant AVANT de toucher la victime, dégager avec objet isolant si impossible, alerter secours, surveiller fonctions vitales.</span></span> en cas d'accident</h4>
+                        </div>
+                        <div class="point-grid">
+                            <div class="point-item"><span class="tooltip">1. Couper le courant d'urgence<span class="tooltip-content"><strong>Coupure d'urgence :</strong> Disjoncteur, sectionneur, arrêt d'urgence. JAMAIS toucher la victime avant d'avoir coupé l'alimentation car le corps humain est conducteur d'électricité.</span></span></div>
+                            <div class="point-item"><span class="tooltip">2. Dégager la victime<span class="tooltip-content"><strong>Dégagement :</strong> Si impossible de couper, utiliser un objet isolant (bois sec, plastique). Ne jamais utiliser d'objet métallique ou humide.</span></span></div>
+                            <div class="point-item"><span class="tooltip">3. Alerter les secours (15/18)<span class="tooltip-content"><strong>Alerte :</strong> 15 (SAMU), 18 (Pompiers), 112 (urgence européenne). Préciser : accident électrique, nombre de victimes, localisation, circonstances.</span></span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="point-card nouvelles-regles">
+                        <div class="point-header">
+                            <div class="point-icon">🛡️</div>
+                            <h4><span class="tooltip">Protection renforcée<span class="tooltip-content"><strong>Évolution réglementaire :</strong> Renforcement des obligations de formation, généralisation des protections différentielles 30mA, nouvelles normes d'EPI.</span></span> sur chantier</h4>
+                        </div>
+                        <div class="point-grid">
+                            <div class="point-item"><span class="tooltip">Différentiel 30mA obligatoire<span class="tooltip-content"><strong>Protection différentielle :</strong> Dispositif qui coupe automatiquement le courant dès qu'une fuite de 30mA est détectée. Obligatoire sur tous les chantiers BTP.</span></span></div>
+                            <div class="point-item"><span class="tooltip">DT-DICT obligatoire<span class="tooltip-content"><strong>DT-DICT :</strong> Déclaration de Travaux / Déclaration d'Intention de Commencement de Travaux. Procédure obligatoire avant travaux à proximité de réseaux enterrés.</span></span></div>
+                            <div class="point-item"><span class="tooltip">Formation habilitation<span class="tooltip-content"><strong>Habilitation électrique :</strong> Formation obligatoire attestant de la capacité à travailler en sécurité sur ou à proximité d'installations électriques. Recyclage triennal obligatoire.</span></span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="./pdf/Iris-ST-Risque-Electrique-2015_Internet-100x150-1.pdf" target="_blank" class="btn btn-warning">
+                    📄 Consulter le mémo IRIS-ST complet
+                </a>
+            </div>
+        </div>
+
+        <!-- Focus seuils électriques enrichi -->
+        <div class="content-section">
+            <h2>⚡ Focus : <span class="tooltip">Seuils critiques<span class="tooltip-content"><strong>Seuils physiologiques :</strong> Valeurs d'intensité de courant qui déclenchent des réactions spécifiques du corps humain. Ces valeurs sont des moyennes et peuvent varier selon les individus.</span></span> du courant électrique</h2>
+            
+            <div class="seuils-grid">
+                <div class="seuil-card perception" onclick="showTechnicalDetails('perception')">
+                    <h3>👀 <span class="technical-link"><span class="tooltip">Seuil de perception<span class="tooltip-content"><strong>Perception :</strong> Premier niveau où l'être humain ressent le passage du courant électrique. Sensation de picotement très faible, sans danger immédiat.</span></span></span></h3>
+                    <div class="current-value">0,5 mA</div>
+                    <p><strong>Sensation très faible</strong><br>Premier ressenti du courant</p>
+                </div>
+                
+                <div class="seuil-card non-lacher" onclick="showTechnicalDetails('non_lacher')">
+                    <h3>🤏 <span class="technical-link"><span class="tooltip">Seuil de non-lâcher<span class="tooltip-content"><strong>Tétanisation :</strong> Contraction musculaire involontaire qui empêche de lâcher le conducteur. Situation très dangereuse car l'exposition se prolonge.</span></span></span></h3>
+                    <div class="current-value">10 mA</div>
+                    <p><strong>Contraction musculaire</strong><br>Impossible de lâcher</p>
+                </div>
+                
+                <div class="seuil-card paralysie" onclick="showTechnicalDetails('paralysie')">
+                    <h3>🫁 <span class="technical-link"><span class="tooltip">Seuil de paralysie respiratoire<span class="tooltip-content"><strong>Paralysie diaphragme :</strong> Le courant paralyse les muscles respiratoires. La victime ne peut plus respirer et risque l'asphyxie si le courant n'est pas coupé rapidement.</span></span></span></h3>
+                    <div class="current-value">30 mA</div>
+                    <p><strong>Arrêt respiratoire</strong><br>Asphyxie mortelle</p>
+                </div>
+                
+                <div class="seuil-card fibrillation" onclick="showTechnicalDetails('fibrillation')">
+                    <h3>💓 <span class="technical-link"><span class="tooltip">Seuil de fibrillation cardiaque<span class="tooltip-content"><strong>Fibrillation ventriculaire :</strong> Contractions anarchiques du cœur qui ne pompe plus le sang efficacement. Arrêt cardiaque en quelques minutes. Réversible uniquement par défibrillation immédiate.</span></span></span></h3>
+                    <div class="current-value">75 mA</div>
+                    <p><strong>Fibrillation irréversible</strong><br>Arrêt cardiaque</p>
+                </div>
+                
+                <div class="seuil-card arret" onclick="showTechnicalDetails('arret')">
+                    <h3>💀 <span class="technical-link"><span class="tooltip">Arrêt du cœur<span class="tooltip-content"><strong>Arrêt cardiaque complet :</strong> Le cœur s'arrête totalement. Paradoxalement, peut être réversible si le courant est coupé rapidement, contrairement à la fibrillation.</span></span></span></h3>
+                    <div class="current-value">1 A</div>
+                    <p><strong>Arrêt cardiaque</strong><br>Mort clinique</p>
+                </div>
+            </div>
+            
+            <div class="alert alert-warning">
+                <span style="font-size: 1.5em;">⚠️</span>
+                <div>
+                    <strong>Important :</strong> Ces seuils varient selon la <span class="tooltip">durée de contact<span class="tooltip-content"><strong>Facteur temps :</strong> Plus le contact dure, plus les effets sont graves. Un courant de 50mA peut être mortel s'il dure plusieurs secondes. D'où l'importance des protections différentielles 30mA.</span></span>, le <span class="tooltip">trajet du courant<span class="tooltip-content"><strong>Trajet dans le corps :</strong> Main droite → main gauche = traverse le cœur (très dangereux). Main → pied = moins dangereux. Doigt → doigt = brûlure locale.</span></span> dans le corps, et les conditions physiologiques individuelles. 
+                    La <span class="tooltip">résistance du corps humain<span class="tooltip-content"><strong>Résistance variable :</strong> Peau sèche : 5000 Ω, peau humide : 1000 Ω, peau mouillée : 500 Ω. Plus la résistance est faible, plus le courant passe facilement.</span></span> varie de 500 Ω (peau mouillée) à 5000 Ω (peau sèche).
+                </div>
+            </div>
+        </div>
+
+        <!-- Activité 1 : Association -->
+        <div class="content-section activity-section">
+            <h2>🎮 Activité 1 : Association seuils-effets</h2>
+            
+            <div class="activity-instructions">
+                <h3>📝 Instructions :</h3>
+                <p>Glissez chaque <span class="tooltip">intensité de courant<span class="tooltip-content"><strong>Intensité électrique :</strong> Quantité d'électricité qui traverse un conducteur par unité de temps. Mesurée en ampères (A) ou milliampères (mA). 1 A = 1000 mA.</span></span> vers l'effet physiologique correspondant. Toutes les valeurs doivent être associées pour valider l'activité.</p>
+                <button class="btn btn-warning" onclick="resetAssociation()" style="margin-top: 10px;">🔄 Recommencer</button>
+            </div>
+            
+            <div class="association-game">
+                <div class="symbols-column">
+                    <h4>⚡ Intensités du courant</h4>
+                    <div class="draggable-item" draggable="true" data-symbol="0.5mA">
+                        <span style="font-size: 1.5em;">👀</span>
+                        <span><span class="tooltip">0,5 mA<span class="tooltip-content"><strong>0,5 milliampère :</strong> Courant très faible, premier seuil de perception humaine. Correspond à une tension de 2,5V sur peau sèche (5000 Ω).</span></span></span>
+                    </div>
+                    <div class="draggable-item" draggable="true" data-symbol="10mA">
+                        <span style="font-size: 1.5em;">🤏</span>
+                        <span><span class="tooltip">10 mA<span class="tooltip-content"><strong>10 milliampères :</strong> Seuil critique de tétanisation. Équivaut à 50V sur peau sèche. Intensité à partir de laquelle on ne peut plus lâcher volontairement.</span></span></span>
+                    </div>
+                    <div class="draggable-item" draggable="true" data-symbol="30mA">
+                        <span style="font-size: 1.5em;">🫁</span>
+                        <span><span class="tooltip">30 mA<span class="tooltip-content"><strong>30 milliampères :</strong> Seuil de paralysie respiratoire. C'est pourquoi les protections différentielles sont réglées à 30mA maximum.</span></span></span>
+                    </div>
+                    <div class="draggable-item" draggable="true" data-symbol="75mA">
+                        <span style="font-size: 1.5em;">💓</span>
+                        <span><span class="tooltip">75 mA<span class="tooltip-content"><strong>75 milliampères :</strong> Fibrillation ventriculaire irréversible. Le cœur bat de manière anarchique et ne peut plus assurer la circulation sanguine.</span></span></span>
+                    </div>
+                </div>
+                
+                <div class="risks-column">
+                    <h4>🩺 Effets physiologiques</h4>
+                    <div class="drop-zone" data-target="0.5mA">
+                        <span>Sensation très faible - <span class="tooltip">Seuil de perception<span class="tooltip-content"><strong>Mécanisme :</strong> Stimulation des récepteurs nerveux cutanés. Picotement léger sans danger immédiat.</span></span></span>
+                    </div>
+                    <div class="drop-zone" data-target="10mA">
+                        <span>Contraction musculaire - <span class="tooltip">Seuil de non-lâcher<span class="tooltip-content"><strong>Mécanisme :</strong> Stimulation des nerfs moteurs → contraction involontaire des muscles fléchisseurs → impossible d'ouvrir la main.</span></span></span>
+                    </div>
+                    <div class="drop-zone" data-target="30mA">
+                        <span>Paralysie respiratoire - <span class="tooltip">Arrêt diaphragme<span class="tooltip-content"><strong>Mécanisme :</strong> Paralysie du nerf phrénique → arrêt du diaphragme → impossibilité de respirer → asphyxie.</span></span></span>
+                    </div>
+                    <div class="drop-zone" data-target="75mA">
+                        <span>Fibrillation cardiaque - <span class="tooltip">Arrêt cardiaque<span class="tooltip-content"><strong>Mécanisme :</strong> Désynchronisation de l'activité électrique cardiaque → contractions anarchiques → arrêt de la circulation sanguine.</span></span></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="alert" id="association-result" style="display: none;">
+                <span id="association-icon"></span>
+                <div id="association-text"></div>
+            </div>
+        </div>
+
+        <!-- Activité 2 : Texte à compléter -->
+        <div class="content-section activity-section">
+            <h2>📝 Activité 2 : Compléter le texte de sécurité</h2>
+            
+            <div class="activity-instructions">
+                <h3>📝 Instructions :</h3>
+                <p>Cliquez sur chaque case vide et sélectionnez le mot approprié dans la banque de mots.</p>
+                <button class="btn btn-warning" onclick="resetFillText()" style="margin-top: 10px;">🔄 Recommencer</button>
+            </div>
+            
+            <div class="fill-text">
+                L'<span class="tooltip">électricité<span class="tooltip-content"><strong>Électricité :</strong> Phénomène physique dû au mouvement des charges électriques. Invisible, inodore, silencieuse mais potentiellement mortelle.</span></span> ne se voit pas, ne s'entend pas, n'a pas d'<span class="fill-blank" data-answer="odeur"></span> 
+                mais entraîne chaque année des accidents graves dans le <span class="fill-blank" data-answer="BTP"></span>.
+                <br><br>
+                En cas d'accident électrique et avant de porter <span class="fill-blank" data-answer="secours"></span>, 
+                il faut examiner la situation et <span class="fill-blank" data-answer="couper"></span> 
+                le courant sans <span class="fill-blank" data-answer="toucher"></span> le corps de la victime.
+                <br><br>
+                Le <span class="tooltip">travail hors tension<span class="tooltip-content"><strong>Principe fondamental :</strong> Seule méthode garantissant la sécurité absolue. Le travail sous tension est exceptionnel et réservé aux personnes formées et qualifiées.</span></span> est la <span class="fill-blank" data-answer="règle"></span> 
+                à appliquer pour travailler en toute <span class="fill-blank" data-answer="sécurité"></span>.
+                <br><br>
+                Les <span class="fill-blank" data-answer="EPI"></span> adaptés et la vérification d'<span class="fill-blank" data-answer="absence"></span> 
+                de tension avec un <span class="fill-blank" data-answer="VAT"></span> sont obligatoires.
+            </div>
+            
+            <div class="word-bank">
+                <div class="word-option" data-word="odeur">odeur</div>
+                <div class="word-option" data-word="BTP">BTP</div>
+                <div class="word-option" data-word="secours">secours</div>
+                <div class="word-option" data-word="couper">couper</div>
+                <div class="word-option" data-word="toucher">toucher</div>
+                <div class="word-option" data-word="règle">règle</div>
+                <div class="word-option" data-word="sécurité">sécurité</div>
+                <div class="word-option" data-word="EPI">EPI</div>
+                <div class="word-option" data-word="absence">absence</div>
+                <div class="word-option" data-word="VAT">VAT</div>
+                <div class="word-option" data-word="habilitation">habilitation</div>
+            </div>
+            
+            <div class="alert" id="fill-result" style="display: none;">
+                <span id="fill-icon"></span>
+                <div id="fill-text-result"></div>
+            </div>
+        </div>
+
+        <!-- QCM d'évaluation finale -->
+        <div class="qcm-section evaluation-section">
+            <div class="competence-badge">
+                🧠 <strong>Compétence visée :</strong> Identifier les dangers liés aux <span class="tooltip">risques électriques<span class="tooltip-content"><strong>Compétence professionnelle :</strong> Capacité à reconnaître les situations dangereuses, anticiper les risques électriques, appliquer les mesures de prévention selon les recommandations INRS.</span></span>
+                <br><small>Référentiel : <span id="referentiel-eleve">Sécurité BTP - Prévention risques électriques</span></small>
+            </div>
+            
+            <h2>🎯 QCM Final : Évaluation des connaissances</h2>
+            
+            <!-- Questions basées sur PDF IRIS-ST -->
+            <div class="qcm-question" data-source="PDF">
+                <div class="help-system">
+                    <button class="help-btn" onclick="showContextualHelp(1)">
+                        ❓
+                        <span class="help-badge" id="help-badge-1">📖</span>
+                    </button>
+                </div>
+                <h3>1. À partir de quelle intensité une personne ne peut-elle plus <span class="tooltip">lâcher<span class="tooltip-content"><strong>Seuil de non-lâcher :</strong> Niveau de courant où les muscles se contractent involontairement, empêchant de lâcher le conducteur électrique.</span></span> un conducteur électrique ?</h3>
+                <div class="qcm-options">
+                    <div class="qcm-option" data-question="1" data-correct="false">
+                        <span>🔸</span> 0,5 mA (seuil de perception)
+                    </div>
+                    <div class="qcm-option" data-question="1" data-correct="true">
+                        <span>🔸</span> <span class="tooltip">10 mA<span class="tooltip-content"><strong>10 milliampères :</strong> Seuil critique où commence la tétanisation des muscles. C'est pourquoi il est vital de couper le courant rapidement en cas d'accident.</span></span> (seuil de non-lâcher)
+                    </div>
+                    <div class="qcm-option" data-question="1" data-correct="false">
+                        <span>🔸</span> 30 mA (paralysie respiratoire)
+                    </div>
+                </div>
+            </div>
+            
+            <div class="qcm-question" data-source="PDF">
+                <div class="help-system">
+                    <button class="help-btn" onclick="showContextualHelp(2)">
+                        ❓
+                        <span class="help-badge" id="help-badge-2">📖</span>
+                    </button>
+                </div>
+                <h3>2. Quels sont les principaux risques des <span class="tooltip">accidents électriques<span class="tooltip-content"><strong>Accidents électriques :</strong> Événements causés par le contact direct ou indirect avec des pièces sous tension, provoquant des lésions corporelles.</span></span> selon l'INRS ?</h3>
+                <div class="qcm-options">
+                    <div class="qcm-option" data-question="2" data-correct="false">
+                        <span>🔸</span> Seulement des irritations cutanées légères
+                    </div>
+                    <div class="qcm-option" data-question="2" data-correct="true">
+                        <span>🔸</span> <span class="tooltip">Brûlures<span class="tooltip-content"><strong>Brûlures électriques :</strong> Lésions cutanées causées par l'arc électrique ou l'échauffement des tissus traversés par le courant.</span></span>, <span class="tooltip">contractures musculaires<span class="tooltip-content"><strong>Contractures :</strong> Contractions involontaires et douloureuses des muscles, pouvant provoquer des fractures.</span></span>, <span class="tooltip">électrisation<span class="tooltip-content"><strong>Électrisation :</strong> Passage du courant électrique dans le corps humain sans issue fatale.</span></span>, <span class="tooltip">électrocution<span class="tooltip-content"><strong>Électrocution :</strong> Électrisation mortelle. Terme réservé aux accidents électriques avec issue fatale.</span></span>
+                    </div>
+                    <div class="qcm-option" data-question="2" data-correct="false">
+                        <span>🔸</span> Uniquement des troubles du sommeil
+                    </div>
+                </div>
+            </div>
+            
+            <div class="qcm-question" data-source="PDF">
+                <div class="help-system">
+                    <button class="help-btn" onclick="showContextualHelp(3)">
+                        ❓
+                        <span class="help-badge" id="help-badge-3">📖</span>
+                    </button>
+                </div>
+                <h3>3. En cas d'accident électrique, que faut-il faire en PREMIER selon la procédure INRS ?</h3>
+                <div class="qcm-options">
+                    <div class="qcm-option" data-question="3" data-correct="true">
+                        <span>🔸</span> <span class="tooltip">Couper le courant<span class="tooltip-content"><strong>Coupure d'urgence :</strong> Première action vitale car le corps humain est conducteur d'électricité. Utiliser disjoncteur, sectionneur ou arrêt d'urgence.</span></span> et examiner la situation sans toucher la victime
+                    </div>
+                    <div class="qcm-option" data-question="3" data-correct="false">
+                        <span>🔸</span> Toucher immédiatement la victime pour la réconforter
+                    </div>
+                    <div class="qcm-option" data-question="3" data-correct="false">
+                        <span>🔸</span> Asperger d'eau pour refroidir les brûlures
+                    </div>
+                </div>
+            </div>
+            
+            <div class="qcm-question" data-source="PDF">
+                <div class="help-system">
+                    <button class="help-btn" onclick="showContextualHelp(4)">
+                        ❓
+                        <span class="help-badge" id="help-badge-4">📖</span>
+                    </button>
+                </div>
+                <h3>4. Quelle est la règle d'or pour travailler en sécurité selon IRIS-ST ?</h3>
+                <div class="qcm-options">
+                    <div class="qcm-option" data-question="4" data-correct="false">
+                        <span>🔸</span> Travailler sous tension avec des gants
+                    </div>
+                    <div class="qcm-option" data-question="4" data-correct="true">
+                        <span>🔸</span> Le <span class="tooltip">travail hors tension<span class="tooltip-content"><strong>Hors tension :</strong> État d'une installation où toute alimentation électrique est supprimée et l'absence de tension vérifiée. Seule méthode garantissant la sécurité.</span></span> est la règle à appliquer
+                    </div>
+                    <div class="qcm-option" data-question="4" data-correct="false">
+                        <span>🔸</span> Utiliser uniquement des outils en métal
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn btn-warning" id="submit-qcm" onclick="evaluateQCM()">
+                ✅ Valider le QCM
+            </button>
+            
+            <!-- Récapitulatif des résultats -->
+            <div class="recapitulatif-resultats" id="recapitulatif" style="display: none;">
+                📝 <strong>Résumé :</strong> Vous avez répondu correctement à <span id="score-detail">0 sur 4</span> questions. 
+                <br>Votre niveau : <span id="niveau-atteint">En cours d'évaluation...</span>
+                <br>
+                <button class="btn btn-success" onclick="exportProgress()" style="margin-top: 10px;">📤 Exporter ma progression</button>
+            </div>
+            
+            <!-- Feedback visuel par niveau -->
+            <div class="feedback" id="feedback-niveau" style="display: none;">
+                <!-- Contenu généré dynamiquement -->
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="navigation">
+            <div class="nav-left">
+                <a href="index.html" class="btn" style="background: #6c757d;">← Accueil ÉNERWEB</a>
+                <button class="btn btn-warning" onclick="exportToPDF()">📄 Exporter PDF</button>
+                <button class="btn btn-success" onclick="saveProgress()">💾 Sauvegarder</button>
+            </div>
+            
+            <div style="text-align: center;">
+                <p style="margin: 0; color: #666;">Score global : <span id="global-score">0%</span></p>
+                <p style="margin: 0; color: #666;">Temps passé : <span id="time-spent">0 min</span></p>
+            </div>
+            
+            <button class="btn btn-success" id="next-chapter" onclick="goToNextChapter()" disabled>
+                TP2 : Situations de travail →
+            </button>
+        </div>
+
+        <!-- Crédits -->
+        <div class="credits">
+            <strong>Sources :</strong> Mémo IRIS-ST "Le risque électrique" - www.iris-st.org | 
+            <strong>Plateforme ÉNERWEB</strong> - Formation interactive INRS créée par F. HENNINOT
+        </div>
+    </div>
+
+    <!-- Toast pour feedback -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Configuration
+        const CURRENT_CHAPTER_ID = 1;
+        const CHAPTER_TITLE = "Introduction à la sécurité électrique";
+        
+        // Variables globales
+        let chapterProgress = {
+            association: false, fillText: false, qcmCompleted: false, qcmScore: 0,
+            qcmCorrectAnswers: 0, qcmTotalQuestions: 4, globalScore: 0,
+            timeSpent: 0, competenceLevel: '', competenceClass: '', helpUsed: {}
+        };
+        
+        let startTime = Date.now(), selectedBlank = null, qcmAnswers = {}, studentData = null;
+
+        // Référentiels par filière
+        const REFERENTIELS = {
+            'CAP_IFCA': 'CAP IFCA - Sécurité électrique', 
+            'CAP_MFER': 'CAP MFER - Prévention BTP',
+            'TNE_2': '2nde TNE - Sécurité, Environnement', 
+            'MFER_BAC': 'Bac Pro MFER - Sécurité installations',
+            'TITRE_PRO_CVC': 'Titre Pro CVC - Habilitation électrique'
+        };
+
+        // Contenu technique enrichi pour les popups
+        const TECHNICAL_CONTENT = {
+            perception: {
+                title: "👀 Seuil de perception (0,5 mA)",
+                content: `
+                    <div class="risque-section">
+                        <h4>🧠 Mécanisme physiologique</h4>
+                        <ul>
+                            <li><strong>Stimulation nerveuse :</strong> Activation des récepteurs tactiles cutanés</li>
+                            <li><strong>Sensation :</strong> Picotement très léger, fourmillement</li>
+                            <li><strong>Zone concernée :</strong> Point de contact uniquement</li>
+                            <li><strong>Réversibilité :</strong> Immédiate à l'arrêt du courant</li>
+                        </ul>
+                    </div>
+                    <div class="risque-section">
+                        <h4>⚡ Conditions d'apparition</h4>
+                        <ul>
+                            <li><strong>Tension correspondante :</strong> 2,5V (peau sèche 5000Ω)</li>
+                            <li><strong>Facteurs aggravants :</strong> Peau humide, transpiration</li>
+                            <li><strong>Variabilité :</strong> Sensibilité individuelle variable</li>
+                        </ul>
+                    </div>
+                `
+            },
+            non_lacher: {
+                title: "🤏 Seuil de non-lâcher (10 mA)",
+                content: `
+                    <div class="risque-section critique">
+                        <h4>💪 Tétanisation musculaire</h4>
+                        <ul>
+                            <li><strong>Mécanisme :</strong> Stimulation continue des nerfs moteurs</li>
+                            <li><strong>Effet :</strong> Contraction involontaire des muscles fléchisseurs</li>
+                            <li><strong>Conséquence :</strong> Impossibilité d'ouvrir la main voluntairement</li>
+                            <li><strong>Danger :</strong> Exposition prolongée au courant électrique</li>
+                        </ul>
+                    </div>
+                    <div class="risque-section urgence">
+                        <h4>🚨 Mesures d'urgence</h4>
+                        <ul>
+                            <li><strong>Coupure immédiate :</strong> Disjoncteur, sectionneur, arrêt d'urgence</li>
+                            <li><strong>Si impossible :</strong> Dégager avec objet isolant (bois sec)</li>
+                            <li><strong>Surveillance :</strong> Brûlures, troubles cardiaques différés</li>
+                        </ul>
+                    </div>
+                `
+            },
+            paralysie: {
+                title: "🫁 Seuil de paralysie respiratoire (30 mA)",
+                content: `
+                    <div class="risque-section critique">
+                        <h4>😵 Paralysie du diaphragme</h4>
+                        <ul>
+                            <li><strong>Nerf affecté :</strong> Nerf phrénique (contrôle diaphragme)</li>
+                            <li><strong>Mécanisme :</strong> Blocage de l'influx nerveux respiratoire</li>
+                            <li><strong>Symptômes :</strong> Arrêt respiratoire, cyanose (bleuissement)</li>
+                            <li><strong>Évolution :</strong> Asphyxie mortelle en quelques minutes</li>
+                        </ul>
+                    </div>
+                    <div class="risque-section">
+                        <h4>🛡️ Protection 30mA</h4>
+                        <ul>
+                            <li><strong>Justification :</strong> Seuil réglementaire basé sur ce danger</li>
+                            <li><strong>Dispositifs :</strong> Différentiel 30mA obligatoire sur chantier</li>
+                            <li><strong>Temps de coupure :</strong> < 300ms pour limiter les effets</li>
+                        </ul>
+                    </div>
+                `
+            },
+            fibrillation: {
+                title: "💓 Seuil de fibrillation cardiaque (75 mA)",
+                content: `
+                    <div class="risque-section critique">
+                        <h4>💔 Fibrillation ventriculaire</h4>
+                        <ul>
+                            <li><strong>Mécanisme :</strong> Désynchronisation électrique du myocarde</li>
+                            <li><strong>Effet :</strong> Contractions anarchiques inefficaces</li>
+                            <li><strong>Conséquence :</strong> Arrêt de la circulation sanguine</li>
+                            <li><strong>Irréversibilité :</strong> Seule la défibrillation peut corriger</li>
+                        </ul>
+                    </div>
+                    <div class="risque-section urgence">
+                        <h4>🚑 Secours spécialisés</h4>
+                        <ul>
+                            <li><strong>Défibrillation :</strong> Choc électrique contrôlé (DAE)</li>
+                            <li><strong>Massage cardiaque :</strong> En attendant les secours</li>
+                            <li><strong>Pronostic :</strong> Dépend de la rapidité d'intervention</li>
+                        </ul>
+                    </div>
+                `
+            },
+            arret: {
+                title: "💀 Arrêt du cœur (1 A)",
+                content: `
+                    <div class="risque-section critique">
+                        <h4>🫀 Arrêt cardiaque complet</h4>
+                        <ul>
+                            <li><strong>Mécanisme :</strong> Sidération complète du muscle cardiaque</li>
+                            <li><strong>Effet :</strong> Arrêt total de l'activité cardiaque</li>
+                            <li><strong>Paradoxe :</strong> Peut être réversible (contrairement à la fibrillation)</li>
+                            <li><strong>Condition :</strong> Coupure immédiate du courant nécessaire</li>
+                        </ul>
+                    </div>
+                    <div class="risque-section">
+                        <h4>⚡ Autres effets à 1A</h4>
+                        <ul>
+                            <li><strong>Brûlures massives :</strong> Destruction tissulaire profonde</li>
+                            <li><strong>Projections :</strong> Contractions musculaires violentes</li>
+                            <li><strong>Traumatismes :</strong> Chutes, fractures secondaires</li>
+                        </ul>
+                    </div>
+                `
+            }
+        };
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStudentData(); setupDragAndDrop(); setupFillText(); setupQCMListeners();
+            setupTimeCounter(); loadAccessibilityPreferences(); checkPDFAvailability();
+        });
+
+        // Fonctions utilitaires
+        function loadStudentData() {
+            const globalProgress = JSON.parse(localStorage.getItem('enerweb_securite_electrique_progress') || '{}');
+            if (globalProgress.student) {
+                studentData = globalProgress.student; displayStudentInfo();
+                if (studentData.formation && REFERENTIELS[studentData.formation]) {
+                    document.getElementById('referentiel-eleve').textContent = REFERENTIELS[studentData.formation];
+                }
+            }
+        }
+
+        function displayStudentInfo() {
+            if (studentData && (studentData.nom || studentData.isAnonymous)) {
+                const studentDisplay = document.getElementById('student-display');
+                const infoDisplay = document.getElementById('student-info-display');
+                
+                if (studentData.isAnonymous) {
+                    infoDisplay.innerHTML = `<p><strong>Session :</strong> Utilisateur anonyme</p>
+                        <p><strong>Démarré le :</strong> ${new Date(studentData.dateInscription || Date.now()).toLocaleDateString('fr-FR')}</p>`;
+                } else {
+                    infoDisplay.innerHTML = `<p><strong>Nom :</strong> ${studentData.nom} ${studentData.prenom}</p>
+                        <p><strong>Formation :</strong> ${studentData.formation || 'Non spécifiée'}</p>
+                        <p><strong>Date :</strong> ${new Date(studentData.dateTest || studentData.dateInscription || Date.now()).toLocaleDateString('fr-FR')}</p>`;
+                }
+                studentDisplay.style.display = 'block';
+            }
+        }
+
+        // Contrôles accessibilité
+        function toggleAccessibility() {
+            document.body.classList.toggle('accessibility-mode');
+            const isActive = document.body.classList.contains('accessibility-mode');
+            localStorage.setItem('enerweb_accessibility', isActive);
+            const button = document.getElementById('btnAccessibility');
+            button.textContent = isActive ? '🔍 Mode normal' : '🔍 Mode accessibilité';
+            button.classList.toggle('active', isActive);
+        }
+
+        function togglePoliceAdaptee() {
+            document.body.classList.toggle('police-adaptee');
+            const isActive = document.body.classList.contains('police-adaptee');
+            localStorage.setItem('enerweb_police_adaptee', isActive);
+            const button = document.getElementById('btnPoliceAdaptee');
+            button.textContent = isActive ? '📖 Police normale' : '📖 Police adaptée';
+            button.classList.toggle('active', isActive);
+        }
+
+        function loadAccessibilityPreferences() {
+            if (localStorage.getItem('enerweb_accessibility') === 'true') {
+                document.body.classList.add('accessibility-mode');
+                document.getElementById('btnAccessibility').classList.add('active');
+                document.getElementById('btnAccessibility').textContent = '🔍 Mode normal';
+            }
+            if (localStorage.getItem('enerweb_police_adaptee') === 'true') {
+                document.body.classList.add('police-adaptee');
+                document.getElementById('btnPoliceAdaptee').classList.add('active');
+                document.getElementById('btnPoliceAdaptee').textContent = '📖 Police normale';
+            }
+        }
+
+        // Gestion PDF
+        function checkPDFAvailability() {
+            const iframe = document.getElementById('pdfViewer');
+            iframe.onerror = function() {
+                iframe.innerHTML = `<div style="padding: 50px; text-align: center; color: #999;">
+                    <h3>📄 Document PDF IRIS-ST non disponible</h3>
+                    <p>Le mémo "Le risque électrique" n'a pas pu être chargé.</p>
+                    <a href="./pdf/Iris-ST-Risque-Electrique-2015_Internet-100x150-1.pdf" 
+                       target="_blank" class="btn btn-warning">Télécharger le mémo</a></div>`;
+            };
+        }
+
+        function openPDFFullscreen() {
+            window.open('./pdf/Iris-ST-Risque-Electrique-2015_Internet-100x150-1.pdf', '_blank');
+        }
+
+        function downloadPDF() {
+            const link = document.createElement('a');
+            link.href = './pdf/Iris-ST-Risque-Electrique-2015_Internet-100x150-1.pdf';
+            link.download = 'IRIS-ST-Risque-Electrique-2015.pdf';
+            link.click();
+        }
+
+        // Popups techniques
+        function showTechnicalDetails(seuilType) {
+            const content = TECHNICAL_CONTENT[seuilType];
+            if (!content) return;
+            
+            const popup = document.createElement('div');
+            popup.className = 'technical-popup';
+            popup.innerHTML = `<div class="popup-content">
+                <button class="popup-close" onclick="closeTechnicalPopup()">&times;</button>
+                <h3>${content.title}</h3>${content.content}</div>`;
+            
+            document.body.appendChild(popup);
+            popup.addEventListener('click', function(e) {
+                if (e.target === popup) closeTechnicalPopup();
+            });
+        }
+
+        function closeTechnicalPopup() {
+            const popup = document.querySelector('.technical-popup');
+            if (popup) popup.remove();
+        }
+
+        // Système d'aide
+        function showContextualHelp(questionId) {
+            chapterProgress.helpUsed[questionId] = true;
+            const iframe = document.getElementById('pdfViewer');
+            iframe.src = './pdf/Iris-ST-Risque-Electrique-2015_Internet-100x150-1.pdf#page=2';
+            iframe.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // Drag & Drop association
+        function setupDragAndDrop() {
+            const draggables = document.querySelectorAll('.draggable-item');
+            const dropZones = document.querySelectorAll('.drop-zone');
+
+            draggables.forEach(item => {
+                item.addEventListener('dragstart', e => {
+                    e.dataTransfer.setData('text/plain', e.target.dataset.symbol);
+                    e.target.classList.add('dragging');
+                });
+                item.addEventListener('dragend', e => e.target.classList.remove('dragging'));
+            });
+
+            dropZones.forEach(zone => {
+                zone.addEventListener('dragover', e => {
+                    e.preventDefault(); e.currentTarget.classList.add('dragover');
+                });
+                zone.addEventListener('drop', e => {
+                    e.preventDefault();
+                    const symbol = e.dataTransfer.getData('text/plain');
+                    const target = e.currentTarget.dataset.target;
+                    e.currentTarget.classList.remove('dragover');
+                    
+                    if (symbol === target) {
+                        e.currentTarget.classList.add('filled');
+                        e.currentTarget.innerHTML = '<span>✅ Association correcte</span>';
+                        document.querySelector(`[data-symbol="${symbol}"]`).style.display = 'none';
+                        checkAssociationComplete();
+                    } else {
+                        e.currentTarget.innerHTML = '<span>❌ Réessayez</span>';
+                        setTimeout(() => {
+                            const originalTexts = {
+                                '0.5mA': 'Sensation très faible - Seuil de perception',
+                                '10mA': 'Contraction musculaire - Seuil de non-lâcher',
+                                '30mA': 'Paralysie respiratoire - Arrêt diaphragme',
+                                '75mA': 'Fibrillation cardiaque - Arrêt cardiaque'
+                            };
+                            e.currentTarget.innerHTML = `<span>${originalTexts[target]}</span>`;
+                        }, 1500);
+                    }
+                });
+                zone.addEventListener('dragleave', e => e.currentTarget.classList.remove('dragover'));
+            });
+        }
+
+        function checkAssociationComplete() {
+            const filledZones = document.querySelectorAll('.drop-zone.filled');
+            const totalZones = document.querySelectorAll('.drop-zone');
+            
+            if (filledZones.length === totalZones.length) {
+                chapterProgress.association = true;
+                showAlert('association-result', 'success', '🎉', '<strong>Parfait !</strong> Vous maîtrisez les seuils électriques critiques.');
+                updateGlobalScore();
+            }
+        }
+
+        function resetAssociation() {
+            const originalTexts = {
+                '0.5mA': 'Sensation très faible - Seuil de perception',
+                '10mA': 'Contraction musculaire - Seuil de non-lâcher',
+                '30mA': 'Paralysie respiratoire - Arrêt diaphragme',
+                '75mA': 'Fibrillation cardiaque - Arrêt cardiaque'
+            };
+            
+            document.querySelectorAll('.drop-zone').forEach(zone => {
+                zone.classList.remove('filled');
+                const target = zone.dataset.target;
+                zone.innerHTML = `<span>${originalTexts[target]}</span>`;
+            });
+            
+            document.querySelectorAll('.draggable-item').forEach(item => item.style.display = 'flex');
+            document.getElementById('association-result').style.display = 'none';
+            chapterProgress.association = false; updateGlobalScore();
+        }
+
+        // Texte à compléter
+        function setupFillText() {
+            const blanks = document.querySelectorAll('.fill-blank');
+            const words = document.querySelectorAll('.word-option');
+
+            blanks.forEach(blank => {
+                blank.addEventListener('click', function() {
+                    if (selectedBlank) selectedBlank.style.border = '2px solid var(--border)';
+                    selectedBlank = this; this.style.border = '2px solid var(--primary)';
+                });
+            });
+
+            words.forEach(word => {
+                word.addEventListener('click', function() {
+                    if (selectedBlank && !this.classList.contains('used')) {
+                        selectedBlank.textContent = this.dataset.word;
+                        selectedBlank.classList.add('filled');
+                        this.classList.add('used');
+                        selectedBlank.style.border = '2px solid var(--border)';
+                        selectedBlank = null; checkFillTextComplete();
+                    }
+                });
+            });
+        }
+
+        function checkFillTextComplete() {
+            const blanks = document.querySelectorAll('.fill-blank');
+            const filledBlanks = document.querySelectorAll('.fill-blank.filled');
+            
+            if (filledBlanks.length === blanks.length) {
+                let correctCount = 0;
+                blanks.forEach(blank => {
+                    if (blank.textContent === blank.dataset.answer) correctCount++;
+                });
+                
+                const accuracy = (correctCount / blanks.length) * 100;
+                chapterProgress.fillText = true;
+                showAlert('fill-result', 'success', '📝', `<strong>Excellent !</strong> Vous maîtrisez les règles de sécurité (${Math.round(accuracy)}%)`);
+                updateGlobalScore();
+            }
+        }
+
+        function resetFillText() {
+            document.querySelectorAll('.fill-blank').forEach(blank => {
+                blank.textContent = ''; blank.classList.remove('filled');
+                blank.style.border = '2px solid var(--border)';
+            });
+            document.querySelectorAll('.word-option').forEach(word => word.classList.remove('used'));
+            document.getElementById('fill-result').style.display = 'none';
+            chapterProgress.fillText = false; selectedBlank = null; updateGlobalScore();
+        }
+
+        // QCM évaluation
+        function setupQCMListeners() {
+            const qcmOptions = document.querySelectorAll('.qcm-option');
+            qcmOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const question = this.dataset.question;
+                    const questionOptions = document.querySelectorAll(`[data-question="${question}"]`);
+                    questionOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    qcmAnswers[question] = this.dataset.correct === 'true';
+                });
+            });
+        }
+
+        function evaluateQCM() {
+            const questions = document.querySelectorAll('.qcm-question');
+            let correctAnswers = 0; let totalQuestions = questions.length;
+            
+            questions.forEach((question, index) => {
+                const selectedOption = question.querySelector('.qcm-option.selected');
+                const correctOption = question.querySelector('.qcm-option[data-correct="true"]');
+                
+                if (selectedOption) {
+                    if (selectedOption.dataset.correct === 'true') {
+                        selectedOption.classList.add('correct'); correctAnswers++;
+                    } else {
+                        selectedOption.classList.add('incorrect');
+                    }
+                    if (correctOption && correctOption !== selectedOption) {
+                        correctOption.classList.add('correct');
+                    }
+                }
+            });
+            
+            chapterProgress.qcmScore = Math.round((correctAnswers / totalQuestions) * 100);
+            chapterProgress.qcmCorrectAnswers = correctAnswers;
+            chapterProgress.qcmTotalQuestions = totalQuestions; chapterProgress.qcmCompleted = true;
+            
+            document.getElementById('recapitulatif').style.display = 'block';
+            document.getElementById('score-detail').textContent = `${correctAnswers} sur ${totalQuestions}`;
+            
+            const niveau = calculateCompetenceLevel(chapterProgress.qcmScore);
+            chapterProgress.competenceLevel = niveau.text; chapterProgress.competenceClass = niveau.class;
+            
+            document.getElementById('niveau-atteint').innerHTML = `<span class="${niveau.class}">${niveau.text}</span>`;
+            showCompetenceFeedback(niveau); document.getElementById('submit-qcm').style.display = 'none';
+            updateGlobalScore(); showToast(`QCM terminé ! Score : ${chapterProgress.qcmScore}%`);
+        }
+
+        function calculateCompetenceLevel(score) {
+            if (score >= 86) return { text: '🟢 Parfaitement acquis', class: 'niveau-vert' };
+            else if (score >= 67) return { text: '🟦 Acquis', class: 'niveau-bleu' };
+            else if (score >= 34) return { text: '🟠 En cours d\'acquisition', class: 'niveau-orange' };
+            else return { text: '🔴 Non acquis', class: 'niveau-rouge' };
+        }
+
+        function showCompetenceFeedback(niveau) {
+            const feedbackDiv = document.getElementById('feedback-niveau');
+            let message = '';
+            
+            switch(niveau.class) {
+                case 'niveau-vert':
+                    message = 'Excellent ! Vous maîtrisez parfaitement les bases de la sécurité électrique selon l\'INRS.';
+                    break;
+                case 'niveau-bleu':
+                    message = 'Très bien ! Vous comprenez les dangers électriques et les mesures de prévention.';
+                    break;
+                case 'niveau-orange':
+                    message = 'Bien ! Quelques révisions du mémo IRIS-ST seraient bénéfiques.';
+                    break;
+                case 'niveau-rouge':
+                    message = 'Il est nécessaire de réviser les fondamentaux. Consultez à nouveau le document INRS.';
+                    break;
+            }
+            
+            feedbackDiv.innerHTML = `<strong>${niveau.text}</strong><br>${message}`;
+            feedbackDiv.className = `feedback ${niveau.class}`;
+            feedbackDiv.style.display = 'block';
+        }
+
+        // Fonctions utilitaires
+        function updateGlobalScore() {
+            let totalScore = 0;
+            if (chapterProgress.association) totalScore += 20;
+            if (chapterProgress.fillText) totalScore += 20;
+            if (chapterProgress.qcmCompleted) totalScore += (chapterProgress.qcmScore / 100) * 60;
+            
+            chapterProgress.globalScore = Math.round(totalScore);
+            document.getElementById('global-score').textContent = chapterProgress.globalScore + '%';
+            
+            if (chapterProgress.globalScore >= 70) {
+                document.getElementById('next-chapter').disabled = false;
+            }
+        }
+
+        function showAlert(elementId, type, icon, text) {
+            const alert = document.getElementById(elementId);
+            alert.style.display = 'flex'; alert.className = `alert alert-${type}`;
+            document.getElementById(elementId.replace('-result', '-icon')).textContent = icon;
+            document.getElementById(elementId.replace('-result', '-text')).innerHTML = text;
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message; toast.className = 'toast show';
+            
+            const colors = { 'success': 'var(--success)', 'warning': 'var(--warning)', 'danger': 'var(--danger)', 'info': 'var(--primary)' };
+            toast.style.background = colors[type] || colors.success;
+            
+            setTimeout(() => toast.classList.remove('show'), 4000);
+        }
+
+        function updateTimeSpent() {
+            const elapsed = Math.round((Date.now() - startTime) / 60000);
+            document.getElementById('time-spent').textContent = elapsed + ' min';
+            chapterProgress.timeSpent = elapsed;
+        }
+
+        function setupTimeCounter() { setInterval(updateTimeSpent, 60000); }
+
+        // Sauvegarde et export
+        function saveProgress() {
+            let globalProgress = JSON.parse(localStorage.getItem('enerweb_securite_electrique_progress') || '{}');
+            
+            globalProgress.chapters = globalProgress.chapters || {};
+            globalProgress.chapters[`tp${CURRENT_CHAPTER_ID}`] = {
+                completed: chapterProgress.globalScore >= 70, score: chapterProgress.globalScore,
+                timeSpent: chapterProgress.timeSpent, lastAccess: new Date().toISOString(),
+                activities: chapterProgress
+            };
+            
+            globalProgress.lastAccess = new Date().toISOString();
+            localStorage.setItem('enerweb_securite_electrique_progress', JSON.stringify(globalProgress));
+            showToast('💾 Progression sauvegardée !');
+        }
+
+        function exportProgress() {
+            const currentStudentData = studentData || { nom: "", prenom: "", formation: "", numero: "", isAnonymous: true };
+            
+            const resultsData = {
+                eleve: currentStudentData,
+                tp: { id: `tp${CURRENT_CHAPTER_ID}_final`, titre: `TP ${CURRENT_CHAPTER_ID} – ${CHAPTER_TITLE}`, date_realisation: new Date().toISOString() },
+                evaluation: [{ competence: "Identifier les dangers liés aux risques électriques", referentiel: REFERENTIELS[currentStudentData.formation] || "INRS - Sécurité BTP", niveau: chapterProgress.competenceLevel, score: chapterProgress.qcmScore, classe_css: chapterProgress.competenceClass }],
+                activites: { association: chapterProgress.association, fillText: chapterProgress.fillText, qcm: { completed: chapterProgress.qcmCompleted, score: chapterProgress.qcmScore, correctAnswers: chapterProgress.qcmCorrectAnswers, totalQuestions: chapterProgress.qcmTotalQuestions }, helpUsed: chapterProgress.helpUsed },
+                note_suivi: chapterProgress.globalScore, note_evaluation: chapterProgress.qcmScore,
+                statut_ccf: chapterProgress.qcmScore >= 67 ? "Validé" : "En cours d'acquisition"
+            };
+            
+            localStorage.setItem(`enerweb_tp${CURRENT_CHAPTER_ID}_results`, JSON.stringify(resultsData));
+            
+            const dataStr = JSON.stringify(resultsData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            const exportFileDefaultName = `enerweb_tp${CURRENT_CHAPTER_ID}_${currentStudentData.nom || 'anonyme'}_${new Date().toISOString().split('T')[0]}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri); linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click(); showToast('📤 Progression exportée !');
+        }
+
+        function goToNextChapter() { saveProgress(); window.location.href = 'tp2_situations_travail.html'; }
+        function exportToPDF() { showToast('⚠️ Fonctionnalité PDF en cours de développement', 'warning'); }
+
+        // Sauvegarde automatique
+        window.addEventListener('beforeunload', () => saveProgress());
+        setInterval(() => { if (chapterProgress.globalScore > 0) saveProgress(); }, 120000);
+    </script>
+</body>
+</html>

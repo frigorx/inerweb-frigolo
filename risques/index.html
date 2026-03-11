@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bibliothèque IRIS-ST — inerWeb FRIGOLO</title>
+<meta name="author" content="F. Henninot">
+<style>
+:root{--navy:#0f2d52;--orange:#e8914a;--red:#c0392b;--bg:#faf7f2;--card:#fff;--text:#2c3e50;--muted:#5a7080;--shadow:0 4px 16px rgba(15,45,82,.07)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:linear-gradient(180deg,var(--bg),#f0ebe3);font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:var(--text);min-height:100vh}
+.app{max-width:900px;margin:0 auto;padding:20px 16px}
+.hdr{background:linear-gradient(135deg,#c0392b,#e74c3c,#e8914a);padding:24px 28px;border-bottom:4px solid var(--navy);border-radius:0 0 0 40px;box-shadow:0 4px 20px rgba(192,57,43,.15);margin-bottom:24px;text-align:center}
+.hdr h1{font-size:1.5rem;font-weight:800;color:#fff;letter-spacing:1px}
+.hdr .sub{font-size:.82rem;color:rgba(255,255,255,.85);margin-top:4px}
+.back{display:inline-block;margin-bottom:16px;color:var(--navy);text-decoration:none;font-size:.85rem;font-weight:600}
+.back:hover{text-decoration:underline}
+.cat-title{font-size:1rem;font-weight:800;color:var(--navy);margin:24px 0 10px;padding:6px 12px;background:#fff;border-radius:10px;border-left:4px solid var(--red);box-shadow:var(--shadow)}
+.pdf-list{list-style:none;display:grid;gap:8px;margin-bottom:8px}
+.pdf-list a{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--card);border-radius:12px;box-shadow:var(--shadow);border:1px solid #ece4da;text-decoration:none;color:var(--text);transition:transform .15s,box-shadow .15s;font-size:.85rem}
+.pdf-list a:hover{transform:translateX(4px);box-shadow:0 6px 20px rgba(15,45,82,.1)}
+.pdf-icon{color:var(--red);font-weight:800;font-size:.75rem;background:#fde8e8;padding:4px 8px;border-radius:6px;flex-shrink:0}
+.disclaimer{margin-top:32px;padding:16px;background:#fff8f0;border:1px solid #f0d9c0;border-radius:12px;font-size:.75rem;color:#7a5c3a;line-height:1.6}
+footer{text-align:center;margin-top:24px;padding:16px;font-size:.72rem;color:var(--muted);border-top:1px solid #ece4da}
+</style>
+<script>
+document.addEventListener('contextmenu',function(e){e.preventDefault()});
+document.addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&(e.key==='u'||e.key==='s')){e.preventDefault()}});
+</script>
+</head>
+<body>
+<div class="app">
+  <a href="../index.html" class="back">&larr; Retour à l'accueil</a>
+  <div class="hdr">
+    <h1>Bibliothèque PDF — IRIS-ST</h1>
+    <div class="sub">Documents de prévention des risques professionnels</div>
+  </div>
+
+  <div class="cat-title">Fluides frigorigènes & Frigoriste</div>
+  <ul class="pdf-list">
+    <li><a href="pdf/Iris-ST-Depliant-Frigoriste-chauffagistes-Fluides-2016-Internet-100x150-1.pdf" target="_blank"><span class="pdf-icon">PDF</span>Dépliant Frigoriste — Fluides frigorigènes</a></li>
+    <li><a href="pdf/Iris-ST_indexe.pdf" target="_blank"><span class="pdf-icon">PDF</span>IRIS-ST — Index général des dépliants</a></li>
+  </ul>
+
+  <div class="cat-title">Risque électrique</div>
+  <ul class="pdf-list">
+    <li><a href="pdf/Iris-ST-Risque-Electrique-2015_Internet-100x150-1.pdf" target="_blank"><span class="pdf-icon">PDF</span>Risque électrique — Dépliant IRIS-ST</a></li>
+    <li><a href="pdf/Iris-ST-depliant-Electriciens-Contraintes-Physiques-2014-Internet-100x150_HD2.pdf" target="_blank"><span class="pdf-icon">PDF</span>Contraintes physiques des électriciens</a></li>
+  </ul>
+
+  <div class="cat-title">Santé & Environnement de travail</div>
+  <ul class="pdf-list">
+    <li><a href="pdf/Iris-ST-Depliant-Memo-bruit-OS-LP-2018_internet_HD.pdf" target="_blank"><span class="pdf-icon">PDF</span>Mémo Bruit</a></li>
+    <li><a href="pdf/Iris-ST-Depliant-Les-vibrations-transmises-aux-mainsbras-et-a-lensemble-du-corps-OS-LP-2018_internet_HD.pdf" target="_blank"><span class="pdf-icon">PDF</span>Vibrations transmises aux mains/bras et au corps</a></li>
+    <li><a href="pdf/Iris-ST-Depliant-Risque-Bio-Assainissement-2014-Internet-100x150-1.pdf" target="_blank"><span class="pdf-icon">PDF</span>Risque biologique — Assainissement</a></li>
+    <li><a href="pdf/CAPEB-Guide-poussieres-web.pdf" target="_blank"><span class="pdf-icon">PDF</span>Guide Poussières — CAPEB</a></li>
+    <li><a href="pdf/Iris-ST-Depliant-Isolants-Thermiques-OS-LW-2017-Internet.pdf" target="_blank"><span class="pdf-icon">PDF</span>Isolants thermiques</a></li>
+    <li><a href="pdf/Iris-ST-Depliant-Ciment-Beton-Macons-Carreleurs-2017-OS-LW-Internet.pdf" target="_blank"><span class="pdf-icon">PDF</span>Ciment & Béton — Maçons, Carreleurs</a></li>
+  </ul>
+
+  <div class="cat-title">Travail en hauteur & Manutention</div>
+  <ul class="pdf-list">
+    <li><a href="pdf/Echafaudage-Fixe.pdf" target="_blank"><span class="pdf-icon">PDF</span>Échafaudage fixe</a></li>
+    <li><a href="pdf/Echelles-escabeaux-et-PIRL.pdf" target="_blank"><span class="pdf-icon">PDF</span>Échelles, escabeaux et PIRL</a></li>
+    <li><a href="pdf/Iris-ST-Depliant-TMP-MTPI-page-par-page_OS-LP-2019_bis_HD.pdf" target="_blank"><span class="pdf-icon">PDF</span>TMP / MTPI</a></li>
+    <li><a href="pdf/memo-accesseoire-levage.pdf" target="_blank"><span class="pdf-icon">PDF</span>Mémo Accessoires de levage</a></li>
+    <li><a href="pdf/Iris-ST-Depliant-Contraintes-Physiques-Couvreurs-2015-Internet-100x150_HD.pdf" target="_blank"><span class="pdf-icon">PDF</span>Contraintes physiques des couvreurs</a></li>
+  </ul>
+
+  <div class="cat-title">Soudage & Opérations spéciales</div>
+  <ul class="pdf-list">
+    <li><a href="pdf/Iris-ST-Operations-Soudage-2016-Internet-100x150-1.pdf" target="_blank"><span class="pdf-icon">PDF</span>Opérations de soudage</a></li>
+  </ul>
+
+  <div class="cat-title">Gestion & Prévention générale</div>
+  <ul class="pdf-list">
+    <li><a href="pdf/Iris-ST-Gestion-AT-MP-2016-Internet-HD.pdf" target="_blank"><span class="pdf-icon">PDF</span>Gestion AT/MP (Accidents du Travail / Maladies Pro)</a></li>
+    <li><a href="pdf/Memo-Apprentis-et-prevention-ApprentisHD.pdf" target="_blank"><span class="pdf-icon">PDF</span>Mémo Apprentis et prévention</a></li>
+    <li><a href="pdf/IRIS-ST-Risque-routier-2018-internet-HD.pdf" target="_blank"><span class="pdf-icon">PDF</span>Risque routier</a></li>
+    <li><a href="pdf/IRIS_ST-Memo-Cyber-Securite-2023-HD-page.pdf" target="_blank"><span class="pdf-icon">PDF</span>Mémo Cyber-Sécurité</a></li>
+  </ul>
+
+  <div class="cat-title">Fiches métier</div>
+  <ul class="pdf-list">
+    <li><a href="pdf/Mon-metier-plombier-chauffagiste.pdf" target="_blank"><span class="pdf-icon">PDF</span>Mon métier : Plombier-Chauffagiste</a></li>
+    <li><a href="pdf/Memo-VUL-plombier-chauffagiste-sans-marque.pdf" target="_blank"><span class="pdf-icon">PDF</span>Mémo VUL Plombier-Chauffagiste</a></li>
+    <li><a href="pdf/mon-metier-macon.pdf" target="_blank"><span class="pdf-icon">PDF</span>Mon métier : Maçon</a></li>
+    <li><a href="pdf/Mon-metier-plaquiste-platrier.pdf" target="_blank"><span class="pdf-icon">PDF</span>Mon métier : Plaquiste-Plâtrier</a></li>
+  </ul>
+
+  <div class="cat-title">INRS — Documents de référence</div>
+  <ul class="pdf-list">
+    <li><a href="pdf/ed6191-1.pdf" target="_blank"><span class="pdf-icon">PDF</span>ED 6191 — INRS</a></li>
+    <li><a href="pdf/ed6276.pdf" target="_blank"><span class="pdf-icon">PDF</span>ED 6276 — INRS</a></li>
+  </ul>
+
+  <div class="disclaimer">
+    <strong>Avertissement :</strong> Les documents PDF présentés sur cette page sont la propriété de l'<strong>IRIS-ST</strong>
+    (Institut de Recherche et d'Innovation en Santé et Sécurité au Travail), de l'<strong>INRS</strong> et de la <strong>CAPEB</strong>.
+    Ils sont mis à disposition ici <strong>exclusivement à des fins pédagogiques et éducatives</strong>, dans le cadre de
+    l'enseignement professionnel. Toute utilisation commerciale est strictement interdite.
+    Pour accéder aux versions officielles : <a href="https://www.iris-st.org" target="_blank" rel="noopener" style="color:var(--navy)">www.iris-st.org</a>
+  </div>
+
+  <footer>
+    <p><strong>inerWeb FRIGOLO</strong> — par F. Henninot — Tous droits réservés &copy; 2024-2026</p>
+  </footer>
+</div>
+</body>
+</html>

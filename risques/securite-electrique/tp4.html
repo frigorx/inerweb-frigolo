@@ -1,0 +1,1813 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TP4 - Analyse d'une situation à risque | ÉNERWEB</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=OpenDyslexic:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* ========== CHARTE GRAPHIQUE ÉLECTRICITÉ ÉNERWEB ========== */
+        :root {
+            /* Couleurs Sécurité Électrique */
+            --primary: #FF6B35;
+            --secondary: #FF8E53;
+            --accent: #FFC300;
+            --danger: #FF1744;
+            --warning: #FF9800;
+            --success: #4CAF50;
+            --info: #2196F3;
+            --dark: #2C3E50;
+            --light: #F8FAFC;
+            --border: #E2E8F0;
+            
+            /* Palette Pédagogique COMMUNE */
+            --non-acquis: #ef4444;
+            --en-cours: #f59e0b;
+            --acquis: #3b82f6;
+            --parfait: #10b981;
+            
+            --gradient: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, var(--accent) 100%);
+            --shadow: 0 4px 15px rgba(0,0,0,0.1);
+            --radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Lexend', 'Comic Sans MS', 'OpenDyslexic', 'Segoe UI', sans-serif;
+            font-size: 18px;
+            line-height: 1.8;
+            letter-spacing: 0.5px;
+            background: var(--light);
+            color: var(--dark);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animation de fond OBLIGATOIRE */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 107, 53, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 195, 0, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(255, 107, 53, 0.2) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+        }
+
+        /* MODE ACCESSIBILITÉ */
+        body.accessibility-mode {
+            font-size: 20px;
+            line-height: 2;
+            letter-spacing: 1px;
+        }
+
+        body.adapted-reading-mode {
+            font-family: 'OpenDyslexic', 'Lexend', sans-serif;
+            font-size: 20px;
+            line-height: 2.2;
+            letter-spacing: 2px;
+            word-spacing: 0.3em;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* ========== CONTRÔLES ACCESSIBILITÉ ========== */
+        .accessibility-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-accessibility {
+            background: var(--warning);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .btn-accessibility:hover {
+            background: var(--secondary);
+            transform: translateY(-1px);
+        }
+
+        .btn-accessibility.active {
+            background: var(--success);
+        }
+
+        /* ========== HEADER ========== */
+        .header {
+            background: var(--gradient);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .logo-enerweb {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .electric-icon {
+            font-size: 3em;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .logo-text {
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+
+        .chapter-info h1 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .progress-section {
+            text-align: right;
+        }
+
+        .progress-bar {
+            width: 300px;
+            height: 12px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: white;
+            border-radius: 6px;
+            width: 66%;
+            transition: width 0.3s ease;
+        }
+
+        .btn-home {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: var(--radius);
+            font-weight: 500;
+            transition: var(--transition);
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .btn-home:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        /* ========== SECTIONS ========== */
+        .content-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            border-top: 4px solid var(--primary);
+        }
+
+        .content-section.intro-section {
+            border-top-color: var(--secondary);
+        }
+
+        .content-section.activity-section {
+            border-top-color: var(--accent);
+        }
+
+        .content-section.evaluation-section {
+            border-top-color: var(--danger);
+        }
+
+        .content-section h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.8em;
+        }
+
+        /* ========== INTRODUCTION ========== */
+        .introduction {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            padding: 40px;
+        }
+
+        .intro-content {
+            flex: 1;
+        }
+
+        .intro-text {
+            font-size: 1.1em;
+            line-height: 1.7;
+            background: rgba(255, 107, 53, 0.08);
+            padding: 20px;
+            border-radius: var(--radius);
+            border-left: 4px solid var(--primary);
+        }
+
+        .intro-icon {
+            font-size: 5em;
+            color: var(--danger);
+            text-align: center;
+            filter: drop-shadow(0 0 10px rgba(255, 23, 68, 0.3));
+        }
+
+        /* ========== CONTENUS IRIS-ST ========== */
+        .iris-content {
+            background: rgba(255, 107, 53, 0.05);
+            border: 2px solid var(--primary);
+            border-radius: var(--radius);
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .iris-content h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .situation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 20px 0;
+        }
+
+        .situation-card {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .situation-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .situation-card.selected {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .situation-card.correct {
+            background: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+
+        .situation-card.incorrect {
+            background: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+
+        .situation-card h4 {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* ========== TEXTE À TROUS ========== */
+        .fill-text-container {
+            background: rgba(255, 195, 0, 0.1);
+            border: 2px solid var(--accent);
+            border-radius: var(--radius);
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .fill-text {
+            font-size: 1.1em;
+            line-height: 2;
+            margin-bottom: 20px;
+        }
+
+        .fill-blank {
+            display: inline-block;
+            min-width: 80px;
+            padding: 5px 10px;
+            border: 2px solid var(--border);
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+            margin: 0 5px;
+            font-weight: bold;
+            transition: var(--transition);
+        }
+
+        .fill-blank:hover {
+            border-color: var(--primary);
+        }
+
+        .fill-blank.selected {
+            border-color: var(--primary);
+            background: rgba(255, 107, 53, 0.1);
+        }
+
+        .fill-blank.filled {
+            background: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+
+        .fill-blank.incorrect {
+            background: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+
+        .word-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .word-option {
+            background: var(--primary);
+            color: white;
+            padding: 8px 15px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .word-option:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .word-option.used {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ========== QCM ========== */
+        .qcm-container {
+            margin: 30px 0;
+        }
+
+        .progress-indicator {
+            background: rgba(255, 107, 53, 0.1);
+            border-radius: var(--radius);
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar-qcm {
+            width: 100%;
+            height: 8px;
+            background: var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill-qcm {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .qcm-question {
+            background: rgba(255, 107, 53, 0.05);
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .question-meta {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .chapter-badge {
+            background: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            font-weight: 500;
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+
+        .qcm-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .qcm-option {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            padding: 15px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .qcm-option:hover {
+            border-color: var(--primary);
+            background: rgba(255, 107, 53, 0.05);
+        }
+
+        .qcm-option.selected {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .qcm-option.correct {
+            background: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+
+        .qcm-option.incorrect {
+            background: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+
+        /* ========== ASSOCIATION ========== */
+        .association-game {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 20px 0;
+        }
+
+        .risks-column,
+        .measures-column {
+            background: rgba(255, 107, 53, 0.05);
+            border-radius: var(--radius);
+            padding: 20px;
+        }
+
+        .association-item {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            padding: 15px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .association-item:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .association-item.selected {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .association-item.matched {
+            background: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+
+        /* ========== RÉSULTATS ========== */
+        .recapitulatif-resultats {
+            background: rgba(76, 175, 80, 0.08);
+            border: 2px solid var(--success);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .feedback {
+            background: var(--light);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid var(--border);
+        }
+
+        .feedback.niveau-vert {
+            background: rgba(76, 175, 80, 0.08);
+            border-left-color: var(--success);
+            color: var(--success);
+        }
+
+        .feedback.niveau-bleu {
+            background: rgba(255, 107, 53, 0.08);
+            border-left-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .feedback.niveau-orange {
+            background: rgba(255, 152, 0, 0.08);
+            border-left-color: var(--warning);
+            color: var(--warning);
+        }
+
+        .feedback.niveau-rouge {
+            background: rgba(244, 67, 54, 0.08);
+            border-left-color: var(--danger);
+            color: var(--danger);
+        }
+
+        /* ========== BOUTONS ========== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 18px 30px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            justify-content: center;
+        }
+
+        .btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+        }
+
+        /* ========== NAVIGATION ========== */
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 40px;
+            padding: 25px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            border-top: 4px solid var(--accent);
+        }
+
+        .nav-left {
+            display: flex;
+            gap: 15px;
+        }
+
+        /* ========== ALERTS ========== */
+        .alert {
+            border-radius: var(--radius);
+            padding: 18px;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .alert-success {
+            background: rgba(76, 175, 80, 0.08);
+            border: 2px solid var(--success);
+            color: var(--success);
+        }
+
+        .alert-warning {
+            background: rgba(255, 152, 0, 0.08);
+            border: 2px solid var(--warning);
+            color: var(--warning);
+        }
+
+        .alert-danger {
+            background: rgba(244, 67, 54, 0.08);
+            border: 2px solid var(--danger);
+            color: var(--danger);
+        }
+
+        /* ========== TOAST ========== */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 18px 25px;
+            border-radius: var(--radius);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transform: translateX(100%);
+            transition: transform 0.3s;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.error {
+            background: var(--danger);
+        }
+
+        .toast.warning {
+            background: var(--warning);
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .progress-bar {
+                width: 100%;
+            }
+
+            .introduction {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .navigation {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .nav-left {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .logo-enerweb {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .logo-text {
+                font-size: 1.8em;
+            }
+
+            .situation-grid,
+            .association-game {
+                grid-template-columns: 1fr;
+            }
+
+            .accessibility-controls {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin-bottom: 20px;
+                flex-direction: row;
+                justify-content: center;
+            }
+        }
+    </style>
+<script>/* (c) F. Henninot - inerWeb FRIGOLO - Tous droits reserves */
+document.addEventListener("contextmenu",function(e){e.preventDefault()});
+document.addEventListener("keydown",function(e){if((e.ctrlKey||e.metaKey)&&(e.key==="u"||e.key==="s"||e.key==="c")){e.preventDefault()}});
+document.addEventListener("selectstart",function(e){if(e.target.tagName\!=="INPUT"&&e.target.tagName\!=="TEXTAREA"){e.preventDefault()}});
+</script>
+</head>
+<body>
+    <!-- Contrôles d'accessibilité -->
+    <div class="accessibility-controls">
+        <button class="btn-accessibility" onclick="toggleAccessibility()" id="btnAccessibility">🔍 Mode accessibilité</button>
+        <button class="btn-accessibility" onclick="togglePoliceAdaptee()" id="btnPoliceAdaptee">📖 Police adaptée</button>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo-section">
+                <div class="logo-enerweb">
+                    <span class="electric-icon">⚡</span>
+                    <span class="logo-text">ÉNERWEB</span>
+                </div>
+                <div class="chapter-info">
+                    <h1>TP4 - Analyse d'une situation à risque électrique</h1>
+                    <p class="subtitle">Développer l'analyse comportementale face aux dangers</p>
+                    <p style="font-size: 0.85em; opacity: 0.8; margin-top: 5px;">💡 Créé par F. HENNINOT - Enseignant Sécurité Électrique</p>
+                </div>
+            </div>
+            <div class="progress-section">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="globalProgress"></div>
+                </div>
+                <p style="font-size: 0.9em; margin-bottom: 10px;">Chapitre 4/6 - Progression : 66%</p>
+                <a href="index.html" class="btn-home">← Accueil</a>
+            </div>
+        </div>
+
+        <!-- Affichage données élève -->
+        <div id="student-display" class="content-section" style="display: none; background: rgba(76, 175, 80, 0.08); border-top-color: var(--success);">
+            <h2>👤 Session en cours</h2>
+            <div id="student-info-display"></div>
+        </div>
+
+        <!-- Introduction -->
+        <div class="content-section intro-section">
+            <div class="introduction">
+                <div class="intro-content">
+                    <h2>🎯 Objectifs du TP4 - Analyse comportementale</h2>
+                    <div class="intro-text">
+                        Ce TP vous forme à l'<strong>analyse critique des situations électriques dangereuses</strong> selon les recommandations INRS. 
+                        Vous développerez vos réflexes de sécurité à travers <strong>5 activités progressives</strong> : 
+                        identification des risques, analyse des comportements, maîtrise des procédures, et auto-évaluation de vos compétences.
+                        <br><br>
+                        <strong>Durée :</strong> 45 minutes | <strong>Évaluation :</strong> 18 questions + activités interactives
+                    </div>
+                </div>
+                <div class="intro-icon">🛡️</div>
+            </div>
+        </div>
+
+        <!-- Rappel des fondamentaux IRIS-ST -->
+        <div class="content-section">
+            <h2>📋 Rappel - Situations à risque selon l'IRIS-ST</h2>
+            <div class="iris-content">
+                <h3>⚡ Principales situations de travail dangereuses</h3>
+                <div class="situation-grid">
+                    <div class="situation-card" style="border-left: 4px solid var(--danger);">
+                        <h4>🏗️ Travaux d'installation</h4>
+                        <p>Interventions sur installations électriques ou dans leur voisinage</p>
+                        <small><strong>Risques :</strong> Contact direct, électrocution, arc électrique</small>
+                    </div>
+                    <div class="situation-card" style="border-left: 4px solid var(--warning);">
+                        <h4>🔌 Travaux sur équipements</h4>
+                        <p>Utilisation d'équipements électriques, outillage électroportatif</p>
+                        <small><strong>Risques :</strong> Contact indirect, défaut d'isolation, surcharge</small>
+                    </div>
+                    <div class="situation-card" style="border-left: 4px solid var(--info);">
+                        <h4>🌐 Travaux à proximité</h4>
+                        <p>Intervention près de lignes aériennes ou souterraines</p>
+                        <small><strong>Risques :</strong> Amorçage, induction électromagnétique</small>
+                    </div>
+                    <div class="situation-card" style="border-left: 4px solid var(--accent);">
+                        <h4>🌧️ Conditions défavorables</h4>
+                        <p>Travaux en milieu humide, poussiéreux ou confiné</p>
+                        <small><strong>Risques :</strong> Conductivité accrue, corrosion, explosion</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activité 1 : Texte à trous sur l'analyse des risques -->
+        <div class="content-section activity-section">
+            <h2>✏️ Activité 1 - Compléter l'analyse de risque</h2>
+            <p style="margin-bottom: 20px;">
+                Complétez le texte suivant avec les mots proposés pour décrire la démarche d'analyse des risques électriques :
+            </p>
+            
+            <div class="fill-text-container">
+                <div class="fill-text">
+                    Pour analyser correctement une situation électrique, il faut d'abord <span class="fill-blank" data-answer="observer"></span> 
+                    l'environnement de travail et <span class="fill-blank" data-answer="identifier"></span> tous les dangers présents. 
+                    Ensuite, il convient d'<span class="fill-blank" data-answer="évaluer"></span> la gravité et la probabilité de chaque risque. 
+                    Les mesures de <span class="fill-blank" data-answer="prévention"></span> doivent être mises en place avant toute intervention. 
+                    Il est essentiel de <span class="fill-blank" data-answer="consigner"></span> l'installation et de 
+                    <span class="fill-blank" data-answer="vérifier"></span> l'absence de tension. Enfin, il faut porter les 
+                    <span class="fill-blank" data-answer="EPI"></span> adaptés et respecter les procédures de sécurité.
+                </div>
+                
+                <div class="word-options">
+                    <div class="word-option" onclick="selectWord(this)">observer</div>
+                    <div class="word-option" onclick="selectWord(this)">identifier</div>
+                    <div class="word-option" onclick="selectWord(this)">évaluer</div>
+                    <div class="word-option" onclick="selectWord(this)">prévention</div>
+                    <div class="word-option" onclick="selectWord(this)">consigner</div>
+                    <div class="word-option" onclick="selectWord(this)">vérifier</div>
+                    <div class="word-option" onclick="selectWord(this)">EPI</div>
+                    <div class="word-option" onclick="selectWord(this)">ignorer</div>
+                    <div class="word-option" onclick="selectWord(this)">précipiter</div>
+                </div>
+                
+                <button class="btn" onclick="validateFillText()" id="validateFillBtn" disabled>
+                    ✅ Valider le texte
+                </button>
+                
+                <div id="fill-result" class="alert" style="display: none; margin-top: 15px;"></div>
+            </div>
+        </div>
+
+        <!-- Activité 2 : Association risques/mesures -->
+        <div class="content-section activity-section" id="associationSection" style="display: none;">
+            <h2>🔗 Activité 2 - Associer risques et mesures de prévention</h2>
+            <p style="margin-bottom: 20px;">
+                Associez chaque risque électrique à la mesure de prévention la plus appropriée :
+            </p>
+            
+            <div class="association-game">
+                <div class="risks-column">
+                    <h4 style="text-align: center; margin-bottom: 15px; color: var(--danger);">⚠️ Risques identifiés</h4>
+                    <div class="association-item" onclick="selectRisk(this)" data-risk="contact-direct">
+                        <strong>⚡ Contact direct</strong><br>
+                        <small>Partie active sous tension accessible</small>
+                    </div>
+                    <div class="association-item" onclick="selectRisk(this)" data-risk="humidite">
+                        <strong>💧 Présence d'humidité</strong><br>
+                        <small>Sol mouillé, condensation</small>
+                    </div>
+                    <div class="association-item" onclick="selectRisk(this)" data-risk="defaut-isolation">
+                        <strong>🔌 Défaut d'isolation</strong><br>
+                        <small>Câble dénudé, matériel défectueux</small>
+                    </div>
+                    <div class="association-item" onclick="selectRisk(this)" data-risk="surcharge">
+                        <strong>🔥 Surcharge électrique</strong><br>
+                        <small>Trop d'appareils sur une ligne</small>
+                    </div>
+                    <div class="association-item" onclick="selectRisk(this)" data-risk="arc-electrique">
+                        <strong>⚡ Arc électrique</strong><br>
+                        <small>Court-circuit, défaut d'isolement</small>
+                    </div>
+                </div>
+                
+                <div class="measures-column">
+                    <h4 style="text-align: center; margin-bottom: 15px; color: var(--success);">🛡️ Mesures de prévention</h4>
+                    <div class="association-item" onclick="selectMeasure(this)" data-measure="epi-isolant">
+                        <strong>🧤 EPI isolants</strong><br>
+                        <small>Gants, chaussures, casque isolants</small>
+                    </div>
+                    <div class="association-item" onclick="selectMeasure(this)" data-measure="assechement">
+                        <strong>🌪️ Assèchement zone</strong><br>
+                        <small>Élimination de l'humidité</small>
+                    </div>
+                    <div class="association-item" onclick="selectMeasure(this)" data-measure="remplacement">
+                        <strong>🔧 Remplacement matériel</strong><br>
+                        <small>Câbles neufs, isolation conforme</small>
+                    </div>
+                    <div class="association-item" onclick="selectMeasure(this)" data-measure="repartition-charge">
+                        <strong>⚖️ Répartition charge</strong><br>
+                        <small>Équilibrage des circuits</small>
+                    </div>
+                    <div class="association-item" onclick="selectMeasure(this)" data-measure="protection-arc">
+                        <strong>🛡️ Protection anti-arc</strong><br>
+                        <small>Disjoncteur différentiel, parafoudre</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px; padding: 15px; background: rgba(255, 152, 0, 0.1); border-radius: var(--radius);">
+                <p><strong>Associations réalisées :</strong> <span id="associationsCount">0/5</span></p>
+                <div id="associationsResult" style="margin-top: 10px;"></div>
+            </div>
+            
+            <button class="btn" onclick="validateAssociations()" id="validateAssocBtn" disabled>
+                ✅ Valider les associations
+            </button>
+        </div>
+
+        <!-- Activité 3 : QCM d'analyse approfondi -->
+        <div class="content-section evaluation-section" id="qcmSection" style="display: none;">
+            <h2>📝 Activité 3 - QCM d'analyse des situations électriques</h2>
+            
+            <!-- Indicateur de progression QCM -->
+            <div class="progress-indicator">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <span>📊 <strong>Progression du QCM</strong></span>
+                    <span id="progress-text">0/18 questions</span>
+                </div>
+                <div class="progress-bar-qcm">
+                    <div class="progress-fill-qcm" id="progress-fill-qcm"></div>
+                </div>
+            </div>
+            
+            <div class="qcm-container">
+                <!-- Questions d'analyse comportementale -->
+                <div class="qcm-question" data-question="1">
+                    <div class="question-meta">
+                        <div class="chapter-badge">Analyse</div>
+                        <span>Comportement face au risque</span>
+                    </div>
+                    <h3>1. Face à une situation électrique inconnue, quelle doit être votre première réaction ?</h3>
+                    <div class="qcm-options">
+                        <div class="qcm-option" onclick="selectAnswer(1, 'a')" data-answer="a">Intervenir immédiatement</div>
+                        <div class="qcm-option" onclick="selectAnswer(1, 'b')" data-answer="b" data-correct="true">Stopper et analyser la situation</div>
+                        <div class="qcm-option" onclick="selectAnswer(1, 'c')" data-answer="c">Demander de l'aide uniquement</div>
+                        <div class="qcm-option" onclick="selectAnswer(1, 'd')" data-answer="d">Ignorer le problème</div>
+                    </div>
+                </div>
+
+                <div class="qcm-question" data-question="2">
+                    <div class="question-meta">
+                        <div class="chapter-badge">Procédures</div>
+                        <span>Consignation électrique</span>
+                    </div>
+                    <h3>2. Quel est l'ordre correct des opérations de consignation ?</h3>
+                    <div class="qcm-options">
+                        <div class="qcm-option" onclick="selectAnswer(2, 'a')" data-answer="a">Condamner → Séparer → Vérifier → Signaler</div>
+                        <div class="qcm-option" onclick="selectAnswer(2, 'b')" data-answer="b" data-correct="true">Séparer → Condamner → Vérifier → Signaler</div>
+                        <div class="qcm-option" onclick="selectAnswer(2, 'c')" data-answer="c">Vérifier → Séparer → Condamner → Signaler</div>
+                        <div class="qcm-option" onclick="selectAnswer(2, 'd')" data-answer="d">Signaler → Séparer → Vérifier → Condamner</div>
+                    </div>
+                </div>
+
+                <div class="qcm-question" data-question="3">
+                    <div class="question-meta">
+                        <div class="chapter-badge">EPI</div>
+                        <span>Équipements de protection</span>
+                    </div>
+                    <h3>3. Quelle classe de gants isolants choisir pour une intervention BT (400V) ?</h3>
+                    <div class="qcm-options">
+                        <div class="qcm-option" onclick="selectAnswer(3, 'a')" data-answer="a">Classe 00 (500V)</div>
+                        <div class="qcm-option" onclick="selectAnswer(3, 'b')" data-answer="b" data-correct="true">Classe 0 (1000V)</div>
+                        <div class="qcm-option" onclick="selectAnswer(3, 'c')" data-answer="c">Classe 1 (7500V)</div>
+                        <div class="qcm-option" onclick="selectAnswer(3, 'd')" data-answer="d">Classe 2 (17000V)</div>
+                    </div>
+                </div>
+
+                <div class="qcm-question" data-question="4">
+                    <div class="question-meta">
+                        <div class="chapter-badge">Environnement</div>
+                        <span>Conditions de travail</span>
+                    </div>
+                    <h3>4. En milieu humide, quelle tension devient dangereuse ?</h3>
+                    <div class="qcm-options">
+                        <div class="qcm-option" onclick="selectAnswer(4, 'a')" data-answer="a" data-correct="true">12V</div>
+                        <div class="qcm-option" onclick="selectAnswer(4, 'b')" data-answer="b">25V</div>
+                        <div class="qcm-option" onclick="selectAnswer(4, 'c')" data-answer="c">50V</div>
+                        <div class="qcm-option" onclick="selectAnswer(4, 'd')" data-answer="d">100V</div>
+                    </div>
+                </div>
+
+                <div class="qcm-question" data-question="5">
+                    <div class="question-meta">
+                        <div class="chapter-badge">Habilitation</div>
+                        <span>Niveaux d'intervention</span>
+                    </div>
+                    <h3>5. Quelle habilitation permet les interventions de dépannage en BT ?</h3>
+                    <div class="qcm-options">
+                        <div class="qcm-option" onclick="selectAnswer(5, 'a')" data-answer="a">B0</div>
+                        <div class="qcm-option" onclick="selectAnswer(5, 'b')" data-answer="b" data-correct="true">BR</div>
+                        <div class="qcm-option" onclick="selectAnswer(5, 'c')" data-answer="c">BS</div>
+                        <div class="qcm-option" onclick="selectAnswer(5, 'd')" data-answer="d">BC</div>
+                    </div>
+                </div>
+
+                <div class="qcm-question" data-question="6">
+                    <div class="question-meta">
+                        <div class="chapter-badge">Outils</div>
+                        <span>Vérification absence tension</span>
+                    </div>
+                    <h3>6. Que faire si le VAT ne fonctionne pas au début de l'intervention ?</h3>
+                    <div class="qcm-options">
+                        <div class="qcm-option" onclick="selectAnswer(6, 'a')" data-answer="a">Continuer sans vérification</div>
+                        <div class="qcm-option" onclick="selectAnswer(6, 'b')" data-answer="b" data-correct="true">Arrêter l'intervention</div>
+                        <div class="qcm-option" onclick="selectAnswer(6, 'c')" data-answer="c">Utiliser un multimètre classique</div>
+                        <div class="qcm-option" onclick="selectAnswer(6, 'd')" data-answer="d">Demander à un collègue de vérifier</div>
+                    </div>
+                </div>
+
+                <div class="qcm-question" data-question="7">
+                    <div class="question-meta">
+                        <div class="chapter-badge">Premiers secours</div>
+                        <span>Électrisation/électrocution</span>
+                    </div>
+                    <h3>7. Première action face à une électrisation ?</h3>
+                    <div class="qcm-options">
+                        <div class="qcm-option" onclick="selectAnswer(7, 'a')" data-answer="a">Toucher la victime</div>
+                        <div class="qcm-option" onclick="selectAnswer(7, 'b')" data-answer="b" data-correct="true">Couper l'alimentation</div>
+                        <div class="qcm-option" onclick="selectAnswer(7, 'c')" data-answer="c">Verser de l'eau</div>
+                        <div class="qcm-option" onclick="selectAnswer(7, 'd')" data-answer="d">Appeler les secours uniquement</div>
+                    </div>
+                </div>
+
+                <div class="qcm-question" data-question="8">
+                    <div class="question-meta">
+                        <div class="chapter-badge">Analyse</div>
+                        <span>Distance de sécurité</span>
+                    </div>
+                    <h3>8. Distance minimale d'approche d'une ligne HTA (20kV) ?</h3>
+                    <div class="qcm-options">
+                        <div class="qcm-option" onclick="selectAnswer(8, 'a')" data-answer="a">1 mètre</div>
+                        <div class="qcm-option" onclick="selectAnswer(8, 'b')" data-answer="b" data-correct="true">3 mètres</div>
+                        <div class="qcm-option" onclick="selectAnswer(8, 'c')" data-answer="c">5 mètres</div>
+                        <div class="qcm-option" onclick="selectAnswer(8, 'd')" data-answer="d">10 mètres</div>
+                    </div>
+                </div>
+
+                <div class="qcm-question" data-question="9">
+                    <div class="question-meta">
+                        <div class="chapter-badge">Prévention</div>
+                        <span>Protection différentielle</span>
+                    </div>
+                    <h3>9. Seuil de déclenchement d'un disjoncteur différentiel 30mA ?</h3>
+                    <div class="qcm-options">
+                        <div class="qcm-option" onclick="selectAnswer(9, 'a')" data-answer="a">Protection des personnes uniquement</div>
+                        <div class="qcm-option" onclick="selectAnswer(9, 'b')" data-answer="b" data-correct="true">Protection personnes et biens</div>
+                        <div class="qcm-option" onclick="selectAnswer(9, 'c')" data-answer="c">Protection des biens uniquement</div>
+                        <div class="qcm-option" onclick="selectAnswer(9, 'd')" data-answer="d">Aucune protection efficace</div>
+                    </div>
+                </div>
+
+                <div class="qcm-question" data-question="10">
+                    <div class="question-meta">
+                        <div class="chapter-badge">Comportement</div>
+                        <span>Travail en équipe</span>
+                    </div>
+                    <h3>10. Pourquoi travailler à deux sur une intervention électrique ?</h3>
+                    <div class="qcm-options">
+                        <div class="qcm-option" onclick="selectAnswer(10, 'a')" data-answer="a">Pour aller plus vite</div>
+                        <div class="qcm-option" onclick="selectAnswer(10, 'b')" data-answer="b" data-correct="true">Pour la surveillance mutuelle</div>
+                        <div class="qcm-option" onclick="selectAnswer(10, 'c')" data-answer="c">Pour partager les responsabilités</div>
+                        <div class="qcm-option" onclick="selectAnswer(10, 'd')" data-answer="d">Par obligation réglementaire</div>
+                    </div>
+                </div>
+
+                <div class="qcm-question" data-question="11">
+                    <div class="question-meta">
+                        <div class="chapter-badge">Matériel</div>
+                        <span>Outillage isolé</span>
+                    </div>
+                    <h3>11. Comment reconnaître un outil isolé conforme ?</h3>
+                    <div class="qcm-options">
+                        <div class="qcm-option" onclick="selectAnswer(11, 'a')" data-answer="a">Par sa couleur rouge</div>
+                        <div class="qcm-option" onclick="selectAnswer(11, 'b')" data-answer="b" data-correct="true">Par le marquage NF EN 60900</div>
+                        <div class="qcm-option" onclick="selectAnswer(11, 'c')" data-answer="c">Par son poids plus léger</div>
+                        <div class="qcm-option" onclick="selectAnswer(11, 'd')" data-answer="d">Par son prix plus élevé</div>
+                    </div>
+                </div>
+
+                <div class="qcm-question" data-question="12">
+                    <div class="question-meta">
+                        <div class="chapter-badge">Réglementation</div>
+                        <span>Code du travail</span>
+                    </div>
+                    <h3>12. Qui est responsable de la sécurité électrique sur un chantier ?</h3>
+                    <div class="qcm-options">
+                        <div class="qcm-option" onclick="selectAnswer(12, 'a')" data-answer="a">L'électricien uniquement</div>
+                        <div class="qcm-option" onclick="selectAnswer(12, 'b')" data-answer="b" data-correct="true">L'employeur en premier lieu</div>
+                        <div class="qcm-option" onclick="selectAnswer(12, 'c')" data-answer="c">Le maître d'ouvrage</div>
+                        <div class="qcm-option" onclick="selectAnswer(12, 'd')" data-answer="d">L'organisme de contrôle</div>
+                    </div>
+                </div>
+
+                <div class="qcm-question" data-question="13">
+                    <div class="question-meta">
+                        <div class="chapter-badge">Analyse</div>
+                        <span>Évaluation des risques</span>
+                    </div>
+                    <h3>13. Comment hiérarchiser les risques électriques ?</h3>
+                    <div class="qcm-options">
+                        <div class="qcm-option" onclick="selectAnswer(13, 'a')" data-answer="a">Par ordre alphabétique</div>
+                        <div class="qcm-option" onclick="selectAnswer(13, 'b')" data-answer="b" data-correct="true">Gravité × Probabilité</div>
+                        <div class="qcm-option" onclick="selectAnswer(13, 'c')" data-answer="c">Par coût des mesures</div>
+                        <div class="qcm-option" onclick="selectAnswer(13, 'd')" data-answer="d">Par facilité de traitement</div>
+                    </div>
+                </div>
+
+                <div class="qcm-question" data-question="14">
+                    <div class="question-meta">
+                        <div class="chapter-badge">Procédures</div>
+                        <span>Document unique</span>
+                    </div>
+                    <h3>14. Quel document recense les risques électriques en entreprise ?</h3>
+                    <div class="qcm-options">
+                        <div class="qcm-option" onclick="selectAnswer(14, 'a')" data-answer="a">Le carnet de prescriptions</div>
+                        <div class="qcm-option" onclick="selectAnswer(14, 'b')" data-answer="b" data-correct="true">Le document unique d'évaluation</div>
+                        <div class="qcm-option" onclick="selectAnswer(14, 'c')" data-answer="c">Le plan de prévention</div>
+                        <div class="qcm-option" onclick="selectAnswer(14, 'd')" data-answer="d">Le règlement intérieur</div>
+                    </div>
+                </div>
+
+                <div class="qcm-question" data-question="15">
+                    <div class="question-meta">
+                        <div class="chapter-badge">Comportement</div>
+                        <span>Formation continue</span>
+                    </div>
+                    <h3>15. Fréquence de recyclage de l'habilitation électrique ?</h3>
+                    <div class="qcm-options">
+                        <div class="qcm-option" onclick="selectAnswer(15, 'a')" data-answer="a">1 an</div>
+                        <div class="qcm-option" onclick="selectAnswer(15, 'b')" data-answer="b">2 ans</div>
+                        <div class="qcm-option" onclick="selectAnswer(15, 'c')" data-answer="c" data-correct="true">3 ans</div>
+                        <div class="qcm-option" onclick="selectAnswer(15, 'd')" data-answer="d">5 ans</div>
+                    </div>
+                </div>
+
+                <div class="qcm-question" data-question="16">
+                    <div class="question-meta">
+                        <div class="chapter-badge">Technologie</div>
+                        <span>Détection de tension</span>
+                    </div>
+                    <h3>16. Quel appareil pour vérifier l'absence de tension en toute sécurité ?</h3>
+                    <div class="qcm-options">
+                        <div class="qcm-option" onclick="selectAnswer(16, 'a')" data-answer="a">Multimètre standard</div>
+                        <div class="qcm-option" onclick="selectAnswer(16, 'b')" data-answer="b" data-correct="true">VAT homologué</div>
+                        <div class="qcm-option" onclick="selectAnswer(16, 'c')" data-answer="c">Tournevis testeur</div>
+                        <div class="qcm-option" onclick="selectAnswer(16, 'd')" data-answer="d">Pince ampèremétrique</div>
+                    </div>
+                </div>
+
+                <div class="qcm-question" data-question="17">
+                    <div class="question-meta">
+                        <div class="chapter-badge">Prévention</div>
+                        <span>Signalisation sécurité</span>
+                    </div>
+                    <h3>17. Couleur réglementaire des panneaux de danger électrique ?</h3>
+                    <div class="qcm-options">
+                        <div class="qcm-option" onclick="selectAnswer(17, 'a')" data-answer="a">Rouge sur blanc</div>
+                        <div class="qcm-option" onclick="selectAnswer(17, 'b')" data-answer="b" data-correct="true">Noir sur jaune</div>
+                        <div class="qcm-option" onclick="selectAnswer(17, 'c')" data-answer="c">Blanc sur rouge</div>
+                        <div class="qcm-option" onclick="selectAnswer(17, 'd')" data-answer="d">Blanc sur bleu</div>
+                    </div>
+                </div>
+
+                <div class="qcm-question" data-question="18">
+                    <div class="question-meta">
+                        <div class="chapter-badge">Analyse</div>
+                        <span>Retour d'expérience</span>
+                    </div>
+                    <h3>18. Quelle attitude adopter après un incident électrique ?</h3>
+                    <div class="qcm-options">
+                        <div class="qcm-option" onclick="selectAnswer(18, 'a')" data-answer="a">Oublier rapidement</div>
+                        <div class="qcm-option" onclick="selectAnswer(18, 'b')" data-answer="b" data-correct="true">Analyser les causes</div>
+                        <div class="qcm-option" onclick="selectAnswer(18, 'c')" data-answer="c">Accuser les autres</div>
+                        <div class="qcm-option" onclick="selectAnswer(18, 'd')" data-answer="d">Minimiser la gravité</div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn" onclick="validateQCM()" id="validateQCMBtn" disabled>
+                ✅ Valider le QCM (18 questions)
+            </button>
+        </div>
+
+        <!-- Activité 4 : Auto-évaluation comportementale -->
+        <div class="content-section evaluation-section" id="selfEvalSection" style="display: none;">
+            <h2>🔍 Activité 4 - Auto-évaluation comportementale</h2>
+            <div class="iris-content">
+                <h3>🎯 Réflexion sur vos compétences d'analyse</h3>
+                <p style="margin-bottom: 20px;">
+                    Évaluez honnêtement votre niveau de maîtrise dans l'analyse des situations électriques dangereuses.
+                    Cette auto-évaluation vous aidera à identifier vos points forts et axes d'amélioration.
+                </p>
+                
+                <div class="situation-grid">
+                    <div class="situation-card" onclick="selectEvaluation(1)" data-level="1">
+                        <h4>😰 Niveau 1 - Débutant</h4>
+                        <p>J'ai des difficultés à identifier les risques électriques. J'ai besoin d'aide constante.</p>
+                    </div>
+                    <div class="situation-card" onclick="selectEvaluation(2)" data-level="2">
+                        <h4>🤔 Niveau 2 - En apprentissage</h4>
+                        <p>Je reconnais quelques dangers mais j'hésite sur les procédures à suivre.</p>
+                    </div>
+                    <div class="situation-card" onclick="selectEvaluation(3)" data-level="3">
+                        <h4>✋ Niveau 3 - Autonome</h4>
+                        <p>Je sais analyser une situation et appliquer les mesures de sécurité appropriées.</p>
+                    </div>
+                    <div class="situation-card" onclick="selectEvaluation(4)" data-level="4">
+                        <h4>🛡️ Niveau 4 - Expert</h4>
+                        <p>Je maîtrise l'analyse des risques et peux former d'autres personnes.</p>
+                    </div>
+                </div>
+                
+                <textarea id="commentaire" placeholder="Décrivez une situation électrique dangereuse que vous avez rencontrée et comment vous l'avez gérée..." 
+                          style="width: 100%; height: 120px; padding: 15px; border: 2px solid var(--border); border-radius: var(--radius); margin: 20px 0; font-family: inherit; font-size: 16px;"></textarea>
+            </div>
+
+            <button class="btn" onclick="finalizeEvaluation()" id="finalizeBtn" disabled>
+                🏆 Finaliser l'évaluation
+            </button>
+        </div>
+
+        <!-- Résultats finaux -->
+        <div class="content-section evaluation-section" id="resultsSection" style="display: none;">
+            <h2>🏆 Résultats de l'analyse comportementale</h2>
+            
+            <div class="recapitulatif-resultats">
+                <h3 style="color: var(--success); margin-bottom: 15px;">📊 Récapitulatif de vos performances</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                    <div style="text-align: center; padding: 15px; background: white; border-radius: var(--radius);">
+                        <h4>Texte à trous</h4>
+                        <p style="font-size: 1.5em; color: var(--primary);" id="fillScore">0/7</p>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: white; border-radius: var(--radius);">
+                        <h4>Associations</h4>
+                        <p style="font-size: 1.5em; color: var(--secondary);" id="assocScore">0/5</p>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: white; border-radius: var(--radius);">
+                        <h4>QCM d'analyse</h4>
+                        <p style="font-size: 1.5em; color: var(--accent);" id="qcmScore">0/18</p>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: white; border-radius: var(--radius);">
+                        <h4>Auto-évaluation</h4>
+                        <p style="font-size: 1.5em; color: var(--success);" id="selfEvalScore">0/4</p>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px; text-align: center;">
+                    <p style="font-size: 1.3em;"><strong>Score global : <span id="globalScore">0</span>/34 (<span id="globalPercentage">0%</span>)</strong></p>
+                    <p style="margin-top: 10px;">Votre niveau : <span id="niveau-atteint">En cours d'évaluation...</span></p>
+                </div>
+            </div>
+            
+            <!-- Feedback personnalisé -->
+            <div class="feedback" id="feedback-niveau">
+                <!-- Contenu généré dynamiquement -->
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="navigation">
+            <div class="nav-left">
+                <a href="index.html" class="btn" style="background: #6c757d;">← Accueil</a>
+                <button class="btn btn-warning" onclick="exportToPDF()">📄 Exporter PDF</button>
+                <button class="btn btn-success" onclick="saveProgress()">💾 Sauvegarder</button>
+            </div>
+            
+            <div style="text-align: center;">
+                <p style="margin: 0; color: #666;">Score global : <span id="global-score">0%</span></p>
+                <p style="margin: 0; color: #666;">Temps passé : <span id="time-spent">0 min</span></p>
+            </div>
+            
+            <button class="btn btn-success" id="next-chapter" onclick="goToNextChapter()" disabled>
+                Chapitre 5 : Interventions sécurisées →
+            </button>
+        </div>
+
+        <!-- Crédits -->
+        <div style="background: white; border-radius: 15px; padding: 20px; margin-top: 20px; box-shadow: var(--shadow); border-top: 4px solid var(--primary); font-size: 0.9em; color: #666;">
+            <strong>Sources :</strong> Mémo IRIS-ST "Le risque électrique" - <a href="https://www.iris-st.org" target="_blank" style="color: var(--primary); text-decoration: none;">www.iris-st.org</a> | 
+            <strong>Plateforme ÉNERWEB</strong> - Formation professionnelle interactive créée par <strong>F. HENNINOT</strong>
+        </div>
+    </div>
+
+    <!-- Toast pour feedback -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Configuration - Cohérent avec les autres modules ÉNERWEB
+        const CURRENT_CHAPTER_ID = 4;
+        const CHAPTER_TITLE = "Analyse d'une situation à risque";
+        
+        // Variables globales
+        let chapterProgress = {
+            fillText: false,
+            association: false,
+            qcm: false,
+            selfEvaluation: false,
+            completed: false,
+            globalScore: 0,
+            timeSpent: 0,
+            competenceLevel: '',
+            competenceClass: ''
+        };
+
+        let selectedBlank = null;
+        let selectedRiskItem = null;
+        let selectedMeasureItem = null;
+        let associations = {};
+        let qcmAnswers = {};
+        let selfEvaluationLevel = 0;
+        let startTime = Date.now();
+
+        // Bonnes réponses
+        const correctAssociations = {
+            'contact-direct': 'epi-isolant',
+            'humidite': 'assechement',
+            'defaut-isolation': 'remplacement',
+            'surcharge': 'repartition-charge',
+            'arc-electrique': 'protection-arc'
+        };
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProgress();
+            startTimeTracking();
+            displayStudentInfo();
+            setupFillTextListeners();
+        });
+
+        // Gestion du temps
+        function startTimeTracking() {
+            setInterval(() => {
+                const elapsed = Math.floor((Date.now() - startTime) / 60000);
+                chapterProgress.timeSpent = elapsed;
+                document.getElementById('time-spent').textContent = elapsed + ' min';
+            }, 60000);
+        }
+
+        // Affichage des informations élève
+        function displayStudentInfo() {
+            const studentDisplay = document.getElementById('student-display');
+            const studentInfo = document.getElementById('student-info-display');
+            
+            const globalData = JSON.parse(sessionStorage.getItem('enerweb_student_data') || '{}');
+            
+            if (globalData.nom && globalData.prenom) {
+                studentDisplay.style.display = 'block';
+                studentInfo.innerHTML = `
+                    <p><strong>👤 ${globalData.prenom} ${globalData.nom}</strong> - ${globalData.formation || 'Formation non précisée'}</p>
+                    <p>📅 ${new Date().toLocaleDateString('fr-FR')} | ⏱️ Temps : <span id="time-display">${chapterProgress.timeSpent} min</span></p>
+                `;
+            }
+        }
+
+        // Activité 1 : Texte à trous
+        function setupFillTextListeners() {
+            const blanks = document.querySelectorAll('.fill-blank');
+            blanks.forEach(blank => {
+                blank.addEventListener('click', function() {
+                    if (selectedBlank) selectedBlank.classList.remove('selected');
+                    selectedBlank = this;
+                    this.classList.add('selected');
+                });
+            });
+        }
+
+        function selectWord(wordElement) {
+            if (wordElement.classList.contains('used') || !selectedBlank) return;
+            
+            const word = wordElement.textContent;
+            const correctAnswer = selectedBlank.dataset.answer;
+            
+            selectedBlank.textContent = word;
+            selectedBlank.classList.remove('selected');
+            
+            if (word === correctAnswer) {
+                selectedBlank.classList.add('filled');
+            } else {
+                selectedBlank.classList.add('incorrect');
+            }
+            
+            wordElement.classList.add('used');
+            selectedBlank = null;
+            
+            checkFillTextCompletion();
+        }
+
+        function checkFillTextCompletion() {
+            const blanks = document.querySelectorAll('.fill-blank');
+            const allFilled = Array.from(blanks).every(blank => blank.textContent.trim() !== '');
+            document.getElementById('validateFillBtn').disabled = !allFilled;
+        }
+
+        function validateFillText() {
+            const blanks = document.querySelectorAll('.fill-blank');
+            let correctCount = 0;
+            
+            blanks.forEach(blank => {
+                const userAnswer = blank.textContent;
+                const correctAnswer = blank.dataset.answer;
+                
+                if (userAnswer === correctAnswer) {
+                    blank.className = 'fill-blank filled';
+                    correctCount++;
+                } else {
+                    blank.className = 'fill-blank incorrect';
+                }
+            });
+            
+            chapterProgress.fillText = true;
+            const percentage = Math.round((correctCount / blanks.length) * 100);
+            
+            const resultDiv = document.getElementById('fill-result');
+            resultDiv.style.display = 'block';
+            
+            if (percentage >= 70) {
+                resultDiv.className = 'alert alert-success';
+                resultDiv.innerHTML = `🎉 <strong>Excellent !</strong> Vous maîtrisez l'analyse des risques (${correctCount}/${blanks.length} - ${percentage}%)`;
+            } else {
+                resultDiv.className = 'alert alert-warning';
+                resultDiv.innerHTML = `⚠️ <strong>À améliorer :</strong> Reprenez les procédures d'analyse (${correctCount}/${blanks.length} - ${percentage}%)`;
+            }
+            
+            setTimeout(() => {
+                document.getElementById('associationSection').style.display = 'block';
+                document.getElementById('associationSection').scrollIntoView({ behavior: 'smooth' });
+            }, 2000);
+        }
+
+        // Activité 2 : Associations
+        function selectRisk(element) {
+            if (selectedRiskItem) selectedRiskItem.classList.remove('selected');
+            selectedRiskItem = element;
+            element.classList.add('selected');
+            
+            checkAssociationPossible();
+        }
+
+        function selectMeasure(element) {
+            if (selectedMeasureItem) selectedMeasureItem.classList.remove('selected');
+            selectedMeasureItem = element;
+            element.classList.add('selected');
+            
+            checkAssociationPossible();
+        }
+
+        function checkAssociationPossible() {
+            if (selectedRiskItem && selectedMeasureItem) {
+                const riskId = selectedRiskItem.dataset.risk;
+                const measureId = selectedMeasureItem.dataset.measure;
+                
+                associations[riskId] = measureId;
+                
+                selectedRiskItem.classList.remove('selected');
+                selectedRiskItem.classList.add('matched');
+                selectedMeasureItem.classList.remove('selected');
+                selectedMeasureItem.classList.add('matched');
+                
+                selectedRiskItem = null;
+                selectedMeasureItem = null;
+                
+                updateAssociationsDisplay();
+            }
+        }
+
+        function updateAssociationsDisplay() {
+            const count = Object.keys(associations).length;
+            document.getElementById('associationsCount').textContent = `${count}/5`;
+            
+            const resultDiv = document.getElementById('associationsResult');
+            resultDiv.innerHTML = Object.keys(associations).map(risk => {
+                const measure = associations[risk];
+                return `<span style="background: var(--primary); color: white; padding: 4px 8px; border-radius: 4px; margin: 2px; font-size: 14px;">${risk} → ${measure}</span>`;
+            }).join(' ');
+            
+            document.getElementById('validateAssocBtn').disabled = count < 5;
+        }
+
+        function validateAssociations() {
+            let correctCount = 0;
+            
+            Object.keys(associations).forEach(risk => {
+                const userMeasure = associations[risk];
+                const correctMeasure = correctAssociations[risk];
+                
+                if (userMeasure === correctMeasure) {
+                    correctCount++;
+                }
+            });
+            
+            chapterProgress.association = true;
+            const percentage = Math.round((correctCount / 5) * 100);
+            
+            showToast(`Associations validées ! Score : ${correctCount}/5 (${percentage}%)`, correctCount >= 3 ? 'success' : 'warning');
+            
+            setTimeout(() => {
+                document.getElementById('qcmSection').style.display = 'block';
+                document.getElementById('qcmSection').scrollIntoView({ behavior: 'smooth' });
+            }, 2000);
+        }
+
+        // Activité 3 : QCM
+        function selectAnswer(questionNum, answer) {
+            const question = document.querySelector(`[data-question="${questionNum}"]`);
+            const options = question.querySelectorAll('.qcm-option');
+            
+            options.forEach(opt => opt.classList.remove('selected'));
+            event.target.classList.add('selected');
+            
+            qcmAnswers[questionNum] = answer;
+            updateQCMProgress();
+        }
+
+        function updateQCMProgress() {
+            const answered = Object.keys(qcmAnswers).length;
+            const total = 18;
+            const percentage = (answered / total) * 100;
+            
+            document.getElementById('progress-text').textContent = `${answered}/${total} questions`;
+            document.getElementById('progress-fill-qcm').style.width = percentage + '%';
+            
+            document.getElementById('validateQCMBtn').disabled = answered < total;
+        }
+
+        function validateQCM() {
+            let correctCount = 0;
+            
+            for (let q = 1; q <= 18; q++) {
+                const question = document.querySelector(`[data-question="${q}"]`);
+                const correctOption = question.querySelector('[data-correct="true"]');
+                const selectedOption = question.querySelector('.qcm-option.selected');
+                
+                question.querySelectorAll('.qcm-option').forEach(opt => {
+                    opt.classList.remove('correct', 'incorrect');
+                });
+                
+                if (correctOption) correctOption.classList.add('correct');
+                
+                if (selectedOption) {
+                    if (selectedOption.dataset.correct === 'true') {
+                        correctCount++;
+                    } else {
+                        selectedOption.classList.add('incorrect');
+                    }
+                }
+            }
+            
+            chapterProgress.qcm = true;
+            const percentage = Math.round((correctCount / 18) * 100);
+            
+            showToast(`QCM terminé ! Score : ${correctCount}/18 (${percentage}%)`, correctCount >= 12 ? 'success' : 'warning');
+            
+            setTimeout(() => {
+                document.getElementById('selfEvalSection').style.display = 'block';
+                document.getElementById('selfEvalSection').scrollIntoView({ behavior: 'smooth' });
+            }, 2000);
+        }
+
+        // Activité 4 : Auto-évaluation
+        function selectEvaluation(level) {
+            document.querySelectorAll('[data-level]').forEach(item => item.classList.remove('selected'));
+            event.target.closest('[data-level]').classList.add('selected');
+            
+            selfEvaluationLevel = level;
+            document.getElementById('finalizeBtn').disabled = false;
+        }
+
+        function finalizeEvaluation() {
+            chapterProgress.selfEvaluation = true;
+            showToast('Auto-évaluation finalisée !', 'success');
+            
+            calculateFinalResults();
+            
+            setTimeout(() => {
+                document.getElementById('resultsSection').style.display = 'block';
+                document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+            }, 1500);
+        }
+
+        function calculateFinalResults() {
+            // Calcul des scores
+            const fillBlanks = document.querySelectorAll('.fill-blank.filled');
+            const fillScore = fillBlanks.length;
+            
+            let assocScore = 0;
+            Object.keys(associations).forEach(risk => {
+                if (associations[risk] === correctAssociations[risk]) assocScore++;
+            });
+            
+            let qcmScore = 0;
+            Object.keys(qcmAnswers).forEach(q => {
+                const question = document.querySelector(`[data-question="${q}"]`);
+                const correctOption = question.querySelector('[data-correct="true"]');
+                if (correctOption && qcmAnswers[q] === correctOption.dataset.answer) {
+                    qcmScore++;
+                }
+            });
+            
+            const totalScore = fillScore + assocScore + qcmScore + selfEvaluationLevel;
+            const globalPercentage = Math.round((totalScore / 34) * 100);
+            
+            // Affichage des résultats
+            document.getElementById('fillScore').textContent = `${fillScore}/7`;
+            document.getElementById('assocScore').textContent = `${assocScore}/5`;
+            document.getElementById('qcmScore').textContent = `${qcmScore}/18`;
+            document.getElementById('selfEvalScore').textContent = `${selfEvaluationLevel}/4`;
+            document.getElementById('globalScore').textContent = totalScore;
+            document.getElementById('globalPercentage').textContent = globalPercentage + '%';
+            document.getElementById('global-score').textContent = globalPercentage + '%';
+            
+            // Détermination du niveau
+            let niveau, classe;
+            if (globalPercentage >= 85) {
+                niveau = '🟢 Parfaitement acquis';
+                classe = 'niveau-vert';
+            } else if (globalPercentage >= 70) {
+                niveau = '🟦 Acquis';
+                classe = 'niveau-bleu';
+            } else if (globalPercentage >= 50) {
+                niveau = '🟠 En cours d\'acquisition';
+                classe = 'niveau-orange';
+            } else {
+                niveau = '🔴 Non acquis';
+                classe = 'niveau-rouge';
+            }
+            
+            document.getElementById('niveau-atteint').textContent = niveau;
+            
+            // Feedback personnalisé
+            const feedback = document.getElementById('feedback-niveau');
+            feedback.className = `feedback ${classe}`;
+            feedback.style.display = 'block';
+            
+            let message = `<h3>🎯 Analyse de vos compétences comportementales</h3>`;
+            if (globalPercentage >= 85) {
+                message += `<p><strong>🎉 Excellent !</strong> Vous maîtrisez parfaitement l'analyse des situations électriques dangereuses. Vos réflexes de sécurité sont exemplaires.</p>`;
+            } else if (globalPercentage >= 70) {
+                message += `<p><strong>👍 Très bien !</strong> Vous savez analyser les risques électriques et adopter les bons comportements de sécurité.</p>`;
+            } else if (globalPercentage >= 50) {
+                message += `<p><strong>⚠️ En progression :</strong> Vos compétences d'analyse s'améliorent mais demandent encore du travail. Continuez à vous former.</p>`;
+            } else {
+                message += `<p><strong>📚 À renforcer :</strong> L'analyse des risques électriques nécessite plus de formation. Reprenez les bases avec votre formateur.</p>`;
+            }
+            
+            feedback.innerHTML = message;
+            
+            // Mise à jour de la progression
+            chapterProgress.globalScore = globalPercentage;
+            chapterProgress.competenceLevel = niveau;
+            chapterProgress.competenceClass = classe;
+            chapterProgress.completed = true;
+            
+            // Débloquer le chapitre suivant
+            document.getElementById('next-chapter').disabled = false;
+            
+            saveProgress();
+        }
+
+        // Sauvegarde et navigation
+        function saveProgress() {
+            const progressData = {
+                chapterProgress,
+                selectedBlank,
+                associations,
+                qcmAnswers,
+                selfEvaluationLevel,
+                timestamp: new Date().toISOString()
+            };
+            
+            try {
+                sessionStorage.setItem('enerweb_tp4_progress', JSON.stringify(progressData));
+                
+                // Sauvegarde dans le système global ÉNERWEB
+                const globalProgress = JSON.parse(sessionStorage.getItem('enerweb_global_progress') || '{}');
+                globalProgress[`chapter_${CURRENT_CHAPTER_ID}`] = {
+                    completed: chapterProgress.completed,
+                    score: chapterProgress.globalScore,
+                    timeSpent: chapterProgress.timeSpent,
+                    lastAccess: new Date().toISOString()
+                };
+                sessionStorage.setItem('enerweb_global_progress', JSON.stringify(globalProgress));
+                
+            } catch (e) {
+                console.warn('Erreur lors de la sauvegarde');
+            }
+        }
+
+        function loadProgress() {
+            try {
+                const savedProgress = sessionStorage.getItem('enerweb_tp4_progress');
+                if (savedProgress) {
+                    const data = JSON.parse(savedProgress);
+                    if (data.chapterProgress) chapterProgress = data.chapterProgress;
+                    if (data.associations) associations = data.associations;
+                    if (data.qcmAnswers) qcmAnswers = data.qcmAnswers;
+                    if (data.selfEvaluationLevel) selfEvaluationLevel = data.selfEvaluationLevel;
+                }
+            } catch (e) {
+                console.warn('Impossible de charger la progression sauvegardée');
+            }
+        }
+
+        // Fonctions d'accessibilité
+        function toggleAccessibility() {
+            document.body.classList.toggle('accessibility-mode');
+            const btn = document.getElementById('btnAccessibility');
+            if (document.body.classList.contains('accessibility-mode')) {
+                btn.textContent = '🔍 Mode normal';
+                btn.classList.add('active');
+            } else {
+                btn.textContent = '🔍 Mode accessibilité';
+                btn.classList.remove('active');
+            }
+        }
+
+        function togglePoliceAdaptee() {
+            document.body.classList.toggle('adapted-reading-mode');
+            const btn = document.getElementById('btnPoliceAdaptee');
+            if (document.body.classList.contains('adapted-reading-mode')) {
+                btn.textContent = '📖 Police normale';
+                btn.classList.add('active');
+            } else {
+                btn.textContent = '📖 Police adaptée';
+                btn.classList.remove('active');
+            }
+        }
+
+        // Autres fonctions
+        function goToNextChapter() {
+            if (chapterProgress.completed) {
+                window.location.href = 'chapter5_interventions_env.html';
+            } else {
+                showToast('Veuillez terminer toutes les activités du chapitre', 'warning');
+            }
+        }
+
+        function exportToPDF() {
+            showToast('⚠️ Fonctionnalité PDF en cours de développement', 'warning');
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type}`;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Sauvegarde automatique
+        window.addEventListener('beforeunload', saveProgress);
+        setInterval(() => {
+            if (chapterProgress.globalScore > 0) saveProgress();
+        }, 120000);
+    </script>
+</body>
+</html>

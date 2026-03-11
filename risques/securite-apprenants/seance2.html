@@ -1,0 +1,1750 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Inerweb - Séance 2 : L'accueil obligatoire en entreprise">
+    <meta name="author" content="F. Henninot">
+    
+    <title>Séance 2 - L'accueil en Entreprise</title>
+    
+    <!-- Police Lexend -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ========== VARIABLES CSS ========== */
+        :root {
+            --primary: #FF6B35;
+            --secondary: #FF8E53;
+            --accent: #FFC300;
+            --non-acquis: #ef4444;
+            --en-cours: #f59e0b;
+            --acquis: #3b82f6;
+            --parfait: #10b981;
+            --background: #f8f9fa;
+            --text: #333333;
+            --border: #e0e0e0;
+            --shadow: 0 4px 12px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Lexend', system-ui, -apple-system, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        /* Header avec navigation */
+        .header {
+            background: white;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .snowflake {
+            display: inline-block;
+            animation: snowflakeRotate 4s linear infinite;
+            font-size: 1.5em;
+        }
+        
+        @keyframes snowflakeRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-nav {
+            padding: 8px 16px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn-nav:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+        
+        /* Container principal */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px 40px;
+        }
+        
+        /* Barre de progression locale */
+        .local-progress {
+            background: #e0e0e0;
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .local-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            width: 0%;
+            transition: width 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .local-progress-fill::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        /* Section d'apprentissage */
+        .learning-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .section-icon {
+            font-size: 2.5em;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .section-title {
+            font-size: 1.8em;
+            color: var(--primary);
+        }
+        
+        /* Objectifs pédagogiques */
+        .objectives {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .objectives::before {
+            content: '🎯';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 4em;
+            opacity: 0.1;
+        }
+        
+        .objectives h3 {
+            color: var(--acquis);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .objectives ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .objectives li {
+            padding: 8px 0;
+            padding-left: 30px;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+        
+        .objectives li:hover {
+            transform: translateX(5px);
+        }
+        
+        .objectives li::before {
+            content: '🎯';
+            position: absolute;
+            left: 0;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        /* Contenu pédagogique amélioré */
+        .content-box {
+            background: #f5f5f5;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border-left: 4px solid var(--primary);
+            position: relative;
+        }
+        
+        .content-box::before {
+            content: '💡';
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+            border: 2px solid var(--accent);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .highlight-box::before {
+            content: '⭐';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 4em;
+            opacity: 0.1;
+            animation: starPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes starPulse {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.2) rotate(180deg); }
+        }
+        
+        /* Tooltips améliorés */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 2px dotted var(--primary);
+            cursor: help;
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 250px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -125px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-weight: normal;
+            font-size: 0.9em;
+            line-height: 1.4;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* Activités interactives améliorées */
+        .activity {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border: 2px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .activity::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+            animation: colorWave 3s linear infinite;
+        }
+        
+        @keyframes colorWave {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .activity-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .activity-title {
+            font-size: 1.2em;
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        /* Checklist interactive améliorée */
+        .checklist {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .checklist-item {
+            background: white;
+            padding: 15px 20px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            border: 2px solid var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .checklist-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,195,0,0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .checklist-item:hover::before {
+            left: 100%;
+        }
+        
+        .checklist-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--primary);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+        
+        .checklist-item.checked .checkbox {
+            background: var(--parfait);
+            border-color: var(--parfait);
+            animation: checkBounce 0.3s ease;
+        }
+        
+        @keyframes checkBounce {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        .checklist-item.checked .checkbox::after {
+            content: '✓';
+            color: white;
+            font-weight: bold;
+        }
+        
+        .checklist-text {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .checklist-icon {
+            font-size: 1.5em;
+            flex-shrink: 0;
+        }
+        
+        /* Matching game amélioré */
+        .matching-game {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        
+        .match-column {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        
+        .match-column h4 {
+            margin-bottom: 15px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1em;
+        }
+        
+        .match-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border: 2px solid var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            user-select: none;
+        }
+        
+        .match-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-color: var(--primary);
+        }
+        
+        .match-item.selected {
+            background: #e3f2fd;
+            border-color: var(--acquis);
+            transform: scale(1.05);
+        }
+        
+        .match-item.matched {
+            background: #c8e6c9;
+            border-color: var(--parfait);
+            opacity: 0.8;
+            cursor: not-allowed;
+            position: relative;
+        }
+        
+        .match-item.matched::after {
+            content: '✅';
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            font-size: 1.2em;
+        }
+        
+        .match-item.incorrect {
+            animation: wrongShake 0.5s ease;
+            background: #ffcdd2;
+            border-color: var(--non-acquis);
+        }
+        
+        @keyframes wrongShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        /* Connection lines for matching */
+        .match-line {
+            position: absolute;
+            height: 2px;
+            background: var(--parfait);
+            transform-origin: left center;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        /* Cards d'information */
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .info-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .info-card:hover::before {
+            opacity: 0.05;
+        }
+        
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+        
+        .info-card-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+            display: inline-block;
+            animation: wiggle 2s ease-in-out infinite;
+        }
+        
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(3deg); }
+            75% { transform: rotate(-3deg); }
+        }
+        
+        .info-card h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        /* Timeline visuelle */
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+            margin: 20px 0;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--primary);
+            transform: translateX(-50%);
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .timeline-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            width: 40%;
+            position: relative;
+            transition: var(--transition);
+        }
+        
+        .timeline-item:nth-child(odd) .timeline-content {
+            margin-right: auto;
+            margin-left: 10%;
+            text-align: right;
+        }
+        
+        .timeline-item:nth-child(even) .timeline-content {
+            margin-left: auto;
+            margin-right: 10%;
+        }
+        
+        .timeline-content:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+        
+        .timeline-dot {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+        
+        .timeline-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        /* Boutons améliorés */
+        .btn {
+            padding: 12px 24px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .btn-validate {
+            background: var(--parfait);
+        }
+        
+        .btn-validate:hover {
+            background: #059862;
+        }
+        
+        /* Score et feedback */
+        .score-display {
+            background: linear-gradient(135deg, #e1f5fe, #b3e5fc);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .score-number {
+            font-size: 3em;
+            font-weight: 700;
+            color: var(--acquis);
+            animation: countUp 1s ease-out;
+        }
+        
+        @keyframes countUp {
+            from { transform: scale(0); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        /* Contrôles d'accessibilité */
+        .accessibility-controls {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 99;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+        
+        .btn-accessibility {
+            padding: 8px 15px;
+            background: white;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn-accessibility:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-accessibility.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* Mode accessible */
+        body.accessible-mode {
+            font-family: 'OpenDyslexic', 'Comic Sans MS', sans-serif;
+            line-height: 2;
+            letter-spacing: 0.1em;
+        }
+        
+        body.high-contrast {
+            background: #000;
+            color: #fff;
+        }
+        
+        body.high-contrast .learning-section,
+        body.high-contrast .activity,
+        body.high-contrast .header {
+            background: #222;
+            color: #fff;
+            border: 2px solid #fff;
+        }
+        
+        /* Mascotte helper */
+        .helper-mascot {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 70px;
+            height: 70px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2em;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: var(--transition);
+            z-index: 100;
+        }
+        
+        .helper-mascot:hover {
+            transform: scale(1.1) rotate(10deg);
+        }
+        
+        .helper-bubble {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            width: 250px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .helper-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            right: 25px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 10px solid white;
+        }
+        
+        .helper-mascot:hover .helper-bubble {
+            display: block;
+        }
+        
+        /* Success animation */
+        .success-animation {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 5em;
+            animation: successPop 1s ease;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        
+        @keyframes successPop {
+            0% { transform: translate(-50%, -50%) scale(0) rotate(0deg); opacity: 0; }
+            50% { transform: translate(-50%, -50%) scale(1.2) rotate(180deg); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1) rotate(360deg); opacity: 0; }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+            }
+            
+            .matching-game {
+                grid-template-columns: 1fr;
+            }
+            
+            .timeline::before {
+                left: 30px;
+            }
+            
+            .timeline-item .timeline-content {
+                width: calc(100% - 60px);
+                margin-left: 60px !important;
+                text-align: left !important;
+            }
+            
+            .timeline-dot {
+                left: 30px;
+            }
+            
+            .accessibility-controls {
+                top: auto;
+                bottom: 100px;
+                flex-direction: row;
+            }
+            
+            .helper-mascot {
+                bottom: 20px;
+                right: 10px;
+                width: 60px;
+                height: 60px;
+                font-size: 1.8em;
+            }
+        }
+    </style>
+<script>/* (c) F. Henninot - inerWeb FRIGOLO - Tous droits reserves */
+document.addEventListener("contextmenu",function(e){e.preventDefault()});
+document.addEventListener("keydown",function(e){if((e.ctrlKey||e.metaKey)&&(e.key==="u"||e.key==="s"||e.key==="c")){e.preventDefault()}});
+document.addEventListener("selectstart",function(e){if(e.target.tagName\!=="INPUT"&&e.target.tagName\!=="TEXTAREA"){e.preventDefault()}});
+</script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <span class="snowflake">❄️</span>
+                <h1>Séance 2 : L'accueil en Entreprise 🤝</h1>
+            </div>
+            <div class="nav-buttons">
+                <button class="btn-nav" onclick="viewPDF()">
+                    <span>📄</span>
+                    <span>Voir PDF</span>
+                </button>
+                <a href="index_accueil_securite.html" class="btn-nav">
+                    <span>🏠</span>
+                    <span>Retour</span>
+                </a>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Contrôles d'accessibilité -->
+    <div class="accessibility-controls">
+        <button class="btn-accessibility" onclick="toggleAccessibleMode()" id="btnAccessible">
+            <span>📖</span>
+            <span>Police adaptée</span>
+        </button>
+        <button class="btn-accessibility" onclick="toggleHighContrast()" id="btnContrast">
+            <span>🌓</span>
+            <span>Contraste</span>
+        </button>
+        <button class="btn-accessibility" onclick="changeFontSize()" id="btnFontSize">
+            <span>🔍+</span>
+            <span>Taille</span>
+        </button>
+    </div>
+    
+    <!-- Mascotte helper -->
+    <div class="helper-mascot">
+        <span>🦺</span>
+        <div class="helper-bubble">
+            <strong>Astuce de Sécu ! 💡</strong><br>
+            L'accueil sécurité est OBLIGATOIRE dès ton premier jour ! Tu ne peux pas commencer sans ça.
+        </div>
+    </div>
+    
+    <!-- Container principal -->
+    <div class="container">
+        <!-- Barre de progression locale -->
+        <div class="local-progress">
+            <div class="local-progress-fill" id="localProgress"></div>
+        </div>
+        
+        <!-- Objectifs pédagogiques -->
+        <div class="objectives">
+            <h3>
+                <span style="font-size: 1.5em;">🎓</span>
+                Objectifs de cette séance
+            </h3>
+            <ul>
+                <li>Comprendre l'importance de l'<span class="tooltip">accueil sécurité
+                    <span class="tooltiptext">Formation obligatoire donnée à tout nouveau salarié pour lui expliquer les règles de sécurité</span>
+                </span></li>
+                <li>Connaître tes droits lors de ton arrivée en entreprise</li>
+                <li>Identifier ce que l'entreprise doit te fournir</li>
+                <li>Savoir poser les bonnes questions pour ta sécurité 🤔</li>
+            </ul>
+        </div>
+        
+        <!-- Section 1 : C'est quoi l'accueil sécurité ? -->
+        <div class="learning-section">
+            <div class="section-header">
+                <span class="section-icon">📋</span>
+                <h2 class="section-title">C'est quoi l'accueil sécurité ?</h2>
+            </div>
+            
+            <div class="highlight-box">
+                <h4 style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 1.5em;">⚖️</span>
+                    L'accueil sécurité, c'est LA LOI !
+                </h4>
+                <p><strong>Depuis 2017, TOUTE entreprise DOIT te faire un accueil sécurité :</strong></p>
+                <ul style="margin-top: 10px; margin-left: 20px;">
+                    <li>✓ Dès ton <strong>premier jour</strong> (pas le 2ème, pas la semaine d'après !)</li>
+                    <li>✓ Avant de commencer à travailler</li>
+                    <li>✓ Même pour un stage de 1 jour !</li>
+                    <li>✓ Avec une <span class="tooltip">attestation signée
+                        <span class="tooltiptext">Un papier officiel que tu signes pour prouver que tu as bien eu la formation</span>
+                    </span></li>
+                </ul>
+            </div>
+            
+            <div class="content-box">
+                <p><strong>L'accueil sécurité est une formation qui te présente :</strong></p>
+                <div class="info-cards">
+                    <div class="info-card">
+                        <div class="info-card-icon">🏢</div>
+                        <h4>L'entreprise</h4>
+                        <p>Les locaux, les sorties de secours, les zones dangereuses...</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-icon">⚠️</div>
+                        <h4>Les risques</h4>
+                        <p>Les dangers spécifiques à ton poste de travail</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-icon">🛡️</div>
+                        <h4>Les protections</h4>
+                        <p>Les EPI obligatoires et comment les utiliser</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-icon">🚨</div>
+                        <h4>Les urgences</h4>
+                        <p>Que faire en cas d'accident, où sont les secours...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Section 2 : Timeline de l'accueil -->
+        <div class="learning-section">
+            <div class="section-header">
+                <span class="section-icon">⏰</span>
+                <h2 class="section-title">Les étapes de ton accueil</h2>
+            </div>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-icon">📅</div>
+                        <h4>JOUR 1 - Matin</h4>
+                        <p>Accueil général de l'entreprise</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-icon">🏗️</div>
+                        <h4>JOUR 1 - Après-midi</h4>
+                        <p>Visite des locaux et de ton poste</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-icon">📝</div>
+                        <h4>Avant de travailler</h4>
+                        <p>Signature de l'attestation d'accueil</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-icon">✅</div>
+                        <h4>Début du travail</h4>
+                        <p>Tu peux commencer en sécurité !</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Activité 1 : Checklist interactive -->
+        <div class="activity">
+            <div class="activity-header">
+                <span style="font-size: 1.5em;">☑️</span>
+                <h3 class="activity-title">Activité 1 : Ce que l'entreprise DOIT te fournir</h3>
+            </div>
+            
+            <p>👆 <strong>Coche tous les éléments que l'entreprise doit OBLIGATOIREMENT te donner :</strong></p>
+            
+            <div class="checklist">
+                <div class="checklist-item" onclick="toggleCheck(this)" data-correct="true">
+                    <div class="checkbox"></div>
+                    <div class="checklist-text">
+                        <span class="checklist-icon">📋</span>
+                        <span>Le <span class="tooltip">règlement intérieur
+                            <span class="tooltiptext">Document qui explique toutes les règles de l'entreprise (horaires, interdictions...)</span>
+                        </span></span>
+                    </div>
+                </div>
+                
+                <div class="checklist-item" onclick="toggleCheck(this)" data-correct="true">
+                    <div class="checkbox"></div>
+                    <div class="checklist-text">
+                        <span class="checklist-icon">🦺</span>
+                        <span>Les <span class="tooltip">EPI
+                            <span class="tooltiptext">Équipements de Protection Individuelle : casque, chaussures de sécurité, gants...</span>
+                        </span> nécessaires</span>
+                    </div>
+                </div>
+                
+                <div class="checklist-item" onclick="toggleCheck(this)" data-correct="false">
+                    <div class="checkbox"></div>
+                    <div class="checklist-text">
+                        <span class="checklist-icon">💰</span>
+                        <span>Une prime de bienvenue</span>
+                    </div>
+                </div>
+                
+                <div class="checklist-item" onclick="toggleCheck(this)" data-correct="true">
+                    <div class="checkbox"></div>
+                    <div class="checklist-text">
+                        <span class="checklist-icon">⚠️</span>
+                        <span>La liste des risques de ton poste</span>
+                    </div>
+                </div>
+                
+                <div class="checklist-item" onclick="toggleCheck(this)" data-correct="true">
+                    <div class="checkbox"></div>
+                    <div class="checklist-text">
+                        <span class="checklist-icon">🏥</span>
+                        <span>Les consignes en cas d'accident</span>
+                    </div>
+                </div>
+                
+                <div class="checklist-item" onclick="toggleCheck(this)" data-correct="false">
+                    <div class="checkbox"></div>
+                    <div class="checklist-text">
+                        <span class="checklist-icon">🚗</span>
+                        <span>Une voiture de fonction</span>
+                    </div>
+                </div>
+                
+                <div class="checklist-item" onclick="toggleCheck(this)" data-correct="true">
+                    <div class="checkbox"></div>
+                    <div class="checklist-text">
+                        <span class="checklist-icon">🔥</span>
+                        <span>Le plan d'<span class="tooltip">évacuation
+                            <span class="tooltiptext">Plan qui montre comment sortir du bâtiment en cas d'urgence (incendie...)</span>
+                        </span></span>
+                    </div>
+                </div>
+                
+                <div class="checklist-item" onclick="toggleCheck(this)" data-correct="true">
+                    <div class="checkbox"></div>
+                    <div class="checklist-text">
+                        <span class="checklist-icon">📚</span>
+                        <span>Une formation à ton poste de travail</span>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn btn-validate" onclick="validateChecklist()" style="margin-top: 20px;">
+                <span>🔍</span>
+                <span>Vérifier mes réponses</span>
+            </button>
+            
+            <div id="checklist-feedback" style="margin-top: 15px; display: none;"></div>
+        </div>
+        
+        <!-- Section 3 : Tes droits -->
+        <div class="learning-section">
+            <div class="section-header">
+                <span class="section-icon">⚖️</span>
+                <h2 class="section-title">Tes droits pendant l'accueil</h2>
+            </div>
+            
+            <div class="content-box" style="background: #e8f5e9; border-color: var(--parfait);">
+                <h4 style="display: flex; align-items: center; gap: 10px; color: var(--parfait);">
+                    <span style="font-size: 1.5em;">✅</span>
+                    Tu as le DROIT de :
+                </h4>
+                <div style="margin-top: 15px; display: grid; gap: 12px;">
+                    <div style="display: flex; align-items: center; gap: 15px; padding: 12px; background: white; border-radius: 8px;">
+                        <span style="font-size: 1.5em;">❓</span>
+                        <span><strong>Poser TOUTES les questions</strong> (même si elles te paraissent bêtes !)</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px; padding: 12px; background: white; border-radius: 8px;">
+                        <span style="font-size: 1.5em;">🔄</span>
+                        <span><strong>Demander à revoir</strong> ce que tu n'as pas compris</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px; padding: 12px; background: white; border-radius: 8px;">
+                        <span style="font-size: 1.5em;">📝</span>
+                        <span><strong>Avoir des documents écrits</strong> sur les consignes</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px; padding: 12px; background: white; border-radius: 8px;">
+                        <span style="font-size: 1.5em;">⏸️</span>
+                        <span><strong>Refuser de travailler</strong> si tu n'as pas eu l'accueil sécurité</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px; padding: 12px; background: white; border-radius: 8px;">
+                        <span style="font-size: 1.5em;">🌐</span>
+                        <span><strong>Avoir la formation dans ta langue</strong> si tu ne comprends pas bien le français</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="content-box" style="background: #ffebee; border-color: var(--non-acquis);">
+                <h4 style="display: flex; align-items: center; gap: 10px; color: var(--non-acquis);">
+                    <span style="font-size: 1.5em;">❌</span>
+                    Ce qui est INTERDIT :
+                </h4>
+                <div style="margin-top: 15px; display: grid; gap: 12px;">
+                    <div style="display: flex; align-items: center; gap: 15px; padding: 12px; background: white; border-radius: 8px;">
+                        <span style="font-size: 1.5em;">🚫</span>
+                        <span>Te faire travailler <strong>SANS accueil sécurité</strong></span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px; padding: 12px; background: white; border-radius: 8px;">
+                        <span style="font-size: 1.5em;">⏱️</span>
+                        <span>Te faire un accueil <strong>"express" de 5 minutes"</strong></span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px; padding: 12px; background: white; border-radius: 8px;">
+                        <span style="font-size: 1.5em;">✍️</span>
+                        <span>Te faire signer l'attestation <strong>sans vraie formation</strong></span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px; padding: 12px; background: white; border-radius: 8px;">
+                        <span style="font-size: 1.5em;">💸</span>
+                        <span>Te faire <strong>payer tes EPI</strong> obligatoires</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Activité 2 : Matching game -->
+        <div class="activity">
+            <div class="activity-header">
+                <span style="font-size: 1.5em;">🎯</span>
+                <h3 class="activity-title">Activité 2 : Associe les questions aux bonnes situations</h3>
+            </div>
+            
+            <p>🔗 <strong>Clique sur une question puis sur la situation correspondante :</strong></p>
+            
+            <div class="matching-game">
+                <div class="match-column">
+                    <h4>
+                        <span>❓</span>
+                        Questions à poser
+                    </h4>
+                    <div class="match-item" data-pair="1" onclick="selectMatch(this, 'question')">
+                        "Où sont les sorties de secours ?"
+                    </div>
+                    <div class="match-item" data-pair="2" onclick="selectMatch(this, 'question')">
+                        "Qui est le responsable sécurité ?"
+                    </div>
+                    <div class="match-item" data-pair="3" onclick="selectMatch(this, 'question')">
+                        "Quels EPI je dois porter ?"
+                    </div>
+                    <div class="match-item" data-pair="4" onclick="selectMatch(this, 'question')">
+                        "Que faire si je me blesse ?"
+                    </div>
+                    <div class="match-item" data-pair="5" onclick="selectMatch(this, 'question')">
+                        "C'est quoi ce signal sonore ?"
+                    </div>
+                </div>
+                
+                <div class="match-column">
+                    <h4>
+                        <span>💡</span>
+                        Situations
+                    </h4>
+                    <div class="match-item" data-pair="3" onclick="selectMatch(this, 'situation')">
+                        Tu arrives à ton poste de travail
+                    </div>
+                    <div class="match-item" data-pair="1" onclick="selectMatch(this, 'situation')">
+                        Tu visites les locaux
+                    </div>
+                    <div class="match-item" data-pair="5" onclick="selectMatch(this, 'situation')">
+                        Tu entends une alarme
+                    </div>
+                    <div class="match-item" data-pair="2" onclick="selectMatch(this, 'situation')">
+                        On te présente l'équipe
+                    </div>
+                    <div class="match-item" data-pair="4" onclick="selectMatch(this, 'situation')">
+                        On t'explique les procédures d'urgence
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn btn-validate" onclick="validateMatching()" style="margin-top: 20px;">
+                <span>✅</span>
+                <span>Valider les associations</span>
+            </button>
+            
+            <div id="matching-feedback" style="margin-top: 15px; display: none;"></div>
+        </div>
+        
+        <!-- Section 4 : Questions importantes -->
+        <div class="learning-section">
+            <div class="section-header">
+                <span class="section-icon">💭</span>
+                <h2 class="section-title">Les questions à ne pas oublier !</h2>
+            </div>
+            
+            <div class="content-box">
+                <p><strong>Voici une liste de questions ESSENTIELLES à poser pendant ton accueil :</strong></p>
+                
+                <div style="display: grid; gap: 15px; margin-top: 20px;">
+                    <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; border-left: 4px solid var(--acquis);">
+                        <h5 style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <span>🏥</span>
+                            Sur les urgences :
+                        </h5>
+                        <ul style="margin-left: 20px;">
+                            <li>Où est l'infirmerie ?</li>
+                            <li>Qui sont les <span class="tooltip">SST
+                                <span class="tooltiptext">Sauveteurs Secouristes du Travail : personnes formées pour donner les premiers secours</span>
+                            </span> ?</li>
+                            <li>Quel numéro appeler en cas d'urgence ?</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #fff3e0; padding: 15px; border-radius: 8px; border-left: 4px solid var(--accent);">
+                        <h5 style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <span>⚠️</span>
+                            Sur les risques :
+                        </h5>
+                        <ul style="margin-left: 20px;">
+                            <li>Quels sont les dangers de mon poste ?</li>
+                            <li>Y a-t-il des produits dangereux ?</li>
+                            <li>Quelles sont les zones interdites ?</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #e8f5e9; padding: 15px; border-radius: 8px; border-left: 4px solid var(--parfait);">
+                        <h5 style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <span>🛡️</span>
+                            Sur la protection :
+                        </h5>
+                        <ul style="margin-left: 20px;">
+                            <li>Où récupérer mes EPI ?</li>
+                            <li>Comment les utiliser correctement ?</li>
+                            <li>Quand les remplacer ?</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="highlight-box" style="background: #fce4ec; border-color: #e91e63;">
+                <h4 style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 1.5em;">💡</span>
+                    Conseil de Sécu
+                </h4>
+                <p><strong>N'aie pas peur de poser des questions !</strong></p>
+                <p style="margin-top: 10px;">Il vaut mieux poser 10 fois la même question que de faire une erreur qui pourrait te blesser. 
+                Les formateurs préfèrent un apprenti curieux qu'un apprenti qui fait semblant d'avoir compris ! 🤓</p>
+            </div>
+        </div>
+        
+        <!-- Synthèse et validation -->
+        <div class="learning-section">
+            <div class="section-header">
+                <span class="section-icon">✅</span>
+                <h2 class="section-title">À retenir de cette séance</h2>
+            </div>
+            
+            <div class="content-box">
+                <h4 style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 1.5em;">📌</span>
+                    Les points essentiels :
+                </h4>
+                <div style="margin-top: 20px; display: grid; gap: 15px;">
+                    <div style="display: flex; align-items: center; gap: 15px; padding: 15px; background: #e3f2fd; border-radius: 8px;">
+                        <span style="font-size: 1.5em;">⚖️</span>
+                        <span>L'accueil sécurité est <strong>OBLIGATOIRE</strong> dès le 1er jour</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px; padding: 15px; background: #fff3e0; border-radius: 8px;">
+                        <span style="font-size: 1.5em;">📝</span>
+                        <span>Tu dois signer une <strong>attestation</strong> après la formation</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px; padding: 15px; background: #fce4ec; border-radius: 8px;">
+                        <span style="font-size: 1.5em;">🦺</span>
+                        <span>L'entreprise doit te fournir <strong>GRATUITEMENT</strong> tes EPI</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px; padding: 15px; background: #e8f5e9; border-radius: 8px;">
+                        <span style="font-size: 1.5em;">❓</span>
+                        <span>Tu as le droit de <strong>poser toutes les questions</strong> nécessaires</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="score-display" id="scoreDisplay" style="display: none;">
+                <p>Ton score pour cette séance :</p>
+                <div class="score-number" id="scoreNumber">0%</div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn" onclick="validateSession()" id="btnValidate">
+                    <span>🏁</span>
+                    <span>Terminer la séance</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Variables globales
+        let activities = {
+            checklist: { completed: false, score: 0 },
+            matching: { completed: false, score: 0 }
+        };
+        
+        let matchingState = {
+            selectedQuestion: null,
+            selectedSituation: null,
+            matches: []
+        };
+        
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeAccessibility();
+            updateLocalProgress();
+        });
+        
+        // Gestion de la checklist
+        function toggleCheck(item) {
+            item.classList.toggle('checked');
+            
+            // Animation de check
+            if (item.classList.contains('checked')) {
+                const checkbox = item.querySelector('.checkbox');
+                checkbox.style.transform = 'scale(1.2)';
+                setTimeout(() => {
+                    checkbox.style.transform = 'scale(1)';
+                }, 200);
+            }
+        }
+        
+        function validateChecklist() {
+            const items = document.querySelectorAll('.checklist-item');
+            let correct = 0;
+            let total = 0;
+            
+            items.forEach(item => {
+                const isChecked = item.classList.contains('checked');
+                const shouldBeChecked = item.dataset.correct === 'true';
+                
+                total++;
+                
+                if (isChecked === shouldBeChecked) {
+                    correct++;
+                    item.style.background = '#e8f5e9';
+                    item.style.borderColor = 'var(--parfait)';
+                } else {
+                    item.style.background = '#ffebee';
+                    item.style.borderColor = 'var(--non-acquis)';
+                    
+                    // Ajouter indicateur visuel
+                    if (shouldBeChecked && !isChecked) {
+                        item.innerHTML += '<span style="margin-left: auto; color: var(--non-acquis); font-weight: 600;">↑ À cocher !</span>';
+                    } else if (!shouldBeChecked && isChecked) {
+                        item.innerHTML += '<span style="margin-left: auto; color: var(--non-acquis); font-weight: 600;">✗ Pas obligatoire</span>';
+                    }
+                }
+            });
+            
+            const score = Math.round((correct / total) * 100);
+            activities.checklist.score = score;
+            activities.checklist.completed = true;
+            
+            const feedback = document.getElementById('checklist-feedback');
+            feedback.innerHTML = `
+                <div style="color: ${score >= 70 ? 'var(--parfait)' : 'var(--non-acquis)'}; font-weight: 600; padding: 15px; background: ${score >= 70 ? '#e8f5e9' : '#ffebee'}; border-radius: 8px; display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 2em;">${score >= 70 ? '🎉' : '🤔'}</span>
+                    <div>
+                        Score : <strong>${correct}/${total} corrects (${score}%)</strong><br>
+                        ${score >= 70 ? 'Excellent ! Tu connais bien tes droits !' : 'Revois bien ce que l\'entreprise doit obligatoirement te fournir.'}
+                    </div>
+                </div>
+            `;
+            feedback.style.display = 'block';
+            
+            updateLocalProgress();
+            
+            // Désactiver les clics
+            items.forEach(item => item.onclick = null);
+        }
+        
+        // Gestion du matching game
+        function selectMatch(element, type) {
+            if (element.classList.contains('matched')) return;
+            
+            if (type === 'question') {
+                // Désélectionner l'ancienne question
+                if (matchingState.selectedQuestion) {
+                    matchingState.selectedQuestion.classList.remove('selected');
+                }
+                
+                element.classList.add('selected');
+                matchingState.selectedQuestion = element;
+                
+                // Si une situation est déjà sélectionnée, faire le match
+                if (matchingState.selectedSituation) {
+                    checkMatch();
+                }
+            } else {
+                // Désélectionner l'ancienne situation
+                if (matchingState.selectedSituation) {
+                    matchingState.selectedSituation.classList.remove('selected');
+                }
+                
+                element.classList.add('selected');
+                matchingState.selectedSituation = element;
+                
+                // Si une question est déjà sélectionnée, faire le match
+                if (matchingState.selectedQuestion) {
+                    checkMatch();
+                }
+            }
+        }
+        
+        function checkMatch() {
+            const questionPair = matchingState.selectedQuestion.dataset.pair;
+            const situationPair = matchingState.selectedSituation.dataset.pair;
+            
+            if (questionPair === situationPair) {
+                // Match correct
+                matchingState.selectedQuestion.classList.add('matched');
+                matchingState.selectedSituation.classList.add('matched');
+                matchingState.selectedQuestion.classList.remove('selected');
+                matchingState.selectedSituation.classList.remove('selected');
+                
+                matchingState.matches.push({
+                    question: matchingState.selectedQuestion,
+                    situation: matchingState.selectedSituation
+                });
+                
+                // Animation de succès
+                showSuccessAnimation();
+            } else {
+                // Match incorrect
+                matchingState.selectedQuestion.classList.add('incorrect');
+                matchingState.selectedSituation.classList.add('incorrect');
+                
+                setTimeout(() => {
+                    matchingState.selectedQuestion.classList.remove('incorrect', 'selected');
+                    matchingState.selectedSituation.classList.remove('incorrect', 'selected');
+                }, 1000);
+            }
+            
+            // Réinitialiser la sélection
+            matchingState.selectedQuestion = null;
+            matchingState.selectedSituation = null;
+        }
+        
+        function showSuccessAnimation() {
+            const anim = document.createElement('div');
+            anim.className = 'success-animation';
+            anim.textContent = '✅';
+            document.body.appendChild(anim);
+            
+            setTimeout(() => anim.remove(), 1000);
+        }
+        
+        function validateMatching() {
+            const totalPairs = 5;
+            const correctPairs = matchingState.matches.length;
+            const score = Math.round((correctPairs / totalPairs) * 100);
+            
+            activities.matching.score = score;
+            activities.matching.completed = true;
+            
+            // Montrer les associations manquées
+            const allItems = document.querySelectorAll('.match-item:not(.matched)');
+            allItems.forEach(item => {
+                item.style.opacity = '0.5';
+                item.style.cursor = 'not-allowed';
+            });
+            
+            const feedback = document.getElementById('matching-feedback');
+            feedback.innerHTML = `
+                <div style="color: ${score >= 60 ? 'var(--parfait)' : 'var(--non-acquis)'}; font-weight: 600; padding: 15px; background: ${score >= 60 ? '#e8f5e9' : '#ffebee'}; border-radius: 8px; display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 2em;">${score >= 60 ? '👏' : '💪'}</span>
+                    <div>
+                        Score : <strong>${correctPairs}/${totalPairs} associations correctes (${score}%)</strong><br>
+                        ${score >= 60 ? 'Bien joué ! Tu sais quand poser les bonnes questions !' : 'Continue à t\'entraîner pour bien identifier quand poser chaque question.'}
+                    </div>
+                </div>
+            `;
+            feedback.style.display = 'block';
+            
+            updateLocalProgress();
+        }
+        
+        // Progression locale
+        function updateLocalProgress() {
+            let completedCount = 0;
+            let totalScore = 0;
+            
+            Object.values(activities).forEach(activity => {
+                if (activity.completed) {
+                    completedCount++;
+                    totalScore += activity.score;
+                }
+            });
+            
+            const progress = (completedCount / Object.keys(activities).length) * 100;
+            const avgScore = completedCount > 0 ? totalScore / completedCount : 0;
+            
+            document.getElementById('localProgress').style.width = progress + '%';
+            
+            return avgScore;
+        }
+        
+        // Validation de la séance
+        function validateSession() {
+            const avgScore = updateLocalProgress();
+            
+            if (Object.values(activities).some(a => !a.completed)) {
+                showNotification('📝 Tu dois compléter toutes les activités avant de terminer !', 'warning');
+                return;
+            }
+            
+            // Afficher le score
+            document.getElementById('scoreNumber').textContent = Math.round(avgScore) + '%';
+            document.getElementById('scoreDisplay').style.display = 'block';
+            
+            // Sauvegarder la progression
+            saveProgress(avgScore);
+            
+            // Message de validation
+            if (avgScore >= 70) {
+                showNotification('🎉 Séance validée ! Tu connais bien tes droits lors de l\'accueil.', 'success');
+                document.getElementById('btnValidate').innerHTML = '<span>➡️</span><span>Séance suivante</span>';
+                document.getElementById('btnValidate').onclick = () => {
+                    window.location.href = 'seance3_travaux_reglementes.html';
+                };
+            } else {
+                showNotification('💪 Score insuffisant. Relis le cours et réessaye !', 'warning');
+            }
+        }
+        
+        // Sauvegarde progression
+        function saveProgress(score) {
+            const moduleData = JSON.parse(localStorage.getItem('inerweb_accueil_securite_data') || '{}');
+            
+            moduleData.progress = moduleData.progress || {};
+            moduleData.progress.seance2 = {
+                completed: true,
+                score: Math.round(score),
+                attempts: (moduleData.progress.seance2?.attempts || 0) + 1,
+                date: new Date().toISOString()
+            };
+            
+            localStorage.setItem('inerweb_accueil_securite_data', JSON.stringify(moduleData));
+        }
+        
+        // Gestion du PDF
+        function viewPDF() {
+            showNotification('📄 Le document PDF s\'ouvrirait ici', 'info');
+        }
+        
+        // Accessibilité
+        function toggleAccessibleMode() {
+            document.body.classList.toggle('accessible-mode');
+            document.getElementById('btnAccessible').classList.toggle('active');
+            if (document.body.classList.contains('accessible-mode')) {
+                loadOpenDyslexicFont();
+            }
+        }
+        
+        function toggleHighContrast() {
+            document.body.classList.toggle('high-contrast');
+            document.getElementById('btnContrast').classList.toggle('active');
+        }
+        
+        function changeFontSize() {
+            const currentSize = parseInt(getComputedStyle(document.body).fontSize);
+            const newSize = currentSize >= 20 ? 16 : currentSize + 2;
+            document.body.style.fontSize = newSize + 'px';
+            showNotification(`📏 Taille de police : ${newSize}px`, 'info');
+        }
+        
+        function loadOpenDyslexicFont() {
+            if (!document.getElementById('openDyslexicFont')) {
+                const link = document.createElement('link');
+                link.id = 'openDyslexicFont';
+                link.rel = 'stylesheet';
+                link.href = 'https://fonts.cdnfonts.com/css/open-dyslexic';
+                document.head.appendChild(link);
+            }
+        }
+        
+        function initializeAccessibility() {
+            const savedSettings = JSON.parse(localStorage.getItem('inerweb_accessibility') || '{}');
+            
+            if (savedSettings.accessibleMode) toggleAccessibleMode();
+            if (savedSettings.highContrast) toggleHighContrast();
+            if (savedSettings.fontSize) document.body.style.fontSize = savedSettings.fontSize;
+        }
+        
+        // Notifications améliorées
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                padding: 15px 25px;
+                background: ${type === 'success' ? 'var(--parfait)' : type === 'warning' ? 'var(--en-cours)' : 'var(--acquis)'};
+                color: white;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                z-index: 9999;
+                animation: slideDown 0.3s ease;
+                font-weight: 600;
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideUp 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+        
+        // Animations CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideDown {
+                from { transform: translateX(-50%) translateY(-100px); opacity: 0; }
+                to { transform: translateX(-50%) translateY(0); opacity: 1; }
+            }
+            
+            @keyframes slideUp {
+                from { transform: translateX(-50%) translateY(0); opacity: 1; }
+                to { transform: translateX(-50%) translateY(-100px); opacity: 0; }
+            }
+            
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

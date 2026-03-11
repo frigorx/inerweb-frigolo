@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Inerweb - Séance 6 : Évaluation finale et certificat">
+    <meta name="author" content="F. Henninot">
+    
+    <title>Séance 6 - Évaluation Finale</title>
+    
+    <!-- Police Lexend -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ========== VARIABLES CSS ========== */
+        :root {
+            --primary: #FF6B35;
+            --secondary: #FF8E53;
+            --accent: #FFC300;
+            --non-acquis: #ef4444;
+            --en-cours: #f59e0b;
+            --acquis: #3b82f6;
+            --parfait: #10b981;
+            --background: #f8f9fa;
+            --text: #333333;
+            --border: #e0e0e0;
+            --shadow: 0 4px 12px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Lexend', system-ui, -apple-system, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        /* Header avec navigation */
+        .header {
+            background: white;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .snowflake {
+            display: inline-block;
+            animation: snowflakeRotate 4s linear infinite;
+            font-size: 1.5em;
+        }
+        
+        @keyframes snowflakeRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-nav {
+            padding: 8px 16px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn-nav:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+        
+        /* Container principal */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px 40px;
+        }
+        
+        /* Section d'apprentissage */
+        .learning-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .section-icon {
+            font-size: 2.5em;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .section-title {
+            font-size: 1.8em;
+            color: var(--primary);
+        }
+        
+        /* Timer */
+        .timer-container {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            z-index: 90;
+        }
+        
+        .timer-display {
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--primary);
+            margin-top: 10px;
+        }
+        
+        .timer-display.warning {
+            color: var(--en-cours);
+            animation: timerWarning 1s ease-in-out infinite;
+        }
+        
+        .timer-display.danger {
+            color: var(--non-acquis);
+            animation: timerDanger 0.5s ease-in-out infinite;
+        }
+        
+        @keyframes timerWarning {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        @keyframes timerDanger {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        /* Instructions */
+        .instructions {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .instructions h3 {
+            color: var(--acquis);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .instructions ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .instructions li {
+            padding: 8px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+        
+        .instructions li::before {
+            content: '📋';
+            position: absolute;
+            left: 0;
+        }
+        
+        /* Zone d'examen */
+        .exam-container {
+            display: none;
+        }
+        
+        .exam-progress {
+            background: #e0e0e0;
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .exam-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            width: 0%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+        
+        /* Questions */
+        .question-container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            animation: slideIn 0.5s ease;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .question-number {
+            background: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        
+        .question-type {
+            background: #f5f5f5;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+        
+        .question-text {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        /* Options de réponse */
+        .answer-options {
+            display: grid;
+            gap: 12px;
+        }
+        
+        .answer-option {
+            padding: 15px 20px;
+            background: #f5f5f5;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .answer-option:hover {
+            background: #e8e8e8;
+            border-color: var(--primary);
+            transform: translateX(5px);
+        }
+        
+        .answer-option.selected {
+            background: #e3f2fd;
+            border-color: var(--acquis);
+        }
+        
+        .answer-option input[type="radio"],
+        .answer-option input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        /* Navigation questions */
+        .question-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+            gap: 20px;
+        }
+        
+        /* Résultats */
+        .results-container {
+            display: none;
+        }
+        
+        .results-summary {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .score-circle {
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: conic-gradient(var(--primary) 0deg, #e0e0e0 0deg);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        .score-value {
+            font-size: 3em;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .results-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .result-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .result-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        /* Certificat */
+        .certificate-container {
+            background: white;
+            padding: 60px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            margin-top: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .certificate-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 10px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+        }
+        
+        .certificate-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .certificate-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            font-size: 2.5em;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .certificate-title {
+            font-size: 2.5em;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .certificate-subtitle {
+            font-size: 1.2em;
+            color: #666;
+        }
+        
+        .certificate-body {
+            margin: 40px 0;
+            text-align: center;
+            line-height: 2;
+        }
+        
+        .certificate-name {
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 20px 0;
+        }
+        
+        .certificate-details {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 30px 0;
+        }
+        
+        .engagement-section {
+            background: #e8f5e9;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 30px 0;
+            border: 2px solid var(--parfait);
+        }
+        
+        .engagement-checkbox {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .engagement-checkbox input {
+            width: 24px;
+            height: 24px;
+            margin-top: 2px;
+            cursor: pointer;
+        }
+        
+        .signature-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .signature-box {
+            text-align: center;
+        }
+        
+        .signature-input {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-bottom: 2px solid var(--primary);
+            background: transparent;
+            font-size: 1.2em;
+            text-align: center;
+            margin-top: 10px;
+        }
+        
+        /* Boutons */
+        .btn {
+            padding: 12px 24px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .btn-start {
+            background: var(--parfait);
+            font-size: 1.2em;
+            padding: 15px 30px;
+        }
+        
+        .btn-start:hover {
+            background: #059862;
+        }
+        
+        .btn-print {
+            background: var(--acquis);
+        }
+        
+        .btn-print:hover {
+            background: #2563eb;
+        }
+        
+        /* Contrôles d'accessibilité */
+        .accessibility-controls {
+            position: fixed;
+            top: 200px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 89;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+        
+        .btn-accessibility {
+            padding: 8px 15px;
+            background: white;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn-accessibility:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-accessibility.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* Mode accessible */
+        body.accessible-mode {
+            font-family: 'OpenDyslexic', 'Comic Sans MS', sans-serif;
+            line-height: 2;
+            letter-spacing: 0.1em;
+        }
+        
+        body.high-contrast {
+            background: #000;
+            color: #fff;
+        }
+        
+        body.high-contrast .learning-section,
+        body.high-contrast .question-container,
+        body.high-contrast .header {
+            background: #222;
+            color: #fff;
+            border: 2px solid #fff;
+        }
+        
+        /* Mascotte helper */
+        .helper-mascot {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 70px;
+            height: 70px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2em;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: var(--transition);
+            z-index: 100;
+        }
+        
+        .helper-mascot:hover {
+            transform: scale(1.1) rotate(10deg);
+        }
+        
+        .helper-bubble {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            width: 250px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .helper-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            right: 25px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 10px solid white;
+        }
+        
+        .helper-mascot:hover .helper-bubble {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Print styles */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            
+            .certificate-container,
+            .certificate-container * {
+                visibility: visible;
+            }
+            
+            .certificate-container {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                padding: 40px;
+                box-shadow: none;
+            }
+            
+            .btn-print,
+            .accessibility-controls,
+            .helper-mascot,
+            .timer-container,
+            .header {
+                display: none !important;
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+            }
+            
+            .timer-container {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin-bottom: 20px;
+            }
+            
+            .signature-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .accessibility-controls {
+                top: auto;
+                bottom: 100px;
+                flex-direction: row;
+            }
+            
+            .helper-mascot {
+                bottom: 20px;
+                right: 10px;
+                width: 60px;
+                height: 60px;
+                font-size: 1.8em;
+            }
+        }
+    </style>
+<script>/* (c) F. Henninot - inerWeb FRIGOLO - Tous droits reserves */
+document.addEventListener("contextmenu",function(e){e.preventDefault()});
+document.addEventListener("keydown",function(e){if((e.ctrlKey||e.metaKey)&&(e.key==="u"||e.key==="s"||e.key==="c")){e.preventDefault()}});
+document.addEventListener("selectstart",function(e){if(e.target.tagName\!=="INPUT"&&e.target.tagName\!=="TEXTAREA"){e.preventDefault()}});
+</script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <span class="snowflake">❄️</span>
+                <h1>Évaluation Finale - Accueil Sécurité 🏆</h1>
+            </div>
+            <div class="nav-buttons">
+                <a href="index_accueil_securite.html" class="btn-nav">
+                    <span>🏠</span>
+                    <span>Retour</span>
+                </a>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Timer -->
+    <div class="timer-container" id="timerContainer">
+        <div style="display: flex; align-items: center; gap: 10px; justify-content: center;">
+            <span style="font-size: 1.5em;">⏱️</span>
+            <span style="font-weight: 600;">Temps restant</span>
+        </div>
+        <div class="timer-display" id="timerDisplay">30:00</div>
+    </div>
+    
+    <!-- Contrôles d'accessibilité -->
+    <div class="accessibility-controls">
+        <button class="btn-accessibility" onclick="toggleAccessibleMode()" id="btnAccessible">
+            <span>📖</span>
+            <span>Police adaptée</span>
+        </button>
+        <button class="btn-accessibility" onclick="toggleHighContrast()" id="btnContrast">
+            <span>🌓</span>
+            <span>Contraste</span>
+        </button>
+        <button class="btn-accessibility" onclick="changeFontSize()" id="btnFontSize">
+            <span>🔍+</span>
+            <span>Taille</span>
+        </button>
+    </div>
+    
+    <!-- Mascotte helper -->
+    <div class="helper-mascot">
+        <span>🦺</span>
+        <div class="helper-bubble">
+            <strong>Conseil de Sécu ! 💡</strong><br>
+            Lis bien chaque question avant de répondre. Tu as 30 minutes, c'est largement suffisant !
+        </div>
+    </div>
+    
+    <!-- Container principal -->
+    <div class="container">
+        <!-- Zone de démarrage -->
+        <div id="startZone">
+            <div class="learning-section">
+                <div class="section-header">
+                    <span class="section-icon">🎯</span>
+                    <h2 class="section-title">Évaluation finale - Accueil Sécurité</h2>
+                </div>
+                
+                <div class="instructions">
+                    <h3>
+                        <span style="font-size: 1.2em;">📋</span>
+                        Instructions pour l'évaluation
+                    </h3>
+                    <ul>
+                        <li>Tu vas répondre à <strong>20 questions</strong> sur la sécurité</li>
+                        <li>Tu as <strong>30 minutes</strong> maximum (largement suffisant !)</li>
+                        <li>Les questions portent sur <strong>toutes les séances</strong> que tu as suivies</li>
+                        <li>Il faut <strong>14/20 minimum</strong> (70%) pour valider</li>
+                        <li>Tu ne peux pas revenir en arrière une fois validé</li>
+                        <li>À la fin, tu recevras ton <strong>certificat personnalisé</strong> 🏆</li>
+                    </ul>
+                </div>
+                
+                <div style="background: #fff3cd; border: 2px solid #ffc107; padding: 20px; border-radius: 10px; margin-bottom: 25px; display: flex; align-items: center; gap: 15px;">
+                    <span style="font-size: 2em;">⚠️</span>
+                    <div>
+                        <strong>Important :</strong>
+                        <p>Une fois l'évaluation commencée, tu ne pourras pas la mettre en pause.</p>
+                        <p>Assure-toi d'être dans de bonnes conditions avant de démarrer !</p>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="btn btn-start" onclick="startExam()">
+                        <span>🚀</span>
+                        <span>Commencer l'évaluation</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Zone d'examen -->
+        <div id="examZone" class="exam-container">
+            <div class="exam-progress">
+                <div class="exam-progress-fill" id="examProgress">Question 1/20</div>
+            </div>
+            
+            <div id="questionContainer" class="question-container">
+                <!-- Les questions seront générées dynamiquement -->
+            </div>
+            
+            <div class="question-nav">
+                <button class="btn" onclick="previousQuestion()" id="btnPrevious" disabled>
+                    <span>⬅️</span>
+                    <span>Précédent</span>
+                </button>
+                
+                <div style="text-align: center;">
+                    <span id="answeredCount">0</span> / 20 réponses
+                </div>
+                
+                <button class="btn" onclick="nextQuestion()" id="btnNext">
+                    <span>Suivant</span>
+                    <span>➡️</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Zone de résultats -->
+        <div id="resultsZone" class="results-container">
+            <div class="results-summary">
+                <h2 style="font-size: 2em; margin-bottom: 20px;">📊 Résultats de ton évaluation</h2>
+                
+                <div class="score-circle" id="scoreCircle">
+                    <div>
+                        <div class="score-value" id="scoreValue">0/20</div>
+                        <div id="scorePercentage" style="font-size: 1.2em; color: #666;">0%</div>
+                    </div>
+                </div>
+                
+                <h3 id="resultMessage" style="margin-top: 20px; font-size: 1.5em;"></h3>
+                
+                <div class="results-details">
+                    <div class="result-card">
+                        <div class="result-icon">✅</div>
+                        <div style="font-size: 1.5em; font-weight: 700; color: var(--parfait);" id="correctCount">0</div>
+                        <div>Bonnes réponses</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-icon">❌</div>
+                        <div style="font-size: 1.5em; font-weight: 700; color: var(--non-acquis);" id="incorrectCount">0</div>
+                        <div>Mauvaises réponses</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-icon">⏱️</div>
+                        <div style="font-size: 1.5em; font-weight: 700; color: var(--primary);" id="timeSpent">00:00</div>
+                        <div>Temps passé</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Certificat -->
+            <div class="certificate-container" id="certificate" style="display: none;">
+                <div class="certificate-header">
+                    <div class="certificate-logo">
+                        <span class="snowflake">❄️</span>
+                        <span>inerWeb</span>
+                    </div>
+                    <h2 class="certificate-title">CERTIFICAT DE FORMATION</h2>
+                    <p class="certificate-subtitle">Accueil Sécurité - Apprenants et Stagiaires</p>
+                </div>
+                
+                <div class="certificate-body">
+                    <p style="font-size: 1.2em;">Nous certifions que</p>
+                    <div class="certificate-name" id="certName">NOM Prénom</div>
+                    <p>Classe : <strong id="certClass">Classe</strong></p>
+                    <p style="margin-top: 20px;">
+                        a suivi avec succès la formation<br>
+                        <strong>"Accueil Sécurité en Entreprise et Atelier"</strong>
+                    </p>
+                </div>
+                
+                <div class="certificate-details">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; text-align: center;">
+                        <div>
+                            <strong>Date de validation</strong><br>
+                            <span id="certDate">--/--/----</span>
+                        </div>
+                        <div>
+                            <strong>Score obtenu</strong><br>
+                            <span id="certScore" style="font-size: 1.5em; color: var(--primary);">--/20</span>
+                        </div>
+                        <div>
+                            <strong>Mention</strong><br>
+                            <span id="certMention" style="font-size: 1.2em;">---</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="engagement-section">
+                    <h3 style="margin-bottom: 15px; color: var(--parfait);">
+                        📝 Engagement de l'apprenant
+                    </h3>
+                    <div class="engagement-checkbox">
+                        <input type="checkbox" id="engagementCheck" onchange="checkEngagement()">
+                        <label for="engagementCheck">
+                            <strong>Je m'engage à :</strong><br>
+                            • Respecter TOUTES les règles de sécurité apprises<br>
+                            • Porter mes EPI systématiquement<br>
+                            • Signaler tout danger immédiatement<br>
+                            • Respecter les 10 commandements de l'apprenti
+                        </label>
+                    </div>
+                    
+                    <div class="signature-section">
+                        <div class="signature-box">
+                            <label>Signature de l'apprenant :</label>
+                            <input type="text" class="signature-input" id="studentSignature" placeholder="Tape ton nom complet" onchange="checkEngagement()">
+                        </div>
+                        <div class="signature-box">
+                            <label>Formateur :</label>
+                            <div style="margin-top: 10px; font-weight: 600;">F. Henninot</div>
+                            <div style="font-size: 0.9em; color: #666;">Enseignant Froid & Climatisation</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="btn btn-print" onclick="printCertificate()" id="btnPrint" disabled>
+                        <span>🖨️</span>
+                        <span>Imprimer le certificat</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Banque de questions (30 questions, 6 par séance)
+        const questionBank = [
+            // Séance 1 - Les risques
+            {
+                id: 1,
+                type: 'qcm',
+                theme: 'Risques',
+                question: "Les jeunes de moins de 25 ans représentent quel pourcentage des accidents du travail ?",
+                options: ["10%", "15%", "20%", "25%"],
+                correct: 3,
+                feedback: "Les jeunes représentent 25% des accidents alors qu'ils ne sont que 10% des travailleurs !"
+            },
+            {
+                id: 2,
+                type: 'vrai-faux',
+                theme: 'Risques',
+                question: "Les jeunes sont plus vulnérables aux accidents car ils manquent d'expérience.",
+                correct: true,
+                feedback: "VRAI : Le manque d'expérience est une des principales causes d'accidents chez les jeunes."
+            },
+            {
+                id: 3,
+                type: 'qcm',
+                theme: 'Risques',
+                question: "Quel type de risque concerne les chutes et les coupures ?",
+                options: ["Risques chimiques", "Risques physiques", "Risques ergonomiques", "Risques biologiques"],
+                correct: 1,
+                feedback: "Les chutes et coupures sont des risques physiques."
+            },
+            {
+                id: 4,
+                type: 'qcm',
+                theme: 'Risques',
+                question: "Que signifie TMS ?",
+                options: ["Travail Manuel Sécurisé", "Trouble Musculo-Squelettique", "Temps Maximum de Sécurité", "Tenue de Maintenance Spéciale"],
+                correct: 1,
+                feedback: "TMS = Troubles Musculo-Squelettiques (mal de dos, tendinites...)"
+            },
+            {
+                id: 5,
+                type: 'vrai-faux',
+                theme: 'Risques',
+                question: "Les règles de sécurité s'appliquent uniquement en entreprise.",
+                correct: false,
+                feedback: "FAUX : Elles s'appliquent PARTOUT (lycée, entreprise, chantier) !"
+            },
+            {
+                id: 6,
+                type: 'qcm',
+                theme: 'Risques',
+                question: "Que faire si tu identifies un danger ?",
+                options: ["L'ignorer si ce n'est pas grave", "Le signaler immédiatement", "Attendre que quelqu'un d'autre le voit", "Le noter pour plus tard"],
+                correct: 1,
+                feedback: "Tout danger doit être signalé IMMÉDIATEMENT !"
+            },
+            
+            // Séance 2 - L'accueil
+            {
+                id: 7,
+                type: 'vrai-faux',
+                theme: 'Accueil',
+                question: "L'accueil sécurité est obligatoire dès le premier jour.",
+                correct: true,
+                feedback: "VRAI : C'est obligatoire depuis 2017, même pour 1 jour de stage !"
+            },
+            {
+                id: 8,
+                type: 'qcm',
+                theme: 'Accueil',
+                question: "Que doit obligatoirement te fournir l'entreprise ?",
+                options: ["Une voiture de fonction", "Les EPI nécessaires", "Un téléphone portable", "Un bureau personnel"],
+                correct: 1,
+                feedback: "L'entreprise doit te fournir GRATUITEMENT tous les EPI nécessaires."
+            },
+            {
+                id: 9,
+                type: 'vrai-faux',
+                theme: 'Accueil',
+                question: "Tu peux commencer à travailler sans avoir signé l'attestation d'accueil sécurité.",
+                correct: false,
+                feedback: "FAUX : Tu dois OBLIGATOIREMENT signer l'attestation avant de commencer !"
+            },
+            {
+                id: 10,
+                type: 'qcm',
+                theme: 'Accueil',
+                question: "Pendant l'accueil sécurité, tu as le droit de :",
+                options: ["Dormir si c'est ennuyeux", "Poser toutes tes questions", "Partir si ça dure trop longtemps", "Utiliser ton téléphone"],
+                correct: 1,
+                feedback: "Tu as le DROIT et le DEVOIR de poser toutes tes questions !"
+            },
+            {
+                id: 11,
+                type: 'qcm',
+                theme: 'Accueil',
+                question: "Si tu ne comprends pas bien le français, l'entreprise doit :",
+                options: ["Tant pis pour toi", "Te faire la formation dans ta langue", "Te renvoyer chez toi", "T'inscrire à des cours"],
+                correct: 1,
+                feedback: "L'entreprise doit adapter la formation pour que tu comprennes (traduction, images...)."
+            },
+            {
+                id: 12,
+                type: 'vrai-faux',
+                theme: 'Accueil',
+                question: "L'entreprise peut te faire payer tes chaussures de sécurité.",
+                correct: false,
+                feedback: "FAUX : Tous les EPI sont GRATUITS et fournis par l'entreprise !"
+            },
+            
+            // Séance 3 - Travaux réglementés
+            {
+                id: 13,
+                type: 'qcm',
+                theme: 'Travaux',
+                question: "À partir de quel âge peux-tu faire de la démolition ?",
+                options: ["16 ans", "17 ans", "18 ans", "21 ans"],
+                correct: 2,
+                feedback: "La démolition est INTERDITE avant 18 ans, sans exception !"
+            },
+            {
+                id: 14,
+                type: 'vrai-faux',
+                theme: 'Travaux',
+                question: "Tu peux conduire un chariot élévateur à 17 ans avec une autorisation.",
+                correct: false,
+                feedback: "FAUX : C'est INTERDIT avant 18 ans, même avec autorisation !"
+            },
+            {
+                id: 15,
+                type: 'qcm',
+                theme: 'Travaux',
+                question: "Les travaux électriques sont :",
+                options: ["Toujours interdits", "Réglementés (avec formation)", "Autorisés pour tous", "Interdits avant 21 ans"],
+                correct: 1,
+                feedback: "Les travaux électriques sont RÉGLEMENTÉS : possibles avec habilitation et surveillance."
+            },
+            {
+                id: 16,
+                type: 'qcm',
+                theme: 'Travaux',
+                question: "Que faire si on te demande un travail interdit ?",
+                options: ["Le faire quand même", "Refuser poliment et alerter", "Demander plus d'argent", "Le faire en cachette"],
+                correct: 1,
+                feedback: "Tu dois REFUSER et ALERTER ton tuteur ou l'inspection du travail !"
+            },
+            {
+                id: 17,
+                type: 'vrai-faux',
+                theme: 'Travaux',
+                question: "Tu peux être sanctionné si tu refuses un travail interdit par la loi.",
+                correct: false,
+                feedback: "FAUX : C'est ton DROIT de refuser, tu ne risques RIEN !"
+            },
+            {
+                id: 18,
+                type: 'qcm',
+                theme: 'Travaux',
+                question: "Le travail de nuit (22h-6h) est :",
+                options: ["Autorisé dès 16 ans", "Interdit avant 18 ans", "Autorisé avec accord des parents", "Interdit avant 21 ans"],
+                correct: 1,
+                feedback: "Le travail de nuit est INTERDIT avant 18 ans (sauf dérogation exceptionnelle)."
+            },
+            
+            // Séance 4 - Les 10 commandements
+            {
+                id: 19,
+                type: 'vrai-faux',
+                theme: 'Obligations',
+                question: "Arriver en retard sans prévenir peut entraîner des sanctions.",
+                correct: true,
+                feedback: "VRAI : La ponctualité est une obligation professionnelle de base !"
+            },
+            {
+                id: 20,
+                type: 'qcm',
+                theme: 'Obligations',
+                question: "Que faire si tes chaussures de sécurité sont au vestiaire et que tu dois intervenir 5 minutes ?",
+                options: ["Y aller sans les chaussures", "Aller chercher tes chaussures", "Demander à quelqu'un d'autre", "Reporter l'intervention"],
+                correct: 1,
+                feedback: "TOUJOURS porter ses EPI, même pour 2 minutes !"
+            },
+            {
+                id: 21,
+                type: 'qcm',
+                theme: 'Obligations',
+                question: "Si tu vois une flaque d'huile au sol, tu dois :",
+                options: ["La contourner", "La nettoyer et signaler", "Prévenir tes amis", "L'ignorer"],
+                correct: 1,
+                feedback: "Nettoyer ET signaler : tu protèges tout le monde !"
+            },
+            {
+                id: 22,
+                type: 'vrai-faux',
+                theme: 'Obligations',
+                question: "Tu peux utiliser ton téléphone pendant le travail si c'est urgent.",
+                correct: false,
+                feedback: "FAUX : Le téléphone reste dans ta poche pendant le travail !"
+            },
+            {
+                id: 23,
+                type: 'qcm',
+                theme: 'Obligations',
+                question: "L'absence non justifiée au lycée ou CFA peut entraîner :",
+                options: ["Rien du tout", "Un simple avertissement", "La rupture du contrat", "Une amende"],
+                correct: 2,
+                feedback: "Les absences injustifiées peuvent entraîner la RUPTURE du contrat d'apprentissage !"
+            },
+            {
+                id: 24,
+                type: 'vrai-faux',
+                theme: 'Obligations',
+                question: "Il vaut mieux faire semblant d'avoir compris que de poser 10 fois la même question.",
+                correct: false,
+                feedback: "FAUX : Mieux vaut demander 10 fois que faire une erreur dangereuse !"
+            },
+            
+            // Séance 5 - Protection et alerte
+            {
+                id: 25,
+                type: 'qcm',
+                theme: 'Protection',
+                question: "Quel est le numéro du SAMU ?",
+                options: ["15", "17", "18", "112"],
+                correct: 0,
+                feedback: "Le SAMU c'est le 15 pour les urgences médicales !"
+            },
+            {
+                id: 26,
+                type: 'qcm',
+                theme: 'Protection',
+                question: "Que signifie la méthode P.A.S. ?",
+                options: ["Prévenir-Agir-Sauver", "Protéger-Alerter-Secourir", "Patienter-Appeler-Soigner", "Préparer-Aider-Signaler"],
+                correct: 1,
+                feedback: "P.A.S. = Protéger, Alerter, Secourir !"
+            },
+            {
+                id: 27,
+                type: 'vrai-faux',
+                theme: 'Protection',
+                question: "Les EPI sont payants si tu les perds.",
+                correct: false,
+                feedback: "FAUX : Les EPI sont TOUJOURS gratuits, même en cas de perte !"
+            },
+            {
+                id: 28,
+                type: 'qcm',
+                theme: 'Protection',
+                question: "Le droit de retrait s'utilise en cas de danger :",
+                options: ["Possible", "Grave et immédiat", "Futur", "Imaginaire"],
+                correct: 1,
+                feedback: "Le droit de retrait = danger GRAVE et IMMÉDIAT uniquement !"
+            },
+            {
+                id: 29,
+                type: 'vrai-faux',
+                theme: 'Protection',
+                question: "Tu dois raccrocher en premier après avoir appelé les secours.",
+                correct: false,
+                feedback: "FAUX : Ne JAMAIS raccrocher en premier, attends leurs instructions !"
+            },
+            {
+                id: 30,
+                type: 'qcm',
+                theme: 'Protection',
+                question: "Le numéro d'urgence européen est le :",
+                options: ["911", "100", "112", "123"],
+                correct: 2,
+                feedback: "Le 112 fonctionne partout en Europe, même sans crédit !"
+            }
+        ];
+        
+        // Variables globales
+        let examQuestions = [];
+        let currentQuestionIndex = 0;
+        let userAnswers = {};
+        let examStartTime = null;
+        let examTimer = null;
+        let timeRemaining = 30 * 60; // 30 minutes en secondes
+        
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeAccessibility();
+            loadStudentData();
+        });
+        
+        // Démarrer l'examen
+        function startExam() {
+            // Sélectionner 20 questions aléatoires
+            examQuestions = selectRandomQuestions(20);
+            currentQuestionIndex = 0;
+            userAnswers = {};
+            examStartTime = new Date();
+            
+            // Masquer la zone de démarrage
+            document.getElementById('startZone').style.display = 'none';
+            document.getElementById('examZone').style.display = 'block';
+            
+            // Démarrer le timer
+            startTimer();
+            
+            // Afficher la première question
+            displayQuestion(0);
+        }
+        
+        // Sélectionner des questions aléatoires
+        function selectRandomQuestions(count) {
+            const shuffled = [...questionBank].sort(() => Math.random() - 0.5);
+            return shuffled.slice(0, count);
+        }
+        
+        // Timer
+        function startTimer() {
+            examTimer = setInterval(() => {
+                timeRemaining--;
+                updateTimerDisplay();
+                
+                if (timeRemaining <= 0) {
+                    clearInterval(examTimer);
+                    finishExam();
+                }
+            }, 1000);
+        }
+        
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            const timerElement = document.getElementById('timerDisplay');
+            timerElement.textContent = display;
+            
+            // Changement de couleur selon le temps restant
+            if (timeRemaining < 5 * 60) {
+                timerElement.classList.add('danger');
+            } else if (timeRemaining < 10 * 60) {
+                timerElement.classList.add('warning');
+            }
+        }
+        
+        // Afficher une question
+        function displayQuestion(index) {
+            const question = examQuestions[index];
+            const container = document.getElementById('questionContainer');
+            
+            let html = `
+                <div class="question-header">
+                    <div class="question-number">Question ${index + 1}/20</div>
+                    <div class="question-type">${question.theme}</div>
+                </div>
+                <div class="question-text">${question.question}</div>
+            `;
+            
+            if (question.type === 'qcm') {
+                html += '<div class="answer-options">';
+                question.options.forEach((option, i) => {
+                    const isChecked = userAnswers[question.id] === i ? 'checked' : '';
+                    html += `
+                        <label class="answer-option ${isChecked ? 'selected' : ''}">
+                            <input type="radio" name="answer" value="${i}" ${isChecked} onchange="selectAnswer(${question.id}, ${i})">
+                            <span>${option}</span>
+                        </label>
+                    `;
+                });
+                html += '</div>';
+            } else if (question.type === 'vrai-faux') {
+                const vfOptions = [
+                    { value: true, label: '✅ VRAI' },
+                    { value: false, label: '❌ FAUX' }
+                ];
+                html += '<div class="answer-options">';
+                vfOptions.forEach(option => {
+                    const isChecked = userAnswers[question.id] === option.value ? 'checked' : '';
+                    html += `
+                        <label class="answer-option ${isChecked ? 'selected' : ''}">
+                            <input type="radio" name="answer" value="${option.value}" ${isChecked} onchange="selectAnswer(${question.id}, ${option.value})">
+                            <span style="font-size: 1.2em;">${option.label}</span>
+                        </label>
+                    `;
+                });
+                html += '</div>';
+            }
+            
+            container.innerHTML = html;
+            
+            // Mettre à jour la progression
+            updateProgress();
+            
+            // Gérer les boutons de navigation
+            document.getElementById('btnPrevious').disabled = index === 0;
+            
+            if (index === examQuestions.length - 1) {
+                document.getElementById('btnNext').innerHTML = '<span>Terminer</span><span>🏁</span>';
+                document.getElementById('btnNext').onclick = confirmFinish;
+            } else {
+                document.getElementById('btnNext').innerHTML = '<span>Suivant</span><span>➡️</span>';
+                document.getElementById('btnNext').onclick = nextQuestion;
+            }
+        }
+        
+        // Sélectionner une réponse
+        function selectAnswer(questionId, answer) {
+            userAnswers[questionId] = answer;
+            
+            // Mettre à jour l'affichage
+            document.querySelectorAll('.answer-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            event.target.closest('.answer-option').classList.add('selected');
+            
+            updateAnsweredCount();
+        }
+        
+        // Navigation
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                displayQuestion(currentQuestionIndex);
+            }
+        }
+        
+        function nextQuestion() {
+            if (currentQuestionIndex < examQuestions.length - 1) {
+                currentQuestionIndex++;
+                displayQuestion(currentQuestionIndex);
+            }
+        }
+        
+        function confirmFinish() {
+            const answered = Object.keys(userAnswers).length;
+            if (answered < examQuestions.length) {
+                if (confirm(`⚠️ Tu n'as répondu qu'à ${answered} questions sur 20.\n\nVeux-tu vraiment terminer ?`)) {
+                    finishExam();
+                }
+            } else {
+                finishExam();
+            }
+        }
+        
+        // Terminer l'examen
+        function finishExam() {
+            clearInterval(examTimer);
+            
+            // Calculer le score
+            let correct = 0;
+            examQuestions.forEach(question => {
+                const userAnswer = userAnswers[question.id];
+                if (question.type === 'qcm' && userAnswer === question.correct) {
+                    correct++;
+                } else if (question.type === 'vrai-faux' && userAnswer === question.correct) {
+                    correct++;
+                }
+            });
+            
+            const score = correct;
+            const percentage = Math.round((correct / examQuestions.length) * 100);
+            const timeSpent = Math.floor((new Date() - examStartTime) / 1000);
+            
+            // Afficher les résultats
+            showResults(score, percentage, timeSpent);
+        }
+        
+        // Afficher les résultats
+        function showResults(score, percentage, timeSpent) {
+            document.getElementById('examZone').style.display = 'none';
+            document.getElementById('resultsZone').style.display = 'block';
+            
+            // Mettre à jour les valeurs
+            document.getElementById('scoreValue').textContent = `${score}/20`;
+            document.getElementById('scorePercentage').textContent = `${percentage}%`;
+            document.getElementById('correctCount').textContent = score;
+            document.getElementById('incorrectCount').textContent = 20 - score;
+            
+            // Temps passé
+            const minutes = Math.floor(timeSpent / 60);
+            const seconds = timeSpent % 60;
+            document.getElementById('timeSpent').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Cercle de score
+            const circle = document.getElementById('scoreCircle');
+            const angle = (percentage / 100) * 360;
+            circle.style.background = `conic-gradient(var(--primary) 0deg ${angle}deg, #e0e0e0 ${angle}deg 360deg)`;
+            
+            // Message et certificat
+            let message, mention;
+            if (percentage >= 90) {
+                message = "🏆 EXCELLENT ! Félicitations !";
+                mention = "Très Bien";
+            } else if (percentage >= 80) {
+                message = "🎉 TRÈS BIEN ! Bravo !";
+                mention = "Bien";
+            } else if (percentage >= 70) {
+                message = "✅ VALIDÉ ! C'est bien !";
+                mention = "Assez Bien";
+            } else {
+                message = "❌ Non validé. Tu dois revoir les cours.";
+                mention = "Non acquis";
+            }
+            
+            document.getElementById('resultMessage').textContent = message;
+            
+            // Sauvegarder les résultats
+            saveExamResults(score, percentage, timeSpent);
+            
+            // Afficher le certificat si validé
+            if (percentage >= 70) {
+                showCertificate(score, mention);
+            }
+        }
+        
+        // Certificat
+        function showCertificate(score, mention) {
+            document.getElementById('certificate').style.display = 'block';
+            
+            // Récupérer les données de l'étudiant
+            const studentData = JSON.parse(localStorage.getItem('inerweb_accueil_securite_data') || '{}');
+            const student = studentData.student || {};
+            
+            // Remplir le certificat
+            document.getElementById('certName').textContent = `${student.nom || 'NOM'} ${student.prenom || 'Prénom'}`;
+            document.getElementById('certClass').textContent = student.classe || 'Classe';
+            document.getElementById('certDate').textContent = new Date().toLocaleDateString('fr-FR');
+            document.getElementById('certScore').textContent = `${score}/20`;
+            document.getElementById('certMention').textContent = mention;
+        }
+        
+        // Vérifier l'engagement
+        function checkEngagement() {
+            const checked = document.getElementById('engagementCheck').checked;
+            const signed = document.getElementById('studentSignature').value.trim().length > 0;
+            
+            document.getElementById('btnPrint').disabled = !(checked && signed);
+        }
+        
+        // Imprimer le certificat
+        function printCertificate() {
+            window.print();
+        }
+        
+        // Fonctions utilitaires
+        function updateProgress() {
+            const progress = ((currentQuestionIndex + 1) / examQuestions.length) * 100;
+            const progressBar = document.getElementById('examProgress');
+            progressBar.style.width = progress + '%';
+            progressBar.textContent = `Question ${currentQuestionIndex + 1}/20`;
+        }
+        
+        function updateAnsweredCount() {
+            const answered = Object.keys(userAnswers).length;
+            document.getElementById('answeredCount').textContent = answered;
+        }
+        
+        // Charger les données de l'étudiant
+        function loadStudentData() {
+            const studentData = JSON.parse(localStorage.getItem('inerweb_accueil_securite_data') || '{}');
+            if (!studentData.student) {
+                alert('⚠️ Aucune donnée étudiant trouvée. Retour à l\'accueil.');
+                window.location.href = 'index_accueil_securite.html';
+            }
+        }
+        
+        // Sauvegarder les résultats
+        function saveExamResults(score, percentage, timeSpent) {
+            const moduleData = JSON.parse(localStorage.getItem('inerweb_accueil_securite_data') || '{}');
+            
+            moduleData.progress = moduleData.progress || {};
+            moduleData.progress.seance6 = {
+                completed: true,
+                score: score,
+                percentage: percentage,
+                timeSpent: timeSpent,
+                date: new Date().toISOString(),
+                validated: percentage >= 70
+            };
+            
+            // Mettre à jour le statut global
+            moduleData.progress.global = {
+                completed: true,
+                validated: percentage >= 70,
+                finalScore: score,
+                completionDate: new Date().toISOString()
+            };
+            
+            localStorage.setItem('inerweb_accueil_securite_data', JSON.stringify(moduleData));
+        }
+        
+        // Accessibilité
+        function toggleAccessibleMode() {
+            document.body.classList.toggle('accessible-mode');
+            document.getElementById('btnAccessible').classList.toggle('active');
+            if (document.body.classList.contains('accessible-mode')) {
+                loadOpenDyslexicFont();
+            }
+        }
+        
+        function toggleHighContrast() {
+            document.body.classList.toggle('high-contrast');
+            document.getElementById('btnContrast').classList.toggle('active');
+        }
+        
+        function changeFontSize() {
+            const currentSize = parseInt(getComputedStyle(document.body).fontSize);
+            const newSize = currentSize >= 20 ? 16 : currentSize + 2;
+            document.body.style.fontSize = newSize + 'px';
+            showNotification(`📏 Taille de police : ${newSize}px`, 'info');
+        }
+        
+        function loadOpenDyslexicFont() {
+            if (!document.getElementById('openDyslexicFont')) {
+                const link = document.createElement('link');
+                link.id = 'openDyslexicFont';
+                link.rel = 'stylesheet';
+                link.href = 'https://fonts.cdnfonts.com/css/open-dyslexic';
+                document.head.appendChild(link);
+            }
+        }
+        
+        function initializeAccessibility() {
+            const savedSettings = JSON.parse(localStorage.getItem('inerweb_accessibility') || '{}');
+            
+            if (savedSettings.accessibleMode) toggleAccessibleMode();
+            if (savedSettings.highContrast) toggleHighContrast();
+            if (savedSettings.fontSize) document.body.style.fontSize = savedSettings.fontSize;
+        }
+        
+        // Notifications
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                padding: 15px 25px;
+                background: ${type === 'success' ? 'var(--parfait)' : type === 'warning' ? 'var(--en-cours)' : 'var(--acquis)'};
+                color: white;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                z-index: 9999;
+                animation: slideDown 0.3s ease;
+                font-weight: 600;
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideUp 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+        
+        // Animations CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideDown {
+                from { transform: translateX(-50%) translateY(-100px); opacity: 0; }
+                to { transform: translateX(-50%) translateY(0); opacity: 1; }
+            }
+            
+            @keyframes slideUp {
+                from { transform: translateX(-50%) translateY(0); opacity: 1; }
+                to { transform: translateX(-50%) translateY(-100px); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

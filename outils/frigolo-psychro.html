@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>inerWeb Frigolo — Psychrométrie</title>
+<style>
+:root {
+  --bleu:#1b3a63; --bleu2:#2a5298; --orange:#ff6b35;
+  --fond:#f4f6f9; --blanc:#fff; --gris:#e2e7ee; --gtxt:#6c757d;
+  --vert:#27ae60; --rouge:#e74c3c; --cyan:#0097a7;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',sans-serif;background:var(--fond);color:var(--bleu);min-height:100vh;display:flex;flex-direction:column;}
+
+/* ── HEADER ── */
+header{background:var(--bleu);color:#fff;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.brand{display:flex;align-items:center;gap:10px;}
+.brand h1{font-size:18px;font-weight:700;}
+.brand h1 span{color:var(--orange);}
+.brand small{display:block;font-size:11px;opacity:.7;}
+.badge{background:var(--orange);color:#fff;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+
+/* ── NAV NIVEAUX ── */
+.nav-levels{display:flex;gap:0;background:var(--bleu2);overflow:hidden;}
+.nav-btn{flex:1;padding:10px 8px;border:none;background:transparent;color:rgba(255,255,255,.6);cursor:pointer;font-size:12px;font-weight:600;border-bottom:3px solid transparent;transition:.2s;text-align:center;}
+.nav-btn:hover{background:rgba(255,255,255,.08);color:#fff;}
+.nav-btn.active{color:#fff;border-bottom-color:var(--orange);background:rgba(255,255,255,.1);}
+.nav-btn .num{display:block;font-size:18px;margin-bottom:2px;}
+
+/* ── PAGES ── */
+.page{display:none;flex:1;padding:20px;flex-direction:column;gap:16px;}
+.page.active{display:flex;}
+
+/* ── CARDS ── */
+.card{background:var(--blanc);border-radius:12px;padding:18px;box-shadow:0 1px 6px rgba(0,0,0,.07);border:1px solid var(--gris);}
+.card h2{font-size:16px;color:var(--bleu);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.card p{font-size:13px;line-height:1.7;color:#333;margin-bottom:8px;}
+.card p:last-child{margin-bottom:0;}
+
+.encadre{border-left:4px solid var(--orange);padding:10px 14px;background:#fff8f5;border-radius:0 8px 8px 0;margin:10px 0;font-size:13px;line-height:1.6;}
+.encadre.bleu{border-color:var(--bleu);background:#f0f4fb;}
+.encadre.vert{border-color:var(--vert);background:#f0faf4;}
+
+/* ── LAYOUT ROW ── */
+.row{display:flex;gap:16px;flex-wrap:wrap;}
+.col{flex:1;min-width:220px;}
+
+/* ── SLIDER INTERACTIF ── */
+.slider-group{margin:12px 0;}
+.slider-group label{font-size:12px;font-weight:600;color:var(--bleu);display:flex;justify-content:space-between;margin-bottom:4px;}
+.slider-group label span{color:var(--orange);font-size:14px;}
+input[type=range]{width:100%;accent-color:var(--orange);}
+
+/* ── THERMOMÈTRES CANVAS ── */
+#thermo-canvas{display:block;margin:0 auto;}
+
+/* ── DIAGRAMME ── */
+#psychro-canvas{display:block;cursor:crosshair;}
+.diagram-wrap{position:relative;background:#fff;border-radius:12px;border:1px solid var(--gris);overflow:hidden;}
+#tooltip{position:absolute;background:rgba(27,58,99,.92);color:#fff;padding:6px 10px;border-radius:6px;font-size:11px;pointer-events:none;display:none;white-space:nowrap;z-index:10;}
+
+/* ── VALEURS ── */
+.val-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
+.val-box{background:var(--fond);border-radius:8px;padding:10px;text-align:center;}
+.val-box .lbl{font-size:10px;color:var(--gtxt);text-transform:uppercase;letter-spacing:.5px;}
+.val-box .num{font-size:20px;font-weight:700;color:var(--bleu);}
+.val-box .unit{font-size:10px;color:var(--gtxt);}
+
+/* ── TRANSFORMATIONS ── */
+.tf-btn{display:block;width:100%;padding:8px 12px;margin-bottom:6px;border:1px solid var(--gris);border-radius:8px;background:#fff;cursor:pointer;font-size:12px;font-weight:600;text-align:left;transition:.2s;}
+.tf-btn:hover{background:var(--fond);}
+.tf-btn.active-tf{background:var(--bleu);color:#fff;border-color:var(--bleu);}
+
+/* ── POINTS MÉMOS ── */
+.pt-list{display:flex;flex-direction:column;gap:4px;max-height:180px;overflow-y:auto;}
+.pt-item{display:flex;align-items:center;gap:8px;font-size:11px;padding:5px 8px;border-radius:6px;background:var(--fond);cursor:pointer;}
+.pt-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+
+/* ── BTN ── */
+.btn{padding:8px 16px;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;transition:.2s;}
+.btn-bleu{background:var(--bleu);color:#fff;} .btn-bleu:hover{background:var(--bleu2);}
+.btn-orange{background:var(--orange);color:#fff;} .btn-orange:hover{background:#e55a2b;}
+.btn-gris{background:#e9ecef;color:#333;} .btn-gris:hover{background:#dee2e6;}
+
+/* ── CONFORT ── */
+.confort-badge{border-radius:8px;padding:8px;font-size:12px;font-weight:700;text-align:center;margin-top:8px;}
+.c-ok{background:#d4edda;color:#155724;} .c-chaud{background:#fff3cd;color:#856404;}
+.c-froid{background:#cce5ff;color:#004085;} .c-humide{background:#f8d7da;color:#721c24;}
+.c-sec{background:#ffeeba;color:#856404;}
+
+/* ── QUIZ ── */
+.quiz-q{font-size:14px;font-weight:600;color:var(--bleu);margin-bottom:10px;}
+.quiz-opts{display:flex;flex-direction:column;gap:6px;}
+.quiz-opt{padding:8px 14px;border:2px solid var(--gris);border-radius:8px;cursor:pointer;font-size:13px;background:#fff;transition:.2s;}
+.quiz-opt:hover{border-color:var(--orange);}
+.quiz-opt.correct{border-color:var(--vert);background:#f0faf4;color:var(--vert);}
+.quiz-opt.wrong{border-color:var(--rouge);background:#fdf0f0;color:var(--rouge);}
+.quiz-feedback{margin-top:8px;font-size:12px;padding:8px;border-radius:6px;display:none;}
+.quiz-feedback.show{display:block;}
+
+/* ── ANIMATION AIR ── */
+#air-canvas{display:block;margin:0 auto;border-radius:12px;}
+
+/* ── TOGGLE ── */
+.tog-row{display:flex;align-items:center;justify-content:space-between;padding:4px 0;font-size:12px;}
+.switch{position:relative;width:36px;height:18px;}
+.switch input{display:none;}
+.sldr{position:absolute;inset:0;background:#ccc;border-radius:18px;cursor:pointer;transition:.3s;}
+.sldr:before{content:'';position:absolute;width:14px;height:14px;left:2px;top:2px;background:#fff;border-radius:50%;transition:.3s;}
+input:checked+.sldr{background:var(--bleu);}
+input:checked+.sldr:before{transform:translateX(18px);}
+
+footer{text-align:center;font-size:10px;color:var(--gtxt);padding:8px;border-top:1px solid var(--gris);}
+</style>
+<script>/* (c) F. Henninot - inerWeb FRIGOLO - Tous droits reserves */
+document.addEventListener("contextmenu",function(e){e.preventDefault()});
+document.addEventListener("keydown",function(e){if((e.ctrlKey||e.metaKey)&&(e.key==="u"||e.key==="s"||e.key==="c")){e.preventDefault()}});
+document.addEventListener("selectstart",function(e){if(e.target.tagName\!=="INPUT"&&e.target.tagName\!=="TEXTAREA"){e.preventDefault()}});
+</script>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <span style="font-size:26px;color:#a8d8f0;">❄</span>
+    <div>
+      <h1>inerWeb <span>Frigolo</span> — Psychrométrie</h1>
+      <small>De l'air humide au diagramme — par F. Henninot</small>
+    </div>
+  </div>
+  <span class="badge">Édu</span>
+</header>
+
+<nav class="nav-levels">
+  <button class="nav-btn active" onclick="goPage(0)"><span class="num">💧</span>L'air humide</button>
+  <button class="nav-btn" onclick="goPage(1)"><span class="num">🌡️</span>Bulbes sec/humide</button>
+  <button class="nav-btn" onclick="goPage(2)"><span class="num">📊</span>Le diagramme</button>
+  <button class="nav-btn" onclick="goPage(3)"><span class="num">🔄</span>Transformations</button>
+</nav>
+
+<!-- ════════════════════════════════════════
+     PAGE 0 — L'AIR HUMIDE
+════════════════════════════════════════ -->
+<div class="page active" id="page-0">
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <h2>💧 Qu'est-ce que l'air humide ?</h2>
+        <p>L'air que nous respirons n'est jamais "pur". C'est un <strong>mélange</strong> de deux éléments :</p>
+        <div class="encadre bleu">
+          🔵 <strong>Air sec</strong> = azote (78%) + oxygène (21%) + autres gaz<br>
+          💧 <strong>Vapeur d'eau</strong> = eau sous forme de gaz invisible
+        </div>
+        <p>La <strong>psychrométrie</strong> étudie les propriétés de ce mélange air sec + vapeur d'eau, pour dimensionner les installations de traitement de l'air et de réfrigération.</p>
+        <div class="encadre">
+          🧊 <strong>En chambre froide :</strong> contrôler l'hygrométrie permet d'éviter la déshydratation des produits (perte de poids = perte d'argent) et le givrage excessif de l'évaporateur.
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:0;">
+        <h2>📐 Les grandeurs clés</h2>
+        <div class="encadre vert">
+          <strong>Humidité relative (HR%)</strong><br>
+          Rapport entre la quantité de vapeur présente et la quantité maximale possible à cette température.<br>
+          HR = 100% → air saturé → condensation imminente
+        </div>
+        <div class="encadre bleu" style="margin-top:8px;">
+          <strong>Humidité spécifique w (g/kg)</strong><br>
+          Masse de vapeur d'eau par kg d'air sec. Ne dépend pas de la température.<br>
+          Exemple : w = 8 g/kg → 8g d'eau dans 1 kg d'air sec
+        </div>
+        <div class="encadre" style="margin-top:8px;">
+          <strong>Point de rosée (°C)</strong><br>
+          Température à laquelle l'air commence à condenser si on le refroidit à w constant.<br>
+          → Sur l'évaporateur d'une chambre froide : c'est quand le givre commence !
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card">
+        <h2>🎮 Visualiser l'air humide</h2>
+        <p style="margin-bottom:12px;">Déplacez les curseurs pour voir comment varie l'air :</p>
+        <div class="slider-group">
+          <label>Température sèche <span id="lbl-T">20°C</span></label>
+          <input type="range" id="sl-T" min="-20" max="45" value="20" oninput="updateAir()">
+        </div>
+        <div class="slider-group">
+          <label>Humidité relative <span id="lbl-HR">50%</span></label>
+          <input type="range" id="sl-HR" min="5" max="100" value="50" oninput="updateAir()">
+        </div>
+        <canvas id="air-canvas" width="340" height="160"></canvas>
+        <div class="val-grid" id="air-vals"></div>
+      </div>
+
+      <div class="card" style="margin-top:0;">
+        <h2>🧩 Quiz rapide</h2>
+        <div id="quiz-0">
+          <div class="quiz-q">L'air à HR = 100% contient...</div>
+          <div class="quiz-opts">
+            <div class="quiz-opt" onclick="quiz(this,0,0)">A. Aucune vapeur d'eau</div>
+            <div class="quiz-opt" onclick="quiz(this,0,1)">B. Le maximum de vapeur possible à cette température</div>
+            <div class="quiz-opt" onclick="quiz(this,0,2)">C. Exactement 10 g/kg d'eau</div>
+          </div>
+          <div class="quiz-feedback" id="qfb-0"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PAGE 1 — BULBE SEC / BULBE HUMIDE
+════════════════════════════════════════ -->
+<div class="page" id="page-1">
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <h2>🌡️ Le bulbe sec</h2>
+        <p>Le <strong>bulbe sec</strong> est un thermomètre ordinaire, exposé à l'air libre sans contact avec l'eau. Il mesure la <strong>température sèche de l'air</strong> — c'est la température habituelle que l'on mesure avec tout thermomètre.</p>
+        <div class="encadre bleu">
+          Symbole : <strong>T<sub>bs</sub></strong> (ou T°sèche)<br>
+          Unité : °C<br>
+          Instrument : thermomètre ordinaire
+        </div>
+        <p>C'est l'axe horizontal (X) du diagramme psychrométrique.</p>
+      </div>
+      <div class="card" style="margin-top:0;">
+        <h2>💧 Le bulbe humide</h2>
+        <p>Le <strong>bulbe humide</strong> est un thermomètre dont le réservoir est entouré d'une <strong>mèche mouillée</strong>. L'eau s'évapore depuis la mèche, ce qui <strong>refroidit</strong> le thermomètre.</p>
+        <div class="encadre">
+          Plus l'air est <strong>sec</strong> (HR basse) → évaporation forte → refroidissement important<br>
+          Plus l'air est <strong>humide</strong> (HR élevée) → évaporation faible → peu de refroidissement<br>
+          Si HR = 100% → <strong>T<sub>bh</sub> = T<sub>bs</sub></strong> (plus d'évaporation possible)
+        </div>
+        <div class="encadre bleu">
+          Symbole : <strong>T<sub>bh</sub></strong> (ou T°humide)<br>
+          Toujours : T<sub>bh</sub> ≤ T<sub>bs</sub>
+        </div>
+      </div>
+      <div class="card" style="margin-top:0;">
+        <h2>🧮 Formule approchée</h2>
+        <div class="encadre vert">
+          <strong>HR (%) ≈ 100 − 5 × (T<sub>bs</sub> − T<sub>bh</sub>)</strong><br><br>
+          Exemple : T<sub>bs</sub> = 20°C, T<sub>bh</sub> = 15°C<br>
+          Écart = 5°C → HR ≈ 100 − 5×5 = <strong>75%</strong>
+        </div>
+        <p>L'instrument qui regroupe les deux thermomètres s'appelle un <strong>psychromètre</strong> (ou thermohygrographe à mèche).</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h2>🎮 Psychromètre interactif</h2>
+        <div class="slider-group">
+          <label>Température sèche T<sub>bs</sub> <span id="lbl-tbs">20°C</span></label>
+          <input type="range" id="sl-tbs" min="-10" max="45" value="20" oninput="updateThermo()">
+        </div>
+        <div class="slider-group">
+          <label>Humidité relative HR <span id="lbl-hr2">50%</span></label>
+          <input type="range" id="sl-hr2" min="10" max="100" value="50" oninput="updateThermo()">
+        </div>
+        <canvas id="thermo-canvas" width="340" height="280"></canvas>
+        <div class="val-grid" id="thermo-vals"></div>
+      </div>
+      <div class="card" style="margin-top:0;">
+        <h2>🧩 Quiz</h2>
+        <div id="quiz-1">
+          <div class="quiz-q">T<sub>bs</sub> = 25°C et T<sub>bh</sub> = 25°C. Quelle est l'humidité relative ?</div>
+          <div class="quiz-opts">
+            <div class="quiz-opt" onclick="quiz(this,1,0)">A. 0% — l'air est complètement sec</div>
+            <div class="quiz-opt" onclick="quiz(this,1,1)">B. 50% — humidité moyenne</div>
+            <div class="quiz-opt" onclick="quiz(this,1,2)">C. 100% — l'air est saturé</div>
+          </div>
+          <div class="quiz-feedback" id="qfb-1"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PAGE 2 — LE DIAGRAMME
+════════════════════════════════════════ -->
+<div class="page" id="page-2">
+  <div class="row" style="align-items:flex-start;">
+    <div class="diagram-wrap col" style="flex:3;min-width:300px;">
+      <canvas id="psychro-canvas"></canvas>
+      <div id="tooltip"></div>
+    </div>
+    <div class="col" style="flex:1;min-width:200px;display:flex;flex-direction:column;gap:12px;">
+      <!-- Affichage -->
+      <div class="card">
+        <h2 style="font-size:13px;">⚙️ Affichage</h2>
+        <div class="tog-row"><label for="ck-hr">Courbes HR</label><label class="switch"><input type="checkbox" id="ck-hr" checked onchange="renderPsychro()"><span class="sldr"></span></label></div>
+        <div class="tog-row"><label for="ck-h">Enthalpies</label><label class="switch"><input type="checkbox" id="ck-h" checked onchange="renderPsychro()"><span class="sldr"></span></label></div>
+        <div class="tog-row"><label for="ck-tbh">T° humides</label><label class="switch"><input type="checkbox" id="ck-tbh" onchange="renderPsychro()"><span class="sldr"></span></label></div>
+        <div class="tog-row"><label for="ck-cf">Zone confort</label><label class="switch"><input type="checkbox" id="ck-cf" checked onchange="renderPsychro()"><span class="sldr"></span></label></div>
+        <div class="tog-row"><label for="ck-gr">Grille</label><label class="switch"><input type="checkbox" id="ck-gr" checked onchange="renderPsychro()"><span class="sldr"></span></label></div>
+      </div>
+      <!-- Valeurs point -->
+      <div class="card">
+        <h2 style="font-size:13px;">📍 Point sélectionné</h2>
+        <div id="pt-vals"><div style="font-size:11px;color:var(--gtxt);font-style:italic;text-align:center;padding:10px;">Cliquez sur<br>le diagramme</div></div>
+      </div>
+      <!-- Mémo points -->
+      <div class="card">
+        <h2 style="font-size:13px;">🔖 Points mémorisés</h2>
+        <div class="pt-list" id="pt-list"><div style="font-size:11px;color:var(--gtxt);font-style:italic;">Aucun point</div></div>
+        <div style="display:flex;gap:6px;margin-top:8px;">
+          <button class="btn btn-bleu" style="flex:1;font-size:11px;" onclick="memoPoint()">+ Mémoriser</button>
+          <button class="btn btn-gris" style="flex:1;font-size:11px;" onclick="clearMemos()">Effacer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PAGE 3 — TRANSFORMATIONS
+════════════════════════════════════════ -->
+<div class="page" id="page-3">
+  <div class="row" style="align-items:flex-start;">
+    <div class="diagram-wrap col" style="flex:3;min-width:300px;">
+      <canvas id="tf-canvas"></canvas>
+      <div id="tooltip2"></div>
+    </div>
+    <div class="col" style="flex:1;min-width:200px;display:flex;flex-direction:column;gap:12px;">
+      <div class="card">
+        <h2 style="font-size:13px;">🔄 Transformations</h2>
+        <p style="font-size:11px;color:var(--gtxt);margin-bottom:10px;">Choisissez une transformation à observer :</p>
+        <button class="tf-btn" onclick="showTF('chauffage')">☀️ Chauffage sensible<br><span style="font-weight:400;font-size:10px;color:var(--gtxt);">w constant → T augmente</span></button>
+        <button class="tf-btn" onclick="showTF('refroidissement')">🧊 Refroidissement sensible<br><span style="font-weight:400;font-size:10px;color:var(--gtxt);">w constant → T diminue</span></button>
+        <button class="tf-btn" onclick="showTF('deshumidification')">💧 Refroidissement + déshumidification<br><span style="font-weight:400;font-size:10px;color:var(--gtxt);">T et w diminuent (batterie froide)</span></button>
+        <button class="tf-btn" onclick="showTF('humidification')">🌫️ Humidification adiabatique<br><span style="font-weight:400;font-size:10px;color:var(--gtxt);">h constant → T diminue, w augmente</span></button>
+        <button class="tf-btn" onclick="showTF('melange')">🔀 Mélange d'air<br><span style="font-weight:400;font-size:10px;color:var(--gtxt);">Air extérieur + air repris</span></button>
+        <button class="tf-btn" onclick="showTF('chambre')">🏭 Cas chambre froide<br><span style="font-weight:400;font-size:10px;color:var(--gtxt);">Cycle complet CTA froide</span></button>
+        <button class="btn btn-gris" style="width:100%;margin-top:6px;font-size:11px;" onclick="clearTF()">Effacer</button>
+      </div>
+      <div class="card">
+        <h2 style="font-size:13px;">📖 Explication</h2>
+        <div id="tf-expl" style="font-size:12px;line-height:1.6;color:#333;">
+          <em style="color:var(--gtxt);">Sélectionnez une transformation ci-dessus.</em>
+        </div>
+      </div>
+      <div class="card">
+        <h2 style="font-size:13px;">🧮 Calculs</h2>
+        <div id="tf-calc" style="font-size:12px;color:#333;">
+          <em style="color:var(--gtxt);">—</em>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>inerWeb Frigolo — Psychrométrie v2.0 — F. Henninot — LP Privé Jacques Raynaud, Campus ÉQUATIO, Marseille</footer>
+
+<script>
+// ══════════════════════════════════════
+// FORMULES PSYCHROMÉTRIQUES
+// ══════════════════════════════════════
+const PATM = 101325;
+
+function Psat(T) { return 610.78 * Math.exp(17.27 * T / (T + 237.3)); }
+function wSat(T) { const p = Psat(T); return 1000 * 0.622 * p / (PATM - p); }
+function wFromHR(T, hr) { return hr / 100 * wSat(T); }
+function HRfromTW(T, w) { return Math.min(100, w / wSat(T) * 100); }
+function enthalpie(T, w) { return 1.006 * T + (w / 1000) * (2501 + 1.86 * T); }
+function rosee(T, hr) {
+  const a = 17.27, b = 237.3;
+  const alpha = Math.log(Math.max(hr, 0.01) / 100) + a * T / (b + T);
+  return b * alpha / (a - alpha);
+}
+function tbhCalc(T, w) {
+  // Approx : Tbh par itération (Sprung)
+  let tbh = T - 2;
+  for (let i = 0; i < 40; i++) {
+    const ws = wSat(tbh) / 1000;
+    const w_calc = ws - 0.000662 * (T - tbh); // formule Sprung en kg/kg
+    const err = w_calc * 1000 - w;
+    if (Math.abs(err) < 0.01) break;
+    tbh += err * 0.1;
+  }
+  return tbh;
+}
+
+// ══════════════════════════════════════
+// PAGE 0 — AIR HUMIDE ANIMATION
+// ══════════════════════════════════════
+function updateAir() {
+  const T = +document.getElementById('sl-T').value;
+  const hr = +document.getElementById('sl-HR').value;
+  document.getElementById('lbl-T').textContent = T + '°C';
+  document.getElementById('lbl-HR').textContent = hr + '%';
+  const w = wFromHR(T, hr);
+  const h = enthalpie(T, w);
+  const tr = rosee(T, hr);
+
+  document.getElementById('air-vals').innerHTML = `
+    <div class="val-box"><div class="lbl">Hum. spécifique</div><div class="num">${w.toFixed(1)}</div><div class="unit">g/kg</div></div>
+    <div class="val-box"><div class="lbl">Enthalpie</div><div class="num">${h.toFixed(1)}</div><div class="unit">kJ/kg</div></div>
+    <div class="val-box"><div class="lbl">Point de rosée</div><div class="num">${tr.toFixed(1)}</div><div class="unit">°C</div></div>
+    <div class="val-box"><div class="lbl">Saturation T°</div><div class="num">${wSat(T).toFixed(1)}</div><div class="unit">g/kg max</div></div>
+  `;
+
+  drawAir(T, hr, w);
+}
+
+function drawAir(T, hr, w) {
+  const c = document.getElementById('air-canvas');
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0, 0, c.width, c.height);
+
+  // Fond dégradé température
+  const tempRatio = (T + 20) / 65;
+  const r = Math.round(100 + tempRatio * 155);
+  const b = Math.round(220 - tempRatio * 130);
+  ctx.fillStyle = `rgb(${r},200,${b})`;
+  ctx.globalAlpha = 0.15;
+  ctx.fillRect(0, 0, c.width, c.height);
+  ctx.globalAlpha = 1;
+
+  // Boîte "air"
+  ctx.strokeStyle = '#1b3a63';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(20, 20, c.width - 40, c.height - 40);
+
+  // Molécules d'eau proportionnelles à w
+  const wmax = wSat(T);
+  const nMol = Math.round(w / wmax * 60);
+  const rng = mulberry32(42);
+  for (let i = 0; i < 60; i++) {
+    const x = 30 + rng() * (c.width - 60);
+    const y = 30 + rng() * (c.height - 60);
+    const inAir = i < nMol;
+    ctx.beginPath();
+    ctx.arc(x, y, inAir ? 4 : 2, 0, Math.PI * 2);
+    ctx.fillStyle = inAir ? '#0097a7' : 'rgba(150,150,150,0.3)';
+    ctx.fill();
+  }
+
+  // Label HR
+  ctx.fillStyle = '#1b3a63';
+  ctx.font = 'bold 13px Segoe UI';
+  ctx.textAlign = 'center';
+  const msg = hr >= 100 ? '💦 Air saturé — condensation !' : hr > 70 ? '💧 Air humide' : hr > 40 ? '😊 Air confortable' : '🏜️ Air sec';
+  ctx.fillText(msg, c.width / 2, c.height - 8);
+  ctx.font = '11px Segoe UI';
+  ctx.fillStyle = '#0097a7';
+  ctx.fillText(`● vapeur d'eau  `, c.width / 2 - 20, 14);
+}
+
+function mulberry32(a) {
+  return function() {
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    var t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+// ══════════════════════════════════════
+// PAGE 1 — THERMOMÈTRES
+// ══════════════════════════════════════
+function updateThermo() {
+  const tbs = +document.getElementById('sl-tbs').value;
+  const hr = +document.getElementById('sl-hr2').value;
+  document.getElementById('lbl-tbs').textContent = tbs + '°C';
+  document.getElementById('lbl-hr2').textContent = hr + '%';
+
+  const w = wFromHR(tbs, hr);
+  const tbh = tbhCalc(tbs, w);
+  const ecart = tbs - tbh;
+
+  document.getElementById('thermo-vals').innerHTML = `
+    <div class="val-box"><div class="lbl">T° bulbe sec</div><div class="num">${tbs.toFixed(1)}</div><div class="unit">°C</div></div>
+    <div class="val-box"><div class="lbl">T° bulbe humide</div><div class="num">${tbh.toFixed(1)}</div><div class="unit">°C</div></div>
+    <div class="val-box"><div class="lbl">Écart</div><div class="num">${ecart.toFixed(1)}</div><div class="unit">°C</div></div>
+    <div class="val-box"><div class="lbl">HR calculée</div><div class="num">${hr.toFixed(0)}</div><div class="unit">%</div></div>
+  `;
+
+  drawThermo(tbs, tbh, hr);
+}
+
+function drawThermo(tbs, tbh, hr) {
+  const c = document.getElementById('thermo-canvas');
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0, 0, c.width, c.height);
+
+  const TMIN = -10, TMAX = 50;
+
+  function drawOneThermo(cx, label, T, color, hasMeche) {
+    const tubW = 18, tubH = 180, tubX = cx - tubW / 2;
+    const bulbR = 14;
+    const topY = 20, botY = topY + tubH;
+
+    // Tube verre
+    ctx.strokeStyle = '#aaa';
+    ctx.lineWidth = 1;
+    ctx.fillStyle = 'rgba(200,230,255,0.3)';
+    ctx.beginPath();
+    ctx.roundRect(tubX, topY, tubW, tubH, 4);
+    ctx.fill(); ctx.stroke();
+
+    // Niveau mercure
+    const ratio = Math.min(1, Math.max(0, (T - TMIN) / (TMAX - TMIN)));
+    const mercH = ratio * tubH;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.roundRect(tubX + 2, botY - mercH, tubW - 4, mercH, 2);
+    ctx.fill();
+
+    // Bulbe
+    ctx.beginPath();
+    ctx.arc(cx, botY + bulbR, bulbR, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.strokeStyle = '#aaa';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Mèche humide
+    if (hasMeche) {
+      ctx.fillStyle = '#81d4fa';
+      ctx.globalAlpha = 0.7;
+      ctx.beginPath();
+      ctx.ellipse(cx, botY + bulbR, bulbR + 5, bulbR + 5, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      // Gouttes d'évaporation
+      const evapIntensity = Math.max(0, (tbs - tbh));
+      for (let i = 0; i < Math.min(6, Math.round(evapIntensity * 1.5)); i++) {
+        const angle = -Math.PI / 2 + (i - 3) * 0.4;
+        const gx = cx + Math.cos(angle) * (bulbR + 12);
+        const gy = botY + bulbR + Math.sin(angle) * (bulbR + 12) - i * 8;
+        ctx.fillStyle = '#0097a7';
+        ctx.globalAlpha = 0.6;
+        ctx.beginPath();
+        ctx.arc(gx, gy, 3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    // Graduations
+    ctx.fillStyle = '#1b3a63';
+    ctx.font = '10px Segoe UI';
+    ctx.textAlign = cx > 170 ? 'left' : 'right';
+    for (let t = TMIN; t <= TMAX; t += 10) {
+      const y = botY - (t - TMIN) / (TMAX - TMIN) * tubH;
+      ctx.beginPath();
+      ctx.moveTo(tubX + (cx > 170 ? tubW : 0), y);
+      ctx.lineTo(tubX + (cx > 170 ? tubW + 8 : -8), y);
+      ctx.strokeStyle = '#666';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.fillText(t + '°', tubX + (cx > 170 ? tubW + 10 : -10), y + 3);
+    }
+
+    // Valeur
+    ctx.fillStyle = color;
+    ctx.font = 'bold 13px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText(T.toFixed(1) + '°C', cx, topY - 6);
+
+    // Label
+    ctx.fillStyle = '#1b3a63';
+    ctx.font = 'bold 11px Segoe UI';
+    ctx.fillText(label, cx, botY + bulbR * 2 + 20);
+  }
+
+  drawOneThermo(90, 'Bulbe sec', tbs, '#e74c3c', false);
+  drawOneThermo(250, 'Bulbe humide', tbh, '#0097a7', true);
+
+  // Flèche écart
+  if (Math.abs(tbs - tbh) > 0.5) {
+    ctx.strokeStyle = '#ff6b35';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([4, 3]);
+    ctx.beginPath();
+    const y1 = 20 + 180 - (tbs - TMIN) / (TMAX - TMIN) * 180;
+    const y2 = 20 + 180 - (tbh - TMIN) / (TMAX - TMIN) * 180;
+    ctx.moveTo(170, y1);
+    ctx.lineTo(170, y2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#ff6b35';
+    ctx.font = 'bold 10px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Écart = ' + (tbs - tbh).toFixed(1) + '°', 170, (y1 + y2) / 2);
+  }
+
+  // Label HR
+  ctx.fillStyle = '#1b3a63';
+  ctx.font = 'bold 12px Segoe UI';
+  ctx.textAlign = 'center';
+  ctx.fillText('HR ≈ ' + hr + '%', c.width / 2, c.height - 5);
+}
+
+// ══════════════════════════════════════
+// PAGE 2 & 3 — DIAGRAMME PSYCHROMÉTRIQUE
+// ══════════════════════════════════════
+const TMIN = -5, TMAX = 50, WMIN = 0, WMAX = 28;
+const M = { top: 20, right: 20, bottom: 50, left: 58 };
+const HR_LEVELS = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+const HR_COLORS = ['#b8d4f5','#93baf0','#6da0ea','#4886e4','#2a6cd9','#1a5bc8','#1a4fa0','#163f80','#0f2d5c','#071d3d'];
+const PT_COLORS = ['#ff6b35','#e63946','#2a9d8f','#f4a261','#6a4c93','#2196F3'];
+
+let curPt = null, memos = [], diagW, diagH;
+
+function initPsychro() {
+  const canvas = document.getElementById('psychro-canvas');
+  const zone = canvas.parentElement;
+  canvas.width = zone.clientWidth;
+  canvas.height = Math.max(350, window.innerHeight - 200);
+  diagW = canvas.width - M.left - M.right;
+  diagH = canvas.height - M.top - M.bottom;
+  renderPsychro();
+
+  canvas.addEventListener('mousemove', (e) => {
+    const r = canvas.getBoundingClientRect();
+    const mx = e.clientX - r.left, my = e.clientY - r.top;
+    if (inDiag(mx, my)) {
+      const T = pxToT(mx), w = pxToW(my);
+      if (w >= WMIN && w <= WMAX + 2) {
+        const tip = document.getElementById('tooltip');
+        tip.style.display = 'block';
+        tip.style.left = (mx + 12) + 'px';
+        tip.style.top = (my - 30) + 'px';
+        const hr = HRfromTW(T, w);
+        const h = enthalpie(T, w);
+        tip.innerHTML = `T=${T.toFixed(1)}°C | w=${w.toFixed(1)} g/kg | HR=${hr.toFixed(0)}% | h=${h.toFixed(1)} kJ/kg`;
+      }
+    } else document.getElementById('tooltip').style.display = 'none';
+  });
+
+  canvas.addEventListener('mouseleave', () => document.getElementById('tooltip').style.display = 'none');
+  canvas.addEventListener('click', (e) => {
+    const r = canvas.getBoundingClientRect();
+    const mx = e.clientX - r.left, my = e.clientY - r.top;
+    if (!inDiag(mx, my)) return;
+    const T = pxToT(mx), w = pxToW(my);
+    if (w < WMIN || w > WMAX) return;
+    const hr = HRfromTW(T, w);
+    const h = enthalpie(T, w);
+    const tr = rosee(T, hr);
+    const tbh = tbhCalc(T, w);
+    curPt = { T, w, hr, h, tr, tbh, x: mx, y: my };
+    updatePtVals(curPt);
+    renderPsychro();
+  });
+}
+
+function inDiag(mx, my) { return mx >= M.left && mx <= M.left + diagW && my >= M.top && my <= M.top + diagH; }
+function toPx(T) { return M.left + (T - TMIN) / (TMAX - TMIN) * diagW; }
+function toWY(w) { return M.top + diagH - (w - WMIN) / (WMAX - WMIN) * diagH; }
+function pxToT(px) { return TMIN + (px - M.left) / diagW * (TMAX - TMIN); }
+function pxToW(py) { return WMIN + (M.top + diagH - py) / diagH * (WMAX - WMIN); }
+
+function renderPsychro() {
+  const canvas = document.getElementById('psychro-canvas');
+  if (!canvas || !diagW) return;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Fond
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(M.left, M.top, diagW, diagH);
+
+  const showGr = document.getElementById('ck-gr') ? document.getElementById('ck-gr').checked : true;
+  const showCF = document.getElementById('ck-cf') ? document.getElementById('ck-cf').checked : true;
+  const showHR = document.getElementById('ck-hr') ? document.getElementById('ck-hr').checked : true;
+  const showH  = document.getElementById('ck-h')  ? document.getElementById('ck-h').checked  : true;
+  const showTBH= document.getElementById('ck-tbh')? document.getElementById('ck-tbh').checked: false;
+
+  if (showCF) drawConfort(ctx);
+  if (showGr) drawGrille(ctx);
+  if (showH)  drawEnthalpies(ctx);
+  if (showTBH) drawTbh(ctx);
+  if (showHR) drawHR(ctx);
+  drawAxes(ctx, canvas);
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(M.left, M.top, diagW, diagH);
+  ctx.clip();
+
+  memos.forEach((pt, i) => drawPtCircle(ctx, pt, PT_COLORS[i % PT_COLORS.length], 'P' + (i + 1)));
+  if (curPt) {
+    // Lignes repère
+    ctx.strokeStyle = 'rgba(255,107,53,.5)';
+    ctx.lineWidth = 1; ctx.setLineDash([4, 4]);
+    ctx.beginPath(); ctx.moveTo(curPt.x, M.top); ctx.lineTo(curPt.x, curPt.y); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(M.left, curPt.y); ctx.lineTo(curPt.x, curPt.y); ctx.stroke();
+    ctx.setLineDash([]);
+    drawPtCircle(ctx, curPt, '#ff6b35', '');
+  }
+  ctx.restore();
+}
+
+function drawConfort(ctx) {
+  const pts = [
+    [toPx(20), toWY(wFromHR(20, 40))],
+    [toPx(26), toWY(wFromHR(26, 40))],
+    [toPx(26), toWY(wFromHR(26, 70))],
+    [toPx(20), toWY(wFromHR(20, 70))],
+  ];
+  ctx.beginPath();
+  ctx.moveTo(pts[0][0], pts[0][1]);
+  pts.forEach(p => ctx.lineTo(p[0], p[1]));
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(46,213,115,.15)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(46,213,115,.6)';
+  ctx.lineWidth = 1.5; ctx.setLineDash([5, 4]); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = '#27ae60'; ctx.font = 'bold 10px Segoe UI'; ctx.textAlign = 'center';
+  ctx.fillText('Zone confort', toPx(23), toWY(9.5));
+}
+
+function drawGrille(ctx) {
+  ctx.strokeStyle = '#e8ecf0'; ctx.lineWidth = .5;
+  for (let T = TMIN; T <= TMAX; T += 5) {
+    ctx.beginPath(); ctx.moveTo(toPx(T), M.top); ctx.lineTo(toPx(T), M.top + diagH); ctx.stroke();
+  }
+  for (let w = 0; w <= WMAX; w += 2) {
+    ctx.beginPath(); ctx.moveTo(M.left, toWY(w)); ctx.lineTo(M.left + diagW, toWY(w)); ctx.stroke();
+  }
+}
+
+function drawHR(ctx) {
+  HR_LEVELS.forEach((hr, i) => {
+    ctx.beginPath();
+    let first = true;
+    for (let T = TMIN; T <= TMAX; T += .5) {
+      const w = wFromHR(T, hr);
+      if (w < WMIN || w > WMAX) { first = true; continue; }
+      const x = toPx(T), y = toWY(w);
+      if (first) { ctx.moveTo(x, y); first = false; } else ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = HR_COLORS[i];
+    ctx.lineWidth = hr === 100 ? 2.5 : 1.2;
+    ctx.stroke();
+
+    // Labels
+    const lT = hr === 100 ? TMIN + 3 : Math.min(TMAX - 2, 35);
+    const lW = wFromHR(lT, hr);
+    if (lW >= WMIN && lW <= WMAX) {
+      ctx.fillStyle = HR_COLORS[i];
+      ctx.font = `${hr === 100 ? 'bold ' : ''}9px Segoe UI`;
+      ctx.textAlign = hr === 100 ? 'left' : 'right';
+      ctx.fillText(hr + '%', toPx(lT) + (hr === 100 ? 3 : -2), toWY(lW) - 3);
+    }
+  });
+}
+
+function drawEnthalpies(ctx) {
+  for (let h = -10; h <= 130; h += 10) {
+    ctx.beginPath();
+    let first = true;
+    for (let T = TMIN; T <= TMAX; T += 1) {
+      const w = (h - 1.006 * T) / (2501 + 1.86 * T) * 1e6;
+      if (w < WMIN || w > WMAX) { first = true; continue; }
+      const x = toPx(T), y = toWY(w);
+      if (first) { ctx.moveTo(x, y); first = false; } else ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = 'rgba(255,140,60,.3)'; ctx.lineWidth = .7;
+    ctx.setLineDash([6, 4]); ctx.stroke(); ctx.setLineDash([]);
+    const lT = TMIN + 1;
+    const lW = (h - 1.006 * lT) / (2501 + 1.86 * lT) * 1e6;
+    if (lW >= WMIN + .5 && lW <= WMAX - 1) {
+      ctx.fillStyle = 'rgba(200,100,40,.7)'; ctx.font = '8px Segoe UI'; ctx.textAlign = 'left';
+      ctx.fillText(h + ' kJ', toPx(lT), toWY(lW) - 2);
+    }
+  }
+}
+
+function drawTbh(ctx) {
+  [0, 5, 10, 15, 20, 25, 30].forEach(tbh => {
+    ctx.beginPath();
+    let first = true;
+    for (let T = TMIN; T <= TMAX; T += 1) {
+      const Lv = 2501, cp = 1.006;
+      const w_gkg = wSat(tbh) - (T - tbh) * cp / Lv * 1000;
+      if (w_gkg < WMIN || w_gkg > WMAX) { first = true; continue; }
+      const x = toPx(T), y = toWY(w_gkg);
+      if (first) { ctx.moveTo(x, y); first = false; } else ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = 'rgba(0,150,180,.35)'; ctx.lineWidth = .8;
+    ctx.setLineDash([3, 5]); ctx.stroke(); ctx.setLineDash([]);
+  });
+}
+
+function drawAxes(ctx, canvas) {
+  ctx.strokeStyle = '#1b3a63'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(M.left, M.top + diagH); ctx.lineTo(M.left + diagW, M.top + diagH); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(M.left, M.top); ctx.lineTo(M.left, M.top + diagH); ctx.stroke();
+
+  ctx.fillStyle = '#1b3a63'; ctx.font = '11px Segoe UI'; ctx.textAlign = 'center';
+  for (let T = TMIN; T <= TMAX; T += 5) {
+    const x = toPx(T);
+    ctx.beginPath(); ctx.moveTo(x, M.top + diagH); ctx.lineTo(x, M.top + diagH + 5); ctx.stroke();
+    ctx.fillText(T + '°', x, M.top + diagH + 16);
+  }
+  ctx.font = 'bold 12px Segoe UI';
+  ctx.fillText('Température sèche T°bs (°C)', M.left + diagW / 2, M.top + diagH + 36);
+
+  ctx.textAlign = 'right'; ctx.font = '11px Segoe UI';
+  for (let w = 0; w <= WMAX; w += 2) {
+    const y = toWY(w);
+    ctx.beginPath(); ctx.moveTo(M.left, y); ctx.lineTo(M.left - 5, y); ctx.stroke();
+    ctx.fillText(w, M.left - 8, y + 4);
+  }
+  ctx.save();
+  ctx.translate(14, M.top + diagH / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.font = 'bold 12px Segoe UI'; ctx.textAlign = 'center'; ctx.fillStyle = '#1b3a63';
+  ctx.fillText('Humidité spécifique w (g/kg)', 0, 0);
+  ctx.restore();
+}
+
+function drawPtCircle(ctx, pt, color, label) {
+  ctx.beginPath();
+  ctx.arc(pt.x, pt.y, 6, 0, Math.PI * 2);
+  ctx.fillStyle = color; ctx.fill();
+  ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+  if (label) {
+    ctx.fillStyle = color; ctx.font = 'bold 10px Segoe UI'; ctx.textAlign = 'left';
+    ctx.fillText(label, pt.x + 8, pt.y - 5);
+  }
+}
+
+function updatePtVals(pt) {
+  const c = evalConfort(pt.T, pt.hr);
+  document.getElementById('pt-vals').innerHTML = `
+    <div class="val-grid">
+      <div class="val-box"><div class="lbl">T° sèche</div><div class="num">${pt.T.toFixed(1)}</div><div class="unit">°C</div></div>
+      <div class="val-box"><div class="lbl">w</div><div class="num">${pt.w.toFixed(2)}</div><div class="unit">g/kg</div></div>
+      <div class="val-box"><div class="lbl">HR</div><div class="num">${pt.hr.toFixed(0)}</div><div class="unit">%</div></div>
+      <div class="val-box"><div class="lbl">h</div><div class="num">${pt.h.toFixed(1)}</div><div class="unit">kJ/kg</div></div>
+      <div class="val-box"><div class="lbl">Rosée</div><div class="num">${pt.tr.toFixed(1)}</div><div class="unit">°C</div></div>
+      <div class="val-box"><div class="lbl">T° humide</div><div class="num">${pt.tbh.toFixed(1)}</div><div class="unit">°C</div></div>
+    </div>
+    <div class="confort-badge ${c.cls}">${c.msg}</div>
+  `;
+}
+
+function evalConfort(T, hr) {
+  if (T >= 20 && T <= 26 && hr >= 40 && hr <= 70) return { cls: 'c-ok', msg: '✅ Zone de confort' };
+  if (T > 26) return { cls: 'c-chaud', msg: '🌡️ Trop chaud' };
+  if (T < 20) return { cls: 'c-froid', msg: '🧊 Trop froid' };
+  if (hr > 70) return { cls: 'c-humide', msg: '💧 Trop humide' };
+  return { cls: 'c-sec', msg: '🏜️ Trop sec' };
+}
+
+function memoPoint() {
+  if (!curPt) { alert('Cliquez d\'abord sur le diagramme.'); return; }
+  if (memos.length >= 6) { alert('Maximum 6 points.'); return; }
+  memos.push({ ...curPt });
+  updateMemoList();
+  renderPsychro();
+}
+
+function clearMemos() { memos = []; updateMemoList(); renderPsychro(); }
+
+function updateMemoList() {
+  const el = document.getElementById('pt-list');
+  if (!memos.length) { el.innerHTML = '<div style="font-size:11px;color:var(--gtxt);font-style:italic;">Aucun point</div>'; return; }
+  el.innerHTML = memos.map((p, i) => `
+    <div class="pt-item" onclick="selectMemo(${i})">
+      <div class="pt-dot" style="background:${PT_COLORS[i % PT_COLORS.length]}"></div>
+      <b>P${i + 1}</b> <span style="color:var(--gtxt)">${p.T.toFixed(1)}°C — ${p.w.toFixed(1)} g/kg</span>
+    </div>`).join('');
+}
+
+function selectMemo(i) { curPt = { ...memos[i] }; updatePtVals(curPt); renderPsychro(); }
+
+// ══════════════════════════════════════
+// PAGE 3 — TRANSFORMATIONS
+// ══════════════════════════════════════
+let tfCanvas, tfCtx, tfDiagW, tfDiagH, currentTF = null;
+
+const TF_DATA = {
+  chauffage: {
+    label: '☀️ Chauffage sensible',
+    color: '#e74c3c',
+    pts: [{ T: 5, hr: 80 }, { T: 22, hr: 22 }],
+    expl: `<b>Chauffage sensible</b> par une batterie chaude.<br><br>
+L'air est chauffé SANS apport d'eau → <b>w reste constant</b> (ligne horizontale sur le diagramme).<br><br>
+La HR diminue car l'air chaud peut "porter" plus de vapeur.<br><br>
+➡ Exemple : air soufflé dans une salle après batterie électrique.`,
+    calc: (p1, p2) => `Δh = ${(p2.h - p1.h).toFixed(1)} kJ/kg<br>ΔT = ${(p2.T - p1.T).toFixed(1)} °C<br>Δw = 0 g/kg<br>ΔHR = ${(p2.hr - p1.hr).toFixed(0)} %`
+  },
+  refroidissement: {
+    label: '🧊 Refroidissement sensible',
+    color: '#2196F3',
+    pts: [{ T: 30, hr: 40 }, { T: 12, hr: 86 }],
+    expl: `<b>Refroidissement sensible</b> jusqu'au point de rosée.<br><br>
+L'air est refroidi SANS perte d'eau → <b>w reste constant</b> (ligne horizontale).<br><br>
+La HR augmente. Quand on atteint HR = 100%, on est au <b>point de rosée</b> : la condensation commence.<br><br>
+➡ Exemple : air qui approche d'une paroi froide.`,
+    calc: (p1, p2) => `ΔT = ${(p2.T - p1.T).toFixed(1)} °C<br>Δw = 0 g/kg<br>Δh = ${(p2.h - p1.h).toFixed(1)} kJ/kg<br>Point de rosée ≈ ${p2.T.toFixed(1)} °C`
+  },
+  deshumidification: {
+    label: '💧 Refroidissement + déshumidification',
+    color: '#0097a7',
+    pts: [{ T: 28, hr: 60 }, { T: 6, hr: 100 }, { T: 14, hr: 90 }],
+    expl: `<b>Refroidissement avec déshumidification</b> — transformation en 2 phases :<br><br>
+1. Refroidissement sensible jusqu'au point de rosée<br>
+2. Refroidissement LE LONG de la courbe de saturation (HR=100%) : l'eau condense sur la batterie froide → <b>w diminue</b><br><br>
+C'est la transformation principale d'une batterie froide en climatisation.<br><br>
+➡ En chambre froide : c'est ce qui se passe sur l'évaporateur.`,
+    calc: (p1, p2, p3) => `Δw = ${(p3 ? p3.w - p1.w : p2.w - p1.w).toFixed(1)} g/kg d'eau condensée<br>ΔT = ${(p3 ? p3.T - p1.T : p2.T - p1.T).toFixed(1)} °C<br>Δh = ${(p3 ? p3.h - p1.h : p2.h - p1.h).toFixed(1)} kJ/kg`
+  },
+  humidification: {
+    label: '🌫️ Humidification adiabatique',
+    color: '#27ae60',
+    pts: [{ T: 28, hr: 20 }, { T: 20, hr: 56 }],
+    expl: `<b>Humidification adiabatique</b> — humidification par évaporation d'eau.<br><br>
+L'eau s'évapore dans l'air en prenant sa chaleur à l'air lui-même → <b>l'enthalpie reste constante</b> (transformation le long d'une droite h = cste).<br><br>
+La T° diminue, w augmente, HR augmente.<br><br>
+➡ Exemple : humidificateur à ultrason ou à pulvérisation.`,
+    calc: (p1, p2) => `Δw = +${(p2.w - p1.w).toFixed(1)} g/kg<br>ΔT = ${(p2.T - p1.T).toFixed(1)} °C<br>Δh ≈ 0 kJ/kg (adiabatique)`
+  },
+  melange: {
+    label: '🔀 Mélange air extérieur + air repris',
+    color: '#9b59b6',
+    pts: [{ T: 35, hr: 50 }, { T: 22, hr: 55 }, null],
+    expl: `<b>Mélange de deux masses d'air</b> (air extérieur + air recyclé).<br><br>
+Le point de mélange M se trouve SUR LE SEGMENT reliant les deux points, à une position proportionnelle aux débits :<br><br>
+<b>T<sub>M</sub> = (Q1×T1 + Q2×T2) / (Q1+Q2)</b><br><br>
+➡ C'est le calcul de base pour dimensionner le taux de brassage d'une CTA.`,
+    calc: (p1, p2) => {
+      const q1 = 0.3, q2 = 0.7;
+      const Tm = q1 * p1.T + q2 * p2.T, wm = q1 * p1.w + q2 * p2.w;
+      return `Pour 30% air ext. + 70% air repris :<br>T<sub>M</sub> = ${Tm.toFixed(1)} °C<br>w<sub>M</sub> = ${wm.toFixed(1)} g/kg<br>h<sub>M</sub> = ${enthalpie(Tm, wm).toFixed(1)} kJ/kg`;
+    }
+  },
+  chambre: {
+    label: '🏭 Cycle chambre froide',
+    color: '#e67e22',
+    pts: [{ T: 25, hr: 60 }, { T: 5, hr: 100 }, { T: 5, hr: 85 }],
+    expl: `<b>Cycle complet d'une chambre froide :</b><br><br>
+<b>A → B</b> : L'air chaud et humide entrant se refroidit et atteint le point de rosée sur l'évaporateur.<br><br>
+<b>B → C</b> : Refroidissement le long de la saturation : l'eau condense (ou gèle → givre) sur l'évaporateur. L'air ressort froid et sec.<br><br>
+<b>→ Résultat :</b> l'air soufflé dans la chambre est plus sec qu'à l'entrée → les produits se déshydratent si le cycle est mal maîtrisé.`,
+    calc: (p1, p2, p3) => `Eau extraite : ${(p1.w - (p3 || p2).w).toFixed(1)} g/kg<br>ΔT : ${((p3 || p2).T - p1.T).toFixed(1)} °C<br>Énergie extraite : ${(p1.h - (p3 || p2).h).toFixed(1)} kJ/kg<br>⚠️ Givre si T évap. < 0°C`
+  }
+};
+
+function makeTFPoint(spec) {
+  const w = wFromHR(spec.T, spec.hr);
+  return { T: spec.T, w, hr: spec.hr, h: enthalpie(spec.T, w), x: toPx2(spec.T), y: toWY2(w) };
+}
+
+let tfPoints = [];
+
+function showTF(key) {
+  currentTF = key;
+  document.querySelectorAll('.tf-btn').forEach(b => b.classList.remove('active-tf'));
+  event.currentTarget.classList.add('active-tf');
+
+  const data = TF_DATA[key];
+  tfPoints = data.pts.filter(Boolean).map(makeTFPoint);
+  // Mélange : calcul point M
+  if (key === 'melange' && tfPoints.length >= 2) {
+    const p1 = tfPoints[0], p2 = tfPoints[1];
+    const q1 = 0.3, q2 = 0.7;
+    const Tm = q1 * p1.T + q2 * p2.T, wm = q1 * p1.w + q2 * p2.w;
+    const xm = q1 * p1.x + q2 * p2.x, ym = q1 * p1.y + q2 * p2.y;
+    tfPoints.push({ T: Tm, w: wm, h: enthalpie(Tm, wm), hr: HRfromTW(Tm, wm), x: xm, y: ym });
+  }
+
+  document.getElementById('tf-expl').innerHTML = data.expl;
+  const calcResult = tfPoints.length >= 2 ? data.calc(tfPoints[0], tfPoints[1], tfPoints[2]) : '—';
+  document.getElementById('tf-calc').innerHTML = calcResult;
+
+  renderTF();
+}
+
+function clearTF() {
+  currentTF = null; tfPoints = [];
+  document.querySelectorAll('.tf-btn').forEach(b => b.classList.remove('active-tf'));
+  document.getElementById('tf-expl').innerHTML = '<em style="color:var(--gtxt);">Sélectionnez une transformation ci-dessus.</em>';
+  document.getElementById('tf-calc').innerHTML = '<em style="color:var(--gtxt);">—</em>';
+  renderTF();
+}
+
+function initTFCanvas() {
+  tfCanvas = document.getElementById('tf-canvas');
+  const zone = tfCanvas.parentElement;
+  tfCanvas.width = zone.clientWidth;
+  tfCanvas.height = Math.max(350, window.innerHeight - 200);
+  tfDiagW = tfCanvas.width - M.left - M.right;
+  tfDiagH = tfCanvas.height - M.top - M.bottom;
+  renderTF();
+
+  tfCanvas.addEventListener('mousemove', (e) => {
+    const r = tfCanvas.getBoundingClientRect();
+    const mx = e.clientX - r.left, my = e.clientY - r.top;
+    if (mx >= M.left && mx <= M.left + tfDiagW && my >= M.top && my <= M.top + tfDiagH) {
+      const T = TMIN + (mx - M.left) / tfDiagW * (TMAX - TMIN);
+      const w = WMIN + (M.top + tfDiagH - my) / tfDiagH * (WMAX - WMIN);
+      if (w >= WMIN && w <= WMAX) {
+        const tip = document.getElementById('tooltip2');
+        tip.style.display = 'block'; tip.style.left = (mx + 12) + 'px'; tip.style.top = (my - 30) + 'px';
+        tip.innerHTML = `T=${T.toFixed(1)}°C | w=${w.toFixed(1)} g/kg | HR=${HRfromTW(T, w).toFixed(0)}% | h=${enthalpie(T, w).toFixed(1)} kJ/kg`;
+      }
+    } else document.getElementById('tooltip2').style.display = 'none';
+  });
+  tfCanvas.addEventListener('mouseleave', () => document.getElementById('tooltip2').style.display = 'none');
+}
+
+function toPx2(T) { return M.left + (T - TMIN) / (TMAX - TMIN) * tfDiagW; }
+function toWY2(w) { return M.top + tfDiagH - (w - WMIN) / (WMAX - WMIN) * tfDiagH; }
+
+function renderTF() {
+  if (!tfCanvas || !tfDiagW) return;
+  tfCtx = tfCanvas.getContext('2d');
+  tfCtx.clearRect(0, 0, tfCanvas.width, tfCanvas.height);
+
+  // Fond + grille + HR
+  tfCtx.fillStyle = '#fff';
+  tfCtx.fillRect(M.left, M.top, tfDiagW, tfDiagH);
+  drawGrilleOn(tfCtx, tfDiagW, tfDiagH);
+  drawHROn(tfCtx, tfDiagW, tfDiagH);
+  drawAxesOn(tfCtx, tfCanvas, tfDiagW, tfDiagH);
+
+  tfCtx.save();
+  tfCtx.beginPath();
+  tfCtx.rect(M.left, M.top, tfDiagW, tfDiagH);
+  tfCtx.clip();
+
+  if (!currentTF || tfPoints.length < 2) { tfCtx.restore(); return; }
+
+  const data = TF_DATA[currentTF];
+  const col = data.color;
+
+  // Tracé de la transformation
+  tfCtx.beginPath();
+  if (currentTF === 'deshumidification' || currentTF === 'chambre') {
+    // Phase 1 : horizontal jusqu'au point de rosée
+    tfCtx.moveTo(tfPoints[0].x, tfPoints[0].y);
+    tfCtx.lineTo(tfPoints[1].x, tfPoints[1].y);
+    tfCtx.strokeStyle = col; tfCtx.lineWidth = 2.5; tfCtx.setLineDash([]);
+    tfCtx.stroke();
+    // Phase 2 : le long de la saturation
+    if (tfPoints[2]) {
+      tfCtx.beginPath();
+      tfCtx.moveTo(tfPoints[1].x, tfPoints[1].y);
+      tfCtx.lineTo(tfPoints[2].x, tfPoints[2].y);
+      tfCtx.strokeStyle = col; tfCtx.lineWidth = 2.5; tfCtx.stroke();
+    }
+  } else if (currentTF === 'melange') {
+    tfCtx.moveTo(tfPoints[0].x, tfPoints[0].y);
+    tfCtx.lineTo(tfPoints[1].x, tfPoints[1].y);
+    tfCtx.strokeStyle = col; tfCtx.lineWidth = 1.5;
+    tfCtx.setLineDash([6, 4]); tfCtx.stroke(); tfCtx.setLineDash([]);
+  } else {
+    tfCtx.moveTo(tfPoints[0].x, tfPoints[0].y);
+    tfCtx.lineTo(tfPoints[1].x, tfPoints[1].y);
+    tfCtx.strokeStyle = col; tfCtx.lineWidth = 2.5; tfCtx.stroke();
+  }
+
+  // Flèche finale
+  const last = tfPoints[tfPoints.length - 1];
+  const prev = tfPoints[tfPoints.length - 2];
+  const angle = Math.atan2(last.y - prev.y, last.x - prev.x);
+  tfCtx.save();
+  tfCtx.translate(last.x, last.y);
+  tfCtx.rotate(angle);
+  tfCtx.beginPath(); tfCtx.moveTo(0, 0); tfCtx.lineTo(-12, -5); tfCtx.lineTo(-12, 5); tfCtx.closePath();
+  tfCtx.fillStyle = col; tfCtx.fill();
+  tfCtx.restore();
+
+  // Points avec lettres
+  const labels = currentTF === 'melange' ? ['Air ext.', 'Air rep.', 'Mélange M'] : ['A', 'B', 'C'];
+  tfPoints.forEach((pt, i) => {
+    tfCtx.beginPath(); tfCtx.arc(pt.x, pt.y, 7, 0, Math.PI * 2);
+    tfCtx.fillStyle = i === tfPoints.length - 1 && currentTF !== 'melange' ? col : col;
+    tfCtx.fill(); tfCtx.strokeStyle = '#fff'; tfCtx.lineWidth = 2; tfCtx.stroke();
+    tfCtx.fillStyle = col; tfCtx.font = 'bold 11px Segoe UI'; tfCtx.textAlign = 'left';
+    tfCtx.fillText(labels[i] || '', pt.x + 9, pt.y - 5);
+    // Valeurs
+    tfCtx.fillStyle = '#555'; tfCtx.font = '9px Segoe UI';
+    tfCtx.fillText(`${pt.T.toFixed(1)}°C | w=${pt.w.toFixed(1)} | HR=${pt.hr.toFixed(0)}%`, pt.x + 9, pt.y + 8);
+  });
+
+  tfCtx.restore();
+}
+
+// Versions génériques pour tfCanvas
+function drawGrilleOn(ctx, dW, dH) {
+  ctx.strokeStyle = '#e8ecf0'; ctx.lineWidth = .5;
+  for (let T = TMIN; T <= TMAX; T += 5) {
+    const x = M.left + (T - TMIN) / (TMAX - TMIN) * dW;
+    ctx.beginPath(); ctx.moveTo(x, M.top); ctx.lineTo(x, M.top + dH); ctx.stroke();
+  }
+  for (let w = 0; w <= WMAX; w += 2) {
+    const y = M.top + dH - (w - WMIN) / (WMAX - WMIN) * dH;
+    ctx.beginPath(); ctx.moveTo(M.left, y); ctx.lineTo(M.left + dW, y); ctx.stroke();
+  }
+}
+
+function drawHROn(ctx, dW, dH) {
+  HR_LEVELS.forEach((hr, i) => {
+    ctx.beginPath(); let first = true;
+    for (let T = TMIN; T <= TMAX; T += .5) {
+      const w = wFromHR(T, hr);
+      if (w < WMIN || w > WMAX) { first = true; continue; }
+      const x = M.left + (T - TMIN) / (TMAX - TMIN) * dW;
+      const y = M.top + dH - (w - WMIN) / (WMAX - WMIN) * dH;
+      if (first) { ctx.moveTo(x, y); first = false; } else ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = HR_COLORS[i]; ctx.lineWidth = hr === 100 ? 2 : 1; ctx.stroke();
+    const lT = Math.min(TMAX - 2, 35), lW = wFromHR(lT, hr);
+    if (lW >= WMIN && lW <= WMAX) {
+      ctx.fillStyle = HR_COLORS[i]; ctx.font = '9px Segoe UI'; ctx.textAlign = 'right';
+      ctx.fillText(hr + '%', M.left + (lT - TMIN) / (TMAX - TMIN) * dW - 2, M.top + dH - (lW - WMIN) / (WMAX - WMIN) * dH - 3);
+    }
+  });
+}
+
+function drawAxesOn(ctx, canvas, dW, dH) {
+  ctx.strokeStyle = '#1b3a63'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(M.left, M.top + dH); ctx.lineTo(M.left + dW, M.top + dH); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(M.left, M.top); ctx.lineTo(M.left, M.top + dH); ctx.stroke();
+  ctx.fillStyle = '#1b3a63'; ctx.font = '11px Segoe UI'; ctx.textAlign = 'center';
+  for (let T = TMIN; T <= TMAX; T += 5) {
+    const x = M.left + (T - TMIN) / (TMAX - TMIN) * dW;
+    ctx.beginPath(); ctx.moveTo(x, M.top + dH); ctx.lineTo(x, M.top + dH + 5); ctx.stroke();
+    ctx.fillText(T + '°', x, M.top + dH + 16);
+  }
+  ctx.font = 'bold 11px Segoe UI';
+  ctx.fillText('Température sèche T°bs (°C)', M.left + dW / 2, M.top + dH + 36);
+  ctx.textAlign = 'right'; ctx.font = '11px Segoe UI';
+  for (let w = 0; w <= WMAX; w += 2) {
+    const y = M.top + dH - (w - WMIN) / (WMAX - WMIN) * dH;
+    ctx.beginPath(); ctx.moveTo(M.left, y); ctx.lineTo(M.left - 5, y); ctx.stroke();
+    ctx.fillText(w, M.left - 8, y + 4);
+  }
+  ctx.save(); ctx.translate(14, M.top + dH / 2); ctx.rotate(-Math.PI / 2);
+  ctx.font = 'bold 11px Segoe UI'; ctx.textAlign = 'center'; ctx.fillStyle = '#1b3a63';
+  ctx.fillText('w (g/kg)', 0, 0); ctx.restore();
+}
+
+// ══════════════════════════════════════
+// QUIZ
+// ══════════════════════════════════════
+const QUIZ_ANSWERS = [1, 2];
+const QUIZ_FEEDBACKS = [
+  ['Pas tout à fait — l\'air sec (0% HR) contient de l\'air pur sans vapeur.', '✅ Correct ! HR=100% = saturation = maximum de vapeur possible à cette température.', 'Non — la teneur en vapeur dépend de la température, pas d\'un chiffre fixe.'],
+  ['Non — si les deux bulbes sont égaux, il n\'y a plus d\'évaporation → saturation.', 'Non — l\'égalité des deux bulbes signifie quelque chose de précis...', '✅ Correct ! T°bs = T°bh → écart = 0 → HR = 100% → air saturé, plus d\'évaporation possible.']
+];
+
+function quiz(el, qNum, choice) {
+  const opts = el.parentElement.querySelectorAll('.quiz-opt');
+  opts.forEach(o => o.style.pointerEvents = 'none');
+  const correct = QUIZ_ANSWERS[qNum];
+  opts[correct].classList.add('correct');
+  if (choice !== correct) el.classList.add('wrong');
+  const fb = document.getElementById('qfb-' + qNum);
+  fb.textContent = QUIZ_FEEDBACKS[qNum][choice];
+  fb.style.background = choice === correct ? '#f0faf4' : '#fdf0f0';
+  fb.style.color = choice === correct ? '#155724' : '#721c24';
+  fb.style.padding = '8px'; fb.style.borderRadius = '6px';
+  fb.classList.add('show');
+}
+
+// ══════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════
+let psychroInited = false, tfInited = false;
+
+function goPage(n) {
+  document.querySelectorAll('.page').forEach((p, i) => p.classList.toggle('active', i === n));
+  document.querySelectorAll('.nav-btn').forEach((b, i) => b.classList.toggle('active', i === n));
+
+  if (n === 2 && !psychroInited) { psychroInited = true; setTimeout(initPsychro, 50); }
+  if (n === 3 && !tfInited) { tfInited = true; setTimeout(initTFCanvas, 50); }
+}
+
+window.addEventListener('resize', () => {
+  if (psychroInited) {
+    const c = document.getElementById('psychro-canvas');
+    const z = c.parentElement;
+    c.width = z.clientWidth;
+    c.height = Math.max(350, window.innerHeight - 200);
+    diagW = c.width - M.left - M.right;
+    diagH = c.height - M.top - M.bottom;
+    renderPsychro();
+  }
+  if (tfInited) {
+    tfCanvas.width = tfCanvas.parentElement.clientWidth;
+    tfCanvas.height = Math.max(350, window.innerHeight - 200);
+    tfDiagW = tfCanvas.width - M.left - M.right;
+    tfDiagH = tfCanvas.height - M.top - M.bottom;
+    renderTF();
+  }
+});
+
+// INIT
+updateAir();
+updateThermo();
+</script>
+</body>
+</html>

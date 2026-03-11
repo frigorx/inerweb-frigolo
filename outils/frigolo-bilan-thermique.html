@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>inerWeb Frigolo — Bilan Thermique Chambre Froide</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --bleu:#1b3a63; --bleu2:#2a5298; --orange:#ff6b35;
+  --fond:#f0f4f8; --blanc:#fff; --gris:#dde3ec; --gtxt:#7a8699;
+  --froid:#4fc3f7; --froid2:#0288d1; --chaud:#ef5350;
+  --vert:#43a047; --violet:#7e57c2;
+  --mur:#78909c; --iso:#a5d6a7;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--fond);color:var(--bleu);min-height:100vh;display:flex;flex-direction:column;}
+
+/* ── HEADER ── */
+header{background:var(--bleu);color:#fff;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.brand{display:flex;align-items:center;gap:10px;}
+.brand h1{font-size:17px;font-weight:700;letter-spacing:.3px;}
+.brand h1 em{color:var(--orange);font-style:normal;}
+.brand small{font-size:11px;opacity:.65;display:block;}
+.badge{background:var(--orange);color:#fff;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+
+/* ── NAV ── */
+.nav{display:flex;background:var(--bleu2);}
+.nav-btn{flex:1;padding:9px 6px;border:none;background:transparent;color:rgba(255,255,255,.55);cursor:pointer;font-size:12px;font-weight:600;border-bottom:3px solid transparent;transition:.2s;font-family:'DM Sans',sans-serif;}
+.nav-btn.active{color:#fff;border-bottom-color:var(--orange);background:rgba(255,255,255,.08);}
+.nav-btn span{display:block;font-size:16px;margin-bottom:1px;}
+
+/* ── PAGES ── */
+.page{display:none;flex:1;padding:16px;gap:14px;flex-direction:column;}
+.page.active{display:flex;}
+
+/* ── ROW / COL ── */
+.row{display:flex;gap:14px;flex-wrap:wrap;}
+.col{flex:1;min-width:220px;display:flex;flex-direction:column;gap:12px;}
+
+/* ── CARDS ── */
+.card{background:var(--blanc);border-radius:12px;padding:16px;box-shadow:0 1px 5px rgba(0,0,0,.07);border:1px solid var(--gris);}
+.card h2{font-size:14px;font-weight:700;color:var(--bleu);margin-bottom:10px;display:flex;align-items:center;gap:7px;}
+.card p{font-size:13px;line-height:1.7;color:#333;margin-bottom:7px;}
+.encadre{border-left:4px solid var(--orange);padding:9px 13px;background:#fff8f5;border-radius:0 8px 8px 0;margin:8px 0;font-size:13px;line-height:1.6;}
+.encadre.bleu{border-color:var(--bleu);background:#f0f4fb;}
+.encadre.vert{border-color:var(--vert);background:#f1f8f1;}
+.encadre.rouge{border-color:var(--chaud);background:#fef0f0;}
+.encadre.violet{border-color:var(--violet);background:#f3f0fb;}
+
+/* ── SLIDERS ── */
+.sl-row{margin:8px 0;}
+.sl-row label{font-size:12px;font-weight:600;color:var(--bleu);display:flex;justify-content:space-between;margin-bottom:3px;}
+.sl-row label em{color:var(--orange);font-style:normal;font-family:'DM Mono',monospace;font-size:13px;}
+input[type=range]{width:100%;accent-color:var(--orange);height:4px;}
+
+/* ── CANVAS ── */
+canvas{display:block;border-radius:10px;}
+
+/* ── APPORTS TABLE ── */
+.apport-row{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;margin-bottom:5px;font-size:12px;}
+.apport-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
+.apport-label{flex:1;font-weight:600;}
+.apport-val{font-family:'DM Mono',monospace;font-size:13px;font-weight:700;min-width:80px;text-align:right;}
+.apport-bar-wrap{flex:2;background:#eee;border-radius:4px;height:8px;overflow:hidden;}
+.apport-bar{height:100%;border-radius:4px;transition:width .5s;}
+
+/* ── RÉSULTAT TOTAL ── */
+.result-box{background:var(--bleu);color:#fff;border-radius:12px;padding:18px;text-align:center;}
+.result-box .big{font-size:40px;font-weight:700;font-family:'DM Mono',monospace;color:var(--froid);}
+.result-box .unit{font-size:14px;opacity:.8;}
+.result-box .sub{font-size:12px;opacity:.65;margin-top:4px;}
+
+/* ── BTN ── */
+.btn{padding:8px 16px;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:.2s;}
+.btn-bleu{background:var(--bleu);color:#fff;} .btn-bleu:hover{background:var(--bleu2);}
+.btn-orange{background:var(--orange);color:#fff;}
+.btn-sm{padding:6px 12px;font-size:11px;}
+
+/* ── SELECT ── */
+select{width:100%;padding:7px 10px;border:1px solid var(--gris);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;color:var(--bleu);background:#fff;}
+
+/* ── ANIMATIONS chaleur ── */
+@keyframes fluxChaud{0%{opacity:0;transform:translateX(-8px)}50%{opacity:1}100%{opacity:0;transform:translateX(8px)}}
+@keyframes fluxFroid{0%{opacity:0;transform:translateY(8px)}50%{opacity:1}100%{opacity:0;transform:translateY(-8px)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+
+/* ── ÉTIQUETTES APPORTS ── */
+.tag{display:inline-block;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:700;color:#fff;}
+.tag-paroi{background:var(--mur);}
+.tag-produit{background:var(--vert);}
+.tag-infiltration{background:var(--froid2);}
+.tag-interne{background:var(--violet);}
+.tag-degivrage{background:var(--chaud);}
+
+/* ── FORMULE ── */
+.formule{background:#f8f9fa;border:1px solid var(--gris);border-radius:8px;padding:10px;font-family:'DM Mono',monospace;font-size:12px;color:var(--bleu);margin:8px 0;}
+
+footer{text-align:center;font-size:10px;color:var(--gtxt);padding:8px;border-top:1px solid var(--gris);}
+</style>
+<script>/* (c) F. Henninot - inerWeb FRIGOLO - Tous droits reserves */
+document.addEventListener("contextmenu",function(e){e.preventDefault()});
+document.addEventListener("keydown",function(e){if((e.ctrlKey||e.metaKey)&&(e.key==="u"||e.key==="s"||e.key==="c")){e.preventDefault()}});
+document.addEventListener("selectstart",function(e){if(e.target.tagName\!=="INPUT"&&e.target.tagName\!=="TEXTAREA"){e.preventDefault()}});
+</script>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <span style="font-size:24px;">🧊</span>
+    <div>
+      <h1>inerWeb <em>Frigolo</em> — Bilan Thermique</h1>
+      <small>Calculer la puissance frigorifique d'une chambre froide</small>
+    </div>
+  </div>
+  <span class="badge">Édu</span>
+</header>
+
+<nav class="nav">
+  <button class="nav-btn active" onclick="goPage(0)"><span>🏗️</span>Les apports</button>
+  <button class="nav-btn" onclick="goPage(1)"><span>🧱</span>Parois</button>
+  <button class="nav-btn" onclick="goPage(2)"><span>📦</span>Produits</button>
+  <button class="nav-btn" onclick="goPage(3)"><span>🌬️</span>Infiltrations</button>
+  <button class="nav-btn" onclick="goPage(4)"><span>💡</span>Apports internes</button>
+  <button class="nav-btn" onclick="goPage(5)"><span>📊</span>Bilan total</button>
+</nav>
+
+<!-- ══════════════════════════════════════
+     PAGE 0 — LES APPORTS THERMIQUES
+══════════════════════════════════════ -->
+<div class="page active" id="page-0">
+  <div class="row">
+    <div class="col" style="flex:2;min-width:320px;">
+      <div class="card">
+        <h2>🏗️ D'où vient la chaleur dans une chambre froide ?</h2>
+        <p>Une chambre froide doit maintenir une température basse. Mais la chaleur cherche toujours à s'équilibrer — elle rentre de partout. Le <strong>bilan thermique</strong> consiste à identifier et quantifier chacun de ces apports pour dimensionner la puissance du groupe frigorifique.</p>
+        <canvas id="chambre-canvas" width="520" height="300"></canvas>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h2>🔥 Les 5 postes d'apports</h2>
+        <div class="encadre bleu">
+          <span class="tag tag-paroi">PAROIS</span> <strong>Déperditions par l'isolation</strong><br>
+          Chaleur traversant les murs, sol, plafond. Dépend de l'isolant (U), de la surface (S) et de l'écart de température (ΔT).
+        </div>
+        <div class="encadre vert">
+          <span class="tag tag-produit">PRODUITS</span> <strong>Refroidissement de la marchandise</strong><br>
+          Chaleur à extraire pour amener les produits à la température de consigne.
+        </div>
+        <div class="encadre bleu" style="border-color:var(--froid2);background:#f0f8ff;">
+          <span class="tag tag-infiltration">INFILTRATIONS</span> <strong>Entrées d'air chaud</strong><br>
+          Ouvertures de porte, renouvellement d'air — l'air extérieur chaud et humide entre.
+        </div>
+        <div class="encadre violet">
+          <span class="tag tag-interne">INTERNES</span> <strong>Apports intérieurs</strong><br>
+          Éclairage, moteurs du ventilateur, personnes travaillant dans la chambre.
+        </div>
+        <div class="encadre rouge">
+          <span class="tag tag-degivrage">DÉGIVRAGE</span> <strong>Cycle de dégivrage</strong><br>
+          Apport électrique (résistances) ou gaz chaud pour fondre le givre sur l'évaporateur.
+        </div>
+      </div>
+      <div class="card">
+        <h2>🧮 La formule globale</h2>
+        <div class="formule">Q<sub>total</sub> = Q<sub>parois</sub> + Q<sub>produits</sub><br>+ Q<sub>infiltrations</sub> + Q<sub>internes</sub><br>+ Q<sub>dégivrage</sub></div>
+        <p style="font-size:12px;color:var(--gtxt);">La puissance du groupe est souvent majorée de <strong>10 à 15%</strong> pour tenir compte des imprévus.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE 1 — PAROIS
+══════════════════════════════════════ -->
+<div class="page" id="page-1">
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <h2>🧱 Déperditions par les parois</h2>
+        <p>La chaleur traverse les parois isolées selon la loi de Fourier :</p>
+        <div class="formule">Q<sub>parois</sub> = U × S × ΔT</div>
+        <div class="encadre bleu">
+          <strong>U</strong> = coefficient global de transmission (W/m²·K)<br>
+          <strong>S</strong> = surface totale de la paroi (m²)<br>
+          <strong>ΔT</strong> = T<sub>ext</sub> − T<sub>int</sub> (K ou °C)
+        </div>
+        <p>Le coefficient U dépend de l'épaisseur et du type d'isolant. Plus U est faible, meilleure est l'isolation.</p>
+        <div class="encadre vert">
+          <strong>Valeurs typiques de U :</strong><br>
+          Polyuréthane 100mm : U ≈ 0,22 W/m²K<br>
+          Polyuréthane 150mm : U ≈ 0,15 W/m²K<br>
+          Polystyrène 100mm : U ≈ 0,35 W/m²K
+        </div>
+      </div>
+      <div class="card">
+        <h2>🧮 Calculer Q parois</h2>
+        <div class="sl-row">
+          <label>Longueur L <em id="lbl-L">6 m</em></label>
+          <input type="range" id="sl-L" min="2" max="20" value="6" step="0.5" oninput="updateParois()">
+        </div>
+        <div class="sl-row">
+          <label>Largeur l <em id="lbl-l">4 m</em></label>
+          <input type="range" id="sl-l" min="2" max="15" value="4" step="0.5" oninput="updateParois()">
+        </div>
+        <div class="sl-row">
+          <label>Hauteur h <em id="lbl-h">3 m</em></label>
+          <input type="range" id="sl-h" min="2" max="6" value="3" step="0.5" oninput="updateParois()">
+        </div>
+        <div class="sl-row">
+          <label>T° intérieure <em id="lbl-Ti">-18 °C</em></label>
+          <input type="range" id="sl-Ti" min="-30" max="10" value="-18" oninput="updateParois()">
+        </div>
+        <div class="sl-row">
+          <label>T° extérieure <em id="lbl-Te">25 °C</em></label>
+          <input type="range" id="sl-Te" min="0" max="45" value="25" oninput="updateParois()">
+        </div>
+        <div class="sl-row">
+          <label>Isolant</label>
+          <select id="sel-iso" onchange="updateParois()">
+            <option value="0.22">Polyuréthane 100mm (U=0,22)</option>
+            <option value="0.15">Polyuréthane 150mm (U=0,15)</option>
+            <option value="0.10">Polyuréthane 200mm (U=0,10)</option>
+            <option value="0.35">Polystyrène 100mm (U=0,35)</option>
+            <option value="0.25">Polystyrène 150mm (U=0,25)</option>
+          </select>
+        </div>
+        <div class="result-box" style="margin-top:10px;" id="res-parois">—</div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h2>📐 Schéma coupe de paroi</h2>
+        <canvas id="paroi-canvas" width="320" height="280"></canvas>
+      </div>
+      <div class="card">
+        <h2>📋 Détail du calcul</h2>
+        <div id="detail-parois" style="font-family:'DM Mono',monospace;font-size:12px;line-height:1.9;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE 2 — PRODUITS
+══════════════════════════════════════ -->
+<div class="page" id="page-2">
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <h2>📦 Apports dus aux produits</h2>
+        <p>Quand on introduit des produits chauds dans la chambre, il faut extraire leur chaleur pour les amener à la température de consigne.</p>
+        <div class="formule">Q<sub>produits</sub> = m × Cp × ΔT / t</div>
+        <div class="encadre bleu">
+          <strong>m</strong> = masse de produits à refroidir (kg)<br>
+          <strong>Cp</strong> = chaleur massique du produit (kJ/kg·K)<br>
+          <strong>ΔT</strong> = T<sub>entrée</sub> − T<sub>consigne</sub> (K)<br>
+          <strong>t</strong> = durée de refroidissement (h) → ×3600 pour avoir des secondes → W
+        </div>
+        <div class="encadre vert">
+          <strong>Cp typiques :</strong><br>
+          Viande : 3,5 kJ/kg·K<br>
+          Poisson : 3,6 kJ/kg·K<br>
+          Légumes : 3,9 kJ/kg·K<br>
+          Produits laitiers : 3,8 kJ/kg·K<br>
+          Glace / surgelés : 2,0 kJ/kg·K
+        </div>
+        <p>Si les produits dégagent de la <strong>chaleur de respiration</strong> (fruits, légumes vivants), il faut ajouter cet apport.</p>
+      </div>
+      <div class="card">
+        <h2>🧮 Calculer Q produits</h2>
+        <div class="sl-row">
+          <label>Masse de produits <em id="lbl-m">500 kg</em></label>
+          <input type="range" id="sl-m" min="10" max="5000" value="500" step="10" oninput="updateProduits()">
+        </div>
+        <div class="sl-row">
+          <label>Type de produit</label>
+          <select id="sel-produit" onchange="updateProduits()">
+            <option value="3.5">Viande (Cp=3,5)</option>
+            <option value="3.6">Poisson (Cp=3,6)</option>
+            <option value="3.9">Légumes (Cp=3,9)</option>
+            <option value="3.8">Produits laitiers (Cp=3,8)</option>
+            <option value="2.0">Surgelés (Cp=2,0)</option>
+          </select>
+        </div>
+        <div class="sl-row">
+          <label>T° d'entrée des produits <em id="lbl-Tp">20 °C</em></label>
+          <input type="range" id="sl-Tp" min="-5" max="40" value="20" oninput="updateProduits()">
+        </div>
+        <div class="sl-row">
+          <label>T° de consigne <em id="lbl-Tc">2 °C</em></label>
+          <input type="range" id="sl-Tc" min="-25" max="10" value="2" oninput="updateProduits()">
+        </div>
+        <div class="sl-row">
+          <label>Durée de refroidissement <em id="lbl-td">8 h</em></label>
+          <input type="range" id="sl-td" min="1" max="24" value="8" oninput="updateProduits()">
+        </div>
+        <div class="result-box" style="margin-top:10px;" id="res-produits">—</div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h2>🌡️ Visualisation refroidissement</h2>
+        <canvas id="produit-canvas" width="320" height="220"></canvas>
+      </div>
+      <div class="card">
+        <h2>📋 Détail</h2>
+        <div id="detail-produits" style="font-family:'DM Mono',monospace;font-size:12px;line-height:1.9;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE 3 — INFILTRATIONS
+══════════════════════════════════════ -->
+<div class="page" id="page-3">
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <h2>🌬️ Apports par infiltrations</h2>
+        <p>À chaque ouverture de porte, l'air chaud et humide de l'extérieur entre dans la chambre. Il faut refroidir cet air ET en extraire l'humidité.</p>
+        <div class="formule">Q<sub>infil</sub> = ṁ<sub>air</sub> × (h<sub>ext</sub> − h<sub>int</sub>)</div>
+        <div class="encadre bleu">
+          <strong>ṁ<sub>air</sub></strong> = débit massique d'air infiltré (kg/s)<br>
+          <strong>h<sub>ext</sub></strong> = enthalpie air extérieur (kJ/kg)<br>
+          <strong>h<sub>int</sub></strong> = enthalpie air intérieur (kJ/kg)
+        </div>
+        <div class="encadre">
+          En pratique, on utilise souvent une <strong>méthode simplifiée</strong> basée sur le nombre d'ouvertures de porte par jour et la durée de chaque ouverture.
+        </div>
+        <div class="encadre rouge">
+          ⚠️ Les infiltrations peuvent représenter <strong>20 à 40%</strong> du bilan total dans les chambres à trafic intense. Un rideau à lanières ou un sas réduit cet apport de 50%.
+        </div>
+      </div>
+      <div class="card">
+        <h2>🧮 Estimation simplifiée</h2>
+        <div class="sl-row">
+          <label>Ouvertures / jour <em id="lbl-nov">10</em></label>
+          <input type="range" id="sl-nov" min="1" max="80" value="10" oninput="updateInfil()">
+        </div>
+        <div class="sl-row">
+          <label>Durée par ouverture <em id="lbl-dov">30 s</em></label>
+          <input type="range" id="sl-dov" min="5" max="120" value="30" oninput="updateInfil()">
+        </div>
+        <div class="sl-row">
+          <label>Surface de la porte <em id="lbl-Sp">2 m²</em></label>
+          <input type="range" id="sl-Sp" min="0.5" max="6" value="2" step="0.5" oninput="updateInfil()">
+        </div>
+        <div class="sl-row">
+          <label>T° extérieure <em id="lbl-Tinf">25 °C</em></label>
+          <input type="range" id="sl-Tinf" min="5" max="45" value="25" oninput="updateInfil()">
+        </div>
+        <div class="sl-row">
+          <label>HR extérieure <em id="lbl-HRinf">60 %</em></label>
+          <input type="range" id="sl-HRinf" min="20" max="100" value="60" oninput="updateInfil()">
+        </div>
+        <div class="sl-row">
+          <label>T° intérieure <em id="lbl-Tii">2 °C</em></label>
+          <input type="range" id="sl-Tii" min="-25" max="10" value="2" oninput="updateInfil()">
+        </div>
+        <div class="sl-row">
+          <label>Rideau à lanières ?
+            <input type="checkbox" id="ck-rideau" onchange="updateInfil()" style="margin-left:8px;">
+          </label>
+        </div>
+        <div class="result-box" style="margin-top:10px;" id="res-infil">—</div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h2>🌡️ Écart enthalpique</h2>
+        <canvas id="infil-canvas" width="320" height="200"></canvas>
+      </div>
+      <div class="card">
+        <h2>📋 Détail</h2>
+        <div id="detail-infil" style="font-family:'DM Mono',monospace;font-size:12px;line-height:1.9;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE 4 — APPORTS INTERNES
+══════════════════════════════════════ -->
+<div class="page" id="page-4">
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <h2>💡 Apports internes</h2>
+        <p>Toute source d'énergie à l'intérieur de la chambre génère de la chaleur que le groupe doit compenser.</p>
+        <div class="encadre bleu">
+          <strong>💡 Éclairage</strong><br>
+          Puissance installée × durée d'utilisation. LED : 6–15 W/m². Fluocompacte (obsolète) : 20–30 W/m².
+        </div>
+        <div class="encadre vert">
+          <strong>🌀 Moteurs ventilateurs</strong><br>
+          Toute la puissance électrique des moto-ventilateurs finit en chaleur dans la chambre.
+        </div>
+        <div class="encadre violet">
+          <strong>👷 Personnes</strong><br>
+          Un opérateur dégage environ 270 W en chambre froide positive (activité physique).
+        </div>
+        <div class="encadre rouge">
+          <strong>🔌 Dégivrage</strong><br>
+          Résistances électriques : toute la puissance passe en chaleur dans la chambre. A ajouter au bilan.
+        </div>
+      </div>
+      <div class="card">
+        <h2>🧮 Calculer les apports internes</h2>
+        <div class="sl-row">
+          <label>Puissance éclairage <em id="lbl-Pec">200 W</em></label>
+          <input type="range" id="sl-Pec" min="0" max="2000" value="200" step="50" oninput="updateInternes()">
+        </div>
+        <div class="sl-row">
+          <label>Durée éclairage / 24h <em id="lbl-Dec">8 h</em></label>
+          <input type="range" id="sl-Dec" min="0" max="24" value="8" oninput="updateInternes()">
+        </div>
+        <div class="sl-row">
+          <label>Puissance ventilateurs <em id="lbl-Pv">500 W</em></label>
+          <input type="range" id="sl-Pv" min="0" max="5000" value="500" step="100" oninput="updateInternes()">
+        </div>
+        <div class="sl-row">
+          <label>Nombre de personnes <em id="lbl-Np">2</em></label>
+          <input type="range" id="sl-Np" min="0" max="10" value="2" oninput="updateInternes()">
+        </div>
+        <div class="sl-row">
+          <label>Durée présence / 24h <em id="lbl-Dp">4 h</em></label>
+          <input type="range" id="sl-Dp" min="0" max="16" value="4" oninput="updateInternes()">
+        </div>
+        <div class="sl-row">
+          <label>Puissance dégivrage <em id="lbl-Pdg">1000 W</em></label>
+          <input type="range" id="sl-Pdg" min="0" max="5000" value="1000" step="100" oninput="updateInternes()">
+        </div>
+        <div class="sl-row">
+          <label>Nb cycles dégivrage / 24h <em id="lbl-Ndg">3</em></label>
+          <input type="range" id="sl-Ndg" min="0" max="6" value="3" oninput="updateInternes()">
+        </div>
+        <div class="sl-row">
+          <label>Durée dégivrage <em id="lbl-Ddg">30 min</em></label>
+          <input type="range" id="sl-Ddg" min="5" max="90" value="30" oninput="updateInternes()">
+        </div>
+        <div class="result-box" style="margin-top:10px;" id="res-internes">—</div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h2>🍰 Répartition des apports internes</h2>
+        <canvas id="internes-canvas" width="320" height="260"></canvas>
+      </div>
+      <div class="card">
+        <h2>📋 Détail</h2>
+        <div id="detail-internes" style="font-family:'DM Mono',monospace;font-size:12px;line-height:1.9;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE 5 — BILAN TOTAL
+══════════════════════════════════════ -->
+<div class="page" id="page-5">
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <h2>📊 Bilan thermique complet</h2>
+        <div id="bilan-apports"></div>
+        <div style="height:1px;background:var(--gris);margin:12px 0;"></div>
+        <div id="res-total" class="result-box">—</div>
+        <div id="conseil-groupe" style="margin-top:10px;font-size:12px;color:var(--gtxt);"></div>
+      </div>
+      <div class="card">
+        <h2>🔧 Choix du groupe</h2>
+        <div id="choix-groupe" style="font-size:13px;line-height:1.7;"></div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h2>📊 Répartition graphique</h2>
+        <canvas id="bilan-canvas" width="340" height="280"></canvas>
+      </div>
+      <div class="card">
+        <h2>🌡️ Récap chambre</h2>
+        <div id="recap-chambre" style="font-family:'DM Mono',monospace;font-size:12px;line-height:1.9;color:var(--bleu);"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>inerWeb Frigolo — Bilan Thermique Chambre Froide v1.0 — F. Henninot — LP Privé Jacques Raynaud, Campus ÉQUATIO, Marseille</footer>
+
+<script>
+// ══════════════════════════════════════════
+// DONNÉES GLOBALES
+// ══════════════════════════════════════════
+const state = {
+  L:6, l:4, h:3, Ti:-18, Te:25, U:0.22,
+  m:500, Cp:3.5, Tp:20, Tc:2, td:8,
+  nov:10, dov:30, Sp:2, Tinf:25, HRinf:60, Tii:2, rideau:false,
+  Pec:200, Dec:8, Pv:500, Np:2, Dp:4, Pdg:1000, Ndg:3, Ddg:30,
+  Qparois:0, Qproduits:0, Qinfil:0, Qinternes:0
+};
+
+// ── Formules psychro simplifiées ──
+function Psat(T){return 610.78*Math.exp(17.27*T/(T+237.3));}
+function wSat(T){const p=Psat(T);return 0.622*p/(101325-p);}
+function enthalpie(T,hr){const w=hr/100*wSat(T);return 1.006*T+w*(2501+1.86*T);}
+
+// ══════════════════════════════════════════
+// PAGE 0 — ANIMATION CHAMBRE
+// ══════════════════════════════════════════
+function drawChambre(){
+  const c=document.getElementById('chambre-canvas');
+  const ctx=c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+
+  const cx=c.width/2, cy=c.height/2;
+  const W=280,H=180,x0=cx-W/2,y0=cy-H/2;
+
+  // Sol (dégradé béton)
+  const gSol=ctx.createLinearGradient(0,cy+H/2,0,c.height);
+  gSol.addColorStop(0,'#b0bec5'); gSol.addColorStop(1,'#eceff1');
+  ctx.fillStyle=gSol; ctx.fillRect(0,cy+H/2,c.width,c.height-cy-H/2);
+
+  // Extérieur (chaud)
+  const gExt=ctx.createRadialGradient(cx,cy,W/2,cx,cy,W);
+  gExt.addColorStop(0,'rgba(255,200,150,0)'); gExt.addColorStop(1,'rgba(255,180,100,0.18)');
+  ctx.fillStyle=gExt; ctx.fillRect(0,0,c.width,c.height);
+
+  // Parois (épaisseur isolant)
+  const ep=18;
+  ctx.fillStyle='#78909c';
+  ctx.fillRect(x0,y0,W,ep); // plafond ext
+  ctx.fillRect(x0,y0,ep,H); // gauche ext
+  ctx.fillRect(x0+W-ep,y0,ep,H); // droite ext
+  ctx.fillRect(x0,y0+H-ep,W,ep); // sol ext
+
+  ctx.fillStyle='#a5d6a7';
+  ctx.fillRect(x0+ep/2,y0+ep/2,W-ep,ep); // isolant plafond
+  ctx.fillRect(x0+ep/2,y0+ep/2,ep,H-ep); // isolant gauche
+  ctx.fillRect(x0+W-ep*1.5,y0+ep/2,ep,H-ep); // isolant droite
+  ctx.fillRect(x0+ep/2,y0+H-ep*1.5,W-ep,ep); // isolant sol
+
+  // Intérieur
+  const gInt=ctx.createLinearGradient(x0+ep*2,y0+ep*2,x0+W-ep*2,y0+H-ep*2);
+  gInt.addColorStop(0,'#e3f2fd'); gInt.addColorStop(1,'#bbdefb');
+  ctx.fillStyle=gInt;
+  ctx.fillRect(x0+ep*2,y0+ep*2,W-ep*4,H-ep*4);
+
+  // Porte
+  const portX=x0+W-ep*2-30, portY=y0+ep*2, portW=30, portH=H-ep*4;
+  ctx.fillStyle='#90a4ae';
+  ctx.fillRect(portX,portY,portW,portH);
+  ctx.fillStyle='#cfd8dc';
+  ctx.fillRect(portX+2,portY+2,portW-4,portH-4);
+
+  // Évaporateur
+  const evX=x0+ep*2+10, evY=y0+ep*2+8, evW=50, evH=30;
+  ctx.fillStyle='#4fc3f7'; ctx.fillRect(evX,evY,evW,evH);
+  ctx.strokeStyle='#0288d1'; ctx.lineWidth=1.5;
+  for(let i=0;i<5;i++){
+    ctx.beginPath(); ctx.moveTo(evX+i*10,evY); ctx.lineTo(evX+i*10,evY+evH); ctx.stroke();
+  }
+  ctx.fillStyle='#0288d1'; ctx.font='9px DM Sans'; ctx.textAlign='center';
+  ctx.fillText('ÉVAP.',evX+evW/2,evY+evH+12);
+
+  // Éclairage
+  ctx.fillStyle='#fff176'; ctx.beginPath();
+  ctx.arc(x0+W/2,y0+ep*2+10,8,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='#fbc02d'; ctx.lineWidth=2; ctx.stroke();
+
+  // Produits
+  const pColors=['#ef9a9a','#a5d6a7','#90caf9'];
+  for(let i=0;i<3;i++){
+    ctx.fillStyle=pColors[i];
+    ctx.fillRect(x0+ep*2+30+i*45,y0+H-ep*2-55,40,45);
+    ctx.strokeStyle='#888'; ctx.lineWidth=1; ctx.stroke();
+  }
+
+  // ── FLÈCHES D'APPORTS ──
+  const t=Date.now()/800;
+
+  function arrowAnim(x1,y1,x2,y2,color,label,phase){
+    const prog=(Math.sin(t+phase)+1)/2;
+    const mx=x1+(x2-x1)*prog, my=y1+(y2-y1)*prog;
+    ctx.save();
+    ctx.strokeStyle=color; ctx.lineWidth=2; ctx.setLineDash([5,4]);
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.setLineDash([]);
+    ctx.beginPath(); ctx.arc(mx,my,5,0,Math.PI*2); ctx.fillStyle=color; ctx.fill();
+    ctx.restore();
+    ctx.fillStyle=color; ctx.font='bold 9px DM Sans'; ctx.textAlign='center';
+    ctx.fillText(label,x1,y1-6);
+  }
+
+  // Parois → intérieur
+  arrowAnim(cx,y0-15,cx,y0+ep*2+5,'#ef5350','🧱 Parois',0);
+  arrowAnim(x0-15,cy,x0+ep*2+5,cy,'#ef5350','',1);
+  arrowAnim(x0+W+15,cy,x0+W-ep*2-5,cy,'#ef5350','',2);
+  arrowAnim(cx,y0+H+15,cx,y0+H-ep*2-5,'#ef5350','',3);
+
+  // Porte → intérieur
+  arrowAnim(portX+portW+20,portY+portH/2,portX+portW-5,portY+portH/2,'#2196F3','🌬️ Porte',4);
+
+  // Éclairage
+  arrowAnim(x0+W/2,y0+ep*2+25,x0+W/2,y0+ep*2+45,'#fbc02d','💡',5);
+
+  // Label T° intérieure
+  ctx.fillStyle='rgba(255,255,255,0.8)';
+  ctx.fillRect(x0+ep*2+8,y0+H-ep*2-22,90,18);
+  ctx.fillStyle=state.Ti<0?'#0288d1':'#333';
+  ctx.font='bold 11px DM Mono'; ctx.textAlign='left';
+  ctx.fillText('T° int : '+state.Ti+'°C',x0+ep*2+12,y0+H-ep*2-9);
+
+  // Label T° extérieure
+  ctx.fillStyle='#ef5350'; ctx.font='bold 11px DM Mono';
+  ctx.textAlign='right'; ctx.fillText('T° ext : '+state.Te+'°C',x0+W-5,y0-20);
+
+  requestAnimationFrame(drawChambre);
+}
+
+// ══════════════════════════════════════════
+// PAGE 1 — PAROIS
+// ══════════════════════════════════════════
+function updateParois(){
+  state.L=+document.getElementById('sl-L').value;
+  state.l=+document.getElementById('sl-l').value;
+  state.h=+document.getElementById('sl-h').value;
+  state.Ti=+document.getElementById('sl-Ti').value;
+  state.Te=+document.getElementById('sl-Te').value;
+  state.U=+document.getElementById('sel-iso').value;
+  document.getElementById('lbl-L').textContent=state.L+' m';
+  document.getElementById('lbl-l').textContent=state.l+' m';
+  document.getElementById('lbl-h').textContent=state.h+' m';
+  document.getElementById('lbl-Ti').textContent=state.Ti+' °C';
+  document.getElementById('lbl-Te').textContent=state.Te+' °C';
+
+  const S_murs=2*(state.L*state.h+state.l*state.h);
+  const S_plaf=state.L*state.l;
+  const S_sol=state.L*state.l;
+  const S_tot=S_murs+S_plaf+S_sol;
+  const dT=state.Te-state.Ti;
+  const Q=state.U*S_tot*dT;
+  state.Qparois=Math.max(0,Q);
+
+  document.getElementById('res-parois').innerHTML=`
+    <div class="big">${(state.Qparois/1000).toFixed(2)}</div>
+    <div class="unit">kW</div>
+    <div class="sub">${state.Qparois.toFixed(0)} W</div>`;
+
+  document.getElementById('detail-parois').innerHTML=`
+    S murs  = ${S_murs.toFixed(1)} m²<br>
+    S plafond= ${S_plaf.toFixed(1)} m²<br>
+    S sol   = ${S_sol.toFixed(1)} m²<br>
+    S totale= ${S_tot.toFixed(1)} m²<br>
+    ΔT      = ${dT.toFixed(0)} K<br>
+    U       = ${state.U} W/m²·K<br>
+    ─────────────────<br>
+    Q = ${state.U} × ${S_tot.toFixed(1)} × ${dT} = <b>${state.Qparois.toFixed(0)} W</b>`;
+
+  drawParoi();
+}
+
+function drawParoi(){
+  const c=document.getElementById('paroi-canvas');
+  const ctx=c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+
+  // Coupe de paroi
+  const x0=40,y0=20,W=240,H=220;
+  const ep_b=12, ep_iso=60, ep_int=12; // béton ext, isolant, parement int
+
+  // Extérieur (chaud)
+  const gExt=ctx.createLinearGradient(0,0,x0,0);
+  gExt.addColorStop(0,'rgba(255,150,80,0.3)'); gExt.addColorStop(1,'rgba(255,150,80,0)');
+  ctx.fillStyle=gExt; ctx.fillRect(0,0,x0,c.height);
+  ctx.fillStyle='#ef5350'; ctx.font='bold 11px DM Mono'; ctx.textAlign='center';
+  ctx.fillText(state.Te+'°C',20,c.height/2);
+
+  // Béton ext
+  ctx.fillStyle='#90a4ae'; ctx.fillRect(x0,y0,ep_b,H);
+  // Isolant
+  ctx.fillStyle='#a5d6a7'; ctx.fillRect(x0+ep_b,y0,ep_iso,H);
+  // Parement int
+  ctx.fillStyle='#cfd8dc'; ctx.fillRect(x0+ep_b+ep_iso,y0,ep_int,H);
+
+  // Intérieur (froid)
+  const gInt=ctx.createLinearGradient(x0+ep_b+ep_iso+ep_int,0,c.width,0);
+  gInt.addColorStop(0,'rgba(100,200,255,0.2)'); gInt.addColorStop(1,'rgba(100,200,255,0.05)');
+  ctx.fillStyle=gInt; ctx.fillRect(x0+ep_b+ep_iso+ep_int,0,c.width-x0-ep_b-ep_iso-ep_int,c.height);
+  ctx.fillStyle='#0288d1'; ctx.font='bold 11px DM Mono'; ctx.textAlign='center';
+  ctx.fillText(state.Ti+'°C',c.width-20,c.height/2);
+
+  // Labels couches
+  ctx.fillStyle='#333'; ctx.font='10px DM Sans'; ctx.textAlign='center';
+  ctx.fillText('Bét.',x0+ep_b/2,y0-5);
+  ctx.fillText('Isolant '+state.U+' W/m²K',x0+ep_b+ep_iso/2,y0-5);
+  ctx.fillText('Par.',x0+ep_b+ep_iso+ep_int/2,y0-5);
+
+  // Flèches flux thermique
+  const nArrows=5;
+  const arrowY=y0+30;
+  for(let i=0;i<nArrows;i++){
+    const yy=arrowY+i*32;
+    const alpha=0.5+0.5*Math.sin(Date.now()/600+i);
+    ctx.strokeStyle=`rgba(239,83,80,${alpha})`; ctx.lineWidth=2;
+    ctx.beginPath();
+    ctx.moveTo(x0-30,yy);
+    ctx.lineTo(x0+ep_b+ep_iso+ep_int+30,yy);
+    ctx.stroke();
+    // Tête de flèche
+    ctx.fillStyle=`rgba(239,83,80,${alpha})`;
+    ctx.beginPath();
+    ctx.moveTo(x0+ep_b+ep_iso+ep_int+30,yy);
+    ctx.lineTo(x0+ep_b+ep_iso+ep_int+22,yy-4);
+    ctx.lineTo(x0+ep_b+ep_iso+ep_int+22,yy+4);
+    ctx.closePath(); ctx.fill();
+  }
+
+  // Label flux
+  ctx.fillStyle='#ef5350'; ctx.font='bold 10px DM Sans'; ctx.textAlign='center';
+  ctx.fillText('Flux Q →', x0+ep_b+ep_iso/2, y0+H+15);
+
+  setTimeout(drawParoi,50);
+}
+
+// ══════════════════════════════════════════
+// PAGE 2 — PRODUITS
+// ══════════════════════════════════════════
+function updateProduits(){
+  state.m=+document.getElementById('sl-m').value;
+  state.Cp=+document.getElementById('sel-produit').value;
+  state.Tp=+document.getElementById('sl-Tp').value;
+  state.Tc=+document.getElementById('sl-Tc').value;
+  state.td=+document.getElementById('sl-td').value;
+  document.getElementById('lbl-m').textContent=state.m+' kg';
+  document.getElementById('lbl-Tp').textContent=state.Tp+' °C';
+  document.getElementById('lbl-Tc').textContent=state.Tc+' °C';
+  document.getElementById('lbl-td').textContent=state.td+' h';
+
+  const dT=state.Tp-state.Tc;
+  const Q_kJ=state.m*state.Cp*dT;
+  const Q_W=Q_kJ*1000/(state.td*3600);
+  state.Qproduits=Math.max(0,Q_W);
+
+  document.getElementById('res-produits').innerHTML=`
+    <div class="big">${(state.Qproduits/1000).toFixed(2)}</div>
+    <div class="unit">kW</div>
+    <div class="sub">${state.Qproduits.toFixed(0)} W (sur ${state.td}h)</div>`;
+
+  document.getElementById('detail-produits').innerHTML=`
+    Masse m = ${state.m} kg<br>
+    Cp      = ${state.Cp} kJ/kg·K<br>
+    ΔT      = ${state.Tp} − ${state.Tc} = ${dT} K<br>
+    Durée   = ${state.td} h = ${state.td*3600} s<br>
+    ─────────────────<br>
+    Q = ${state.m}×${state.Cp}×${dT}<br>
+      = ${Q_kJ.toFixed(0)} kJ<br>
+    P = ${Q_kJ.toFixed(0)}k / ${state.td*3600}s<br>
+    <b>P = ${state.Qproduits.toFixed(0)} W</b>`;
+
+  drawProduit();
+}
+
+function drawProduit(){
+  const c=document.getElementById('produit-canvas');
+  const ctx=c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+
+  // Graphe de refroidissement (exponentielle simplifiée)
+  const W=c.width-60, H=c.height-60, x0=40, y0=10;
+  // Axes
+  ctx.strokeStyle='#1b3a63'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x0,y0+H); ctx.lineTo(x0+W,y0+H); ctx.stroke();
+
+  // Labels axes
+  ctx.fillStyle='#333'; ctx.font='10px DM Mono'; ctx.textAlign='center';
+  ctx.fillText('Temps (h)', x0+W/2, y0+H+30);
+  ctx.save(); ctx.translate(14,y0+H/2); ctx.rotate(-Math.PI/2);
+  ctx.fillText('Température (°C)',0,0); ctx.restore();
+
+  const Tmax=state.Tp, Tmin=state.Tc;
+  const Trange=Tmax-Tmin+5;
+
+  function Ty(T){ return y0+H - (T-Tmin+2)/Trange*H; }
+  function tx(t){ return x0+t/state.td*W; }
+
+  // Zone froide
+  const gFroid=ctx.createLinearGradient(0,Ty(Tmin),0,y0+H);
+  gFroid.addColorStop(0,'rgba(79,195,247,0.15)'); gFroid.addColorStop(1,'rgba(79,195,247,0.05)');
+  ctx.fillStyle=gFroid; ctx.fillRect(x0,Ty(Tmin),W,y0+H-Ty(Tmin));
+
+  // Courbe refroidissement (Newton)
+  ctx.beginPath(); let first=true;
+  for(let t=0;t<=state.td;t+=state.td/100){
+    const tau=state.td/3;
+    const T=Tmin+(Tmax-Tmin)*Math.exp(-t/tau);
+    const x=tx(t), y=Ty(T);
+    if(first){ctx.moveTo(x,y);first=false;}else ctx.lineTo(x,y);
+  }
+  ctx.strokeStyle='#0288d1'; ctx.lineWidth=2.5; ctx.stroke();
+
+  // Lignes T° entrée / consigne
+  ctx.setLineDash([5,4]);
+  ctx.strokeStyle='#ef5350'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(x0,Ty(Tmax)); ctx.lineTo(x0+W,Ty(Tmax)); ctx.stroke();
+  ctx.strokeStyle='#43a047';
+  ctx.beginPath(); ctx.moveTo(x0,Ty(Tmin)); ctx.lineTo(x0+W,Ty(Tmin)); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Labels
+  ctx.fillStyle='#ef5350'; ctx.font='bold 10px DM Mono'; ctx.textAlign='left';
+  ctx.fillText('T entrée: '+Tmax+'°C',x0+4,Ty(Tmax)-4);
+  ctx.fillStyle='#43a047';
+  ctx.fillText('T consigne: '+Tmin+'°C',x0+4,Ty(Tmin)-4);
+
+  // Graduations temps
+  ctx.fillStyle='#666'; ctx.font='9px DM Mono'; ctx.textAlign='center';
+  for(let t=0;t<=state.td;t+=Math.ceil(state.td/4)){
+    ctx.fillText(t+'h',tx(t),y0+H+12);
+  }
+}
+
+// ══════════════════════════════════════════
+// PAGE 3 — INFILTRATIONS
+// ══════════════════════════════════════════
+function updateInfil(){
+  state.nov=+document.getElementById('sl-nov').value;
+  state.dov=+document.getElementById('sl-dov').value;
+  state.Sp=+document.getElementById('sl-Sp').value;
+  state.Tinf=+document.getElementById('sl-Tinf').value;
+  state.HRinf=+document.getElementById('sl-HRinf').value;
+  state.Tii=+document.getElementById('sl-Tii').value;
+  state.rideau=document.getElementById('ck-rideau').checked;
+  document.getElementById('lbl-nov').textContent=state.nov;
+  document.getElementById('lbl-dov').textContent=state.dov+' s';
+  document.getElementById('lbl-Sp').textContent=state.Sp+' m²';
+  document.getElementById('lbl-Tinf').textContent=state.Tinf+' °C';
+  document.getElementById('lbl-HRinf').textContent=state.HRinf+' %';
+  document.getElementById('lbl-Tii').textContent=state.Tii+' °C';
+
+  // Débit air infiltré (approx par gravité)
+  const vInfil=0.6; // m/s vitesse d'échange
+  const rho=1.2; // kg/m³
+  const debitVol=vInfil*state.Sp*0.5; // m³/s (facteur 0.5 : échange bidirectionnel)
+  const debitMas=debitVol*rho; // kg/s
+
+  const h_ext=enthalpie(state.Tinf,state.HRinf);
+  const h_int=enthalpie(state.Tii,95); // air intérieur quasi-saturé
+  const dh=Math.max(0,h_ext-h_int);
+
+  // Durée totale ouvertures / 24h (s)
+  const dureeJour=state.nov*state.dov;
+  const facteurRideau=state.rideau?0.5:1.0;
+  const Q_moy=debitMas*dh*1000*(dureeJour/86400)*facteurRideau;
+  state.Qinfil=Q_moy;
+
+  document.getElementById('res-infil').innerHTML=`
+    <div class="big">${(state.Qinfil/1000).toFixed(2)}</div>
+    <div class="unit">kW (moyen sur 24h)</div>
+    <div class="sub">${state.rideau?'Avec rideau (−50%)':'Sans rideau'}</div>`;
+
+  document.getElementById('detail-infil').innerHTML=`
+    Débit air ≈ ${debitMas.toFixed(2)} kg/s<br>
+    h ext = ${h_ext.toFixed(1)} kJ/kg<br>
+    h int = ${h_int.toFixed(1)} kJ/kg<br>
+    Δh    = ${dh.toFixed(1)} kJ/kg<br>
+    Durée = ${dureeJour} s/jour<br>
+    Facteur rideau : ×${facteurRideau}<br>
+    ─────────────────<br>
+    <b>Q moy = ${state.Qinfil.toFixed(0)} W</b>`;
+
+  drawInfil(h_ext,h_int);
+}
+
+function drawInfil(hext,hint){
+  const c=document.getElementById('infil-canvas');
+  const ctx=c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+
+  const W=c.width-20, H=c.height-30;
+  const hMax=Math.max(hext,hint)*1.1+5, hMin=Math.min(hint,0)-5;
+
+  function hy(h){ return H-(h-hMin)/(hMax-hMin)*H+10; }
+
+  // Barre ext
+  const bW=70;
+  const gExt=ctx.createLinearGradient(30,0,30+bW,0);
+  gExt.addColorStop(0,'#ef9a9a'); gExt.addColorStop(1,'#e53935');
+  ctx.fillStyle=gExt;
+  ctx.fillRect(30,hy(hext),bW,H+10-hy(hext));
+  ctx.fillStyle='#c62828'; ctx.font='bold 11px DM Mono'; ctx.textAlign='center';
+  ctx.fillText(hext.toFixed(1)+' kJ',30+bW/2,hy(hext)-5);
+  ctx.fillStyle='#333'; ctx.font='10px DM Sans';
+  ctx.fillText('Air ext.',30+bW/2,H+22);
+
+  // Barre int
+  const gInt=ctx.createLinearGradient(160,0,160+bW,0);
+  gInt.addColorStop(0,'#90caf9'); gInt.addColorStop(1,'#1565c0');
+  ctx.fillStyle=gInt;
+  ctx.fillRect(160,hy(hint),bW,H+10-hy(hint));
+  ctx.fillStyle='#0d47a1'; ctx.font='bold 11px DM Mono'; ctx.textAlign='center';
+  ctx.fillText(hint.toFixed(1)+' kJ',160+bW/2,hy(hint)-5);
+  ctx.fillStyle='#333'; ctx.font='10px DM Sans';
+  ctx.fillText('Air int.',160+bW/2,H+22);
+
+  // Flèche Δh
+  const dh=hext-hint;
+  if(dh>0){
+    ctx.strokeStyle='#ff6b35'; ctx.lineWidth=2;
+    ctx.beginPath();
+    ctx.moveTo(30+bW+5,hy(hint));
+    ctx.lineTo(155,hy(hint));
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(30+bW+5,hy(hext));
+    ctx.lineTo(155,hy(hext));
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(120,hy(hint));
+    ctx.lineTo(120,hy(hext));
+    ctx.stroke();
+    ctx.fillStyle='#ff6b35'; ctx.font='bold 10px DM Sans'; ctx.textAlign='center';
+    ctx.fillText('Δh='+dh.toFixed(1),120,(hy(hint)+hy(hext))/2);
+  }
+}
+
+// ══════════════════════════════════════════
+// PAGE 4 — APPORTS INTERNES
+// ══════════════════════════════════════════
+function updateInternes(){
+  state.Pec=+document.getElementById('sl-Pec').value;
+  state.Dec=+document.getElementById('sl-Dec').value;
+  state.Pv=+document.getElementById('sl-Pv').value;
+  state.Np=+document.getElementById('sl-Np').value;
+  state.Dp=+document.getElementById('sl-Dp').value;
+  state.Pdg=+document.getElementById('sl-Pdg').value;
+  state.Ndg=+document.getElementById('sl-Ndg').value;
+  state.Ddg=+document.getElementById('sl-Ddg').value;
+
+  document.getElementById('lbl-Pec').textContent=state.Pec+' W';
+  document.getElementById('lbl-Dec').textContent=state.Dec+' h';
+  document.getElementById('lbl-Pv').textContent=state.Pv+' W';
+  document.getElementById('lbl-Np').textContent=state.Np;
+  document.getElementById('lbl-Dp').textContent=state.Dp+' h';
+  document.getElementById('lbl-Pdg').textContent=state.Pdg+' W';
+  document.getElementById('lbl-Ndg').textContent=state.Ndg;
+  document.getElementById('lbl-Ddg').textContent=state.Ddg+' min';
+
+  const Qec=state.Pec*(state.Dec/24);
+  const Qvt=state.Pv; // permanent
+  const Qpers=state.Np*270*(state.Dp/24);
+  const Qdg=state.Pdg*state.Ndg*(state.Ddg/60)/24;
+  state.Qinternes=Qec+Qvt+Qpers+Qdg;
+
+  document.getElementById('res-internes').innerHTML=`
+    <div class="big">${(state.Qinternes/1000).toFixed(2)}</div>
+    <div class="unit">kW</div>
+    <div class="sub">${state.Qinternes.toFixed(0)} W (moyen 24h)</div>`;
+
+  document.getElementById('detail-internes').innerHTML=`
+    Éclairage = ${Qec.toFixed(0)} W moy<br>
+    Ventilateurs=${Qvt.toFixed(0)} W<br>
+    Personnes  = ${Qpers.toFixed(0)} W moy<br>
+    Dégivrage  = ${Qdg.toFixed(0)} W moy<br>
+    ─────────────<br>
+    <b>Total = ${state.Qinternes.toFixed(0)} W</b>`;
+
+  drawInternes(Qec,Qvt,Qpers,Qdg);
+}
+
+function drawInternes(Qec,Qvt,Qpers,Qdg){
+  const c=document.getElementById('internes-canvas');
+  const ctx=c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+
+  const data=[
+    {label:'Éclairage',val:Qec,color:'#fbc02d'},
+    {label:'Ventilateurs',val:Qvt,color:'#7e57c2'},
+    {label:'Personnes',val:Qpers,color:'#43a047'},
+    {label:'Dégivrage',val:Qdg,color:'#ef5350'},
+  ].filter(d=>d.val>0);
+
+  const total=data.reduce((s,d)=>s+d.val,0);
+  if(total===0){ctx.fillStyle='#999';ctx.font='14px DM Sans';ctx.textAlign='center';ctx.fillText('Aucun apport',c.width/2,c.height/2);return;}
+
+  // Camembert
+  const cx=c.width/2, cy=120, r=90;
+  let angle=-Math.PI/2;
+  data.forEach(d=>{
+    const slice=d.val/total*Math.PI*2;
+    ctx.beginPath(); ctx.moveTo(cx,cy);
+    ctx.arc(cx,cy,r,angle,angle+slice);
+    ctx.closePath(); ctx.fillStyle=d.color; ctx.fill();
+    ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.stroke();
+    // Label
+    const midA=angle+slice/2;
+    const lx=cx+Math.cos(midA)*(r+20), ly=cy+Math.sin(midA)*(r+20);
+    ctx.fillStyle=d.color; ctx.font='bold 10px DM Sans'; ctx.textAlign='center';
+    ctx.fillText((d.val/total*100).toFixed(0)+'%',lx,ly);
+    angle+=slice;
+  });
+
+  // Légende
+  data.forEach((d,i)=>{
+    const lx=20, ly=c.height-data.length*20+i*20-5;
+    ctx.fillStyle=d.color; ctx.fillRect(lx,ly-10,14,14);
+    ctx.fillStyle='#333'; ctx.font='11px DM Sans'; ctx.textAlign='left';
+    ctx.fillText(`${d.label} : ${d.val.toFixed(0)} W`,lx+18,ly);
+  });
+}
+
+// ══════════════════════════════════════════
+// PAGE 5 — BILAN TOTAL
+// ══════════════════════════════════════════
+function updateBilan(){
+  const Qtot=state.Qparois+state.Qproduits+state.Qinfil+state.Qinternes;
+  const Qmaj=Qtot*1.1; // +10%
+  const data=[
+    {label:'Parois',val:state.Qparois,color:'#78909c',tag:'tag-paroi'},
+    {label:'Produits',val:state.Qproduits,color:'#43a047',tag:'tag-produit'},
+    {label:'Infiltrations',val:state.Qinfil,color:'#0288d1',tag:'tag-infiltration'},
+    {label:'Internes',val:state.Qinternes,color:'#7e57c2',tag:'tag-interne'},
+  ];
+
+  // Barres apports
+  const maxQ=Math.max(...data.map(d=>d.val),1);
+  document.getElementById('bilan-apports').innerHTML=data.map(d=>`
+    <div class="apport-row">
+      <div class="apport-dot" style="background:${d.color}"></div>
+      <div class="apport-label">${d.label}</div>
+      <div class="apport-bar-wrap"><div class="apport-bar" style="width:${(d.val/maxQ*100).toFixed(0)}%;background:${d.color}"></div></div>
+      <div class="apport-val" style="color:${d.color}">${(d.val/1000).toFixed(2)} kW</div>
+    </div>`).join('');
+
+  document.getElementById('res-total').innerHTML=`
+    <div style="font-size:13px;opacity:.8;margin-bottom:6px;">Puissance frigorifique totale</div>
+    <div class="big">${(Qtot/1000).toFixed(2)}</div>
+    <div class="unit">kW</div>
+    <div class="sub">Avec majoration +10% : ${(Qmaj/1000).toFixed(2)} kW</div>`;
+
+  // Conseil groupe
+  const kW=Qmaj/1000;
+  let conseil='';
+  if(kW<2) conseil='→ Groupe monosplit ou petit groupe hermétique semi-hermétique';
+  else if(kW<5) conseil='→ Groupe condensation air 2-5 kW, compresseur piston ou scroll';
+  else if(kW<15) conseil='→ Centrale frigorifique 5-15 kW, semi-hermétique ou scroll';
+  else conseil='→ Centrale frigorifique puissante ou groupe à vis, étudier la réfrigération secondaire';
+
+  document.getElementById('conseil-groupe').innerHTML=`<strong>${conseil}</strong>`;
+
+  // Récap chambre
+  document.getElementById('recap-chambre').innerHTML=`
+    Chambre  : ${state.L}×${state.l}×${state.h} m<br>
+    T° int   : ${state.Ti} °C<br>
+    T° ext   : ${state.Te} °C<br>
+    Isolant  : U=${state.U} W/m²K<br>
+    Produits : ${state.m} kg, Cp=${state.Cp}<br>
+    Entrées  : ${state.nov}×${state.dov}s/j<br>`;
+
+  drawBilan(data,Qtot);
+}
+
+function drawBilan(data,total){
+  const c=document.getElementById('bilan-canvas');
+  const ctx=c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+
+  if(total===0){ctx.fillStyle='#999';ctx.font='14px DM Sans';ctx.textAlign='center';ctx.fillText('Remplissez les postes précédents',c.width/2,c.height/2);return;}
+
+  // Barres horizontales empilées (type stacked)
+  const bH=50, bY=(c.height-bH)/2;
+  let x=20;
+  const bW=c.width-40;
+  data.forEach(d=>{
+    const w=d.val/total*bW;
+    if(w<2) return;
+    ctx.fillStyle=d.color;
+    ctx.beginPath();
+    ctx.roundRect(x,bY,w,bH,4);
+    ctx.fill();
+    if(w>40){
+      ctx.fillStyle='#fff'; ctx.font='bold 11px DM Sans'; ctx.textAlign='center';
+      ctx.fillText((d.val/total*100).toFixed(0)+'%',x+w/2,bY+bH/2+4);
+    }
+    x+=w;
+  });
+
+  // Légende
+  data.forEach((d,i)=>{
+    const cols=2, col=i%cols, row=Math.floor(i/cols);
+    const lx=20+col*160, ly=bY+bH+25+row*22;
+    ctx.fillStyle=d.color; ctx.fillRect(lx,ly-11,12,12);
+    ctx.fillStyle='#333'; ctx.font='11px DM Sans'; ctx.textAlign='left';
+    ctx.fillText(`${d.label} : ${(d.val/1000).toFixed(2)} kW`,lx+16,ly);
+  });
+
+  // Total
+  ctx.fillStyle='#1b3a63'; ctx.font='bold 14px DM Mono'; ctx.textAlign='center';
+  ctx.fillText('Total : '+(total/1000).toFixed(2)+' kW → '+(total*1.1/1000).toFixed(2)+' kW (+10%)',c.width/2,bY-12);
+}
+
+// ══════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════
+function goPage(n){
+  document.querySelectorAll('.page').forEach((p,i)=>p.classList.toggle('active',i===n));
+  document.querySelectorAll('.nav-btn').forEach((b,i)=>b.classList.toggle('active',i===n));
+  if(n===5) updateBilan();
+  if(n===1) setTimeout(updateParois,50);
+  if(n===2) setTimeout(updateProduits,50);
+  if(n===3) setTimeout(updateInfil,50);
+  if(n===4) setTimeout(updateInternes,50);
+}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+drawChambre();
+setTimeout(()=>{
+  updateParois(); updateProduits(); updateInfil(); updateInternes();
+},100);
+</script>
+</body>
+</html>

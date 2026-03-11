@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Inerweb - Module Accueil Sécurité pour apprenants et stagiaires">
+    <meta name="author" content="F. Henninot">
+    
+    <title>Inerweb - Accueil Sécurité Apprenants</title>
+    
+    <!-- Police Lexend -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ========== VARIABLES CSS DU MODULE ========== */
+        :root {
+            /* Couleurs du module Sécurité */
+            --primary: #FF6B35;
+            --secondary: #FF8E53;
+            --accent: #FFC300;
+            
+            /* Couleurs pédagogiques */
+            --non-acquis: #ef4444;
+            --en-cours: #f59e0b;
+            --acquis: #3b82f6;
+            --parfait: #10b981;
+            
+            /* Interface */
+            --background: #f8f9fa;
+            --text: #333333;
+            --border: #e0e0e0;
+            --shadow: 0 4px 12px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        /* ========== RESET ET BASE ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Lexend', system-ui, -apple-system, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* ========== FOND ANIMÉ ========== */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(255, 107, 53, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 195, 0, 0.05) 0%, transparent 50%);
+            animation: floatingGradient 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        @keyframes floatingGradient {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-20px, -20px) scale(1.1); }
+        }
+        
+        /* ========== HEADER PRINCIPAL ========== */
+        .header {
+            background: white;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .logo-inerweb {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .snowflake {
+            display: inline-block;
+            animation: snowflakeRotate 4s linear infinite;
+            font-size: 1.2em;
+        }
+        
+        @keyframes snowflakeRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .logo-text {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* ========== CONTAINER PRINCIPAL ========== */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px 40px;
+        }
+        
+        /* ========== ALERTE SÉCURITÉ ANIMÉE ========== */
+        .alert-security {
+            background: linear-gradient(135deg, #fff3cd, #ffeeba);
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 4px 12px rgba(255, 193, 7, 0.2);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        
+        .alert-icon {
+            font-size: 2.5em;
+            animation: bounce 1s ease-in-out infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        /* ========== TOOLTIP POUR MOTS DIFFICILES ========== */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 2px dotted var(--primary);
+            cursor: help;
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 250px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -125px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-weight: normal;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+        
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* ========== FORMULAIRE ÉLÈVE AMÉLIORÉ ========== */
+        .student-form {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .student-form::before {
+            content: '👤';
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            font-size: 8em;
+            opacity: 0.05;
+            transform: rotate(-15deg);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 2px solid var(--border);
+            font-size: 16px;
+            transition: var(--transition);
+            font-family: inherit;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+        }
+        
+        /* ========== NAVIGATION SÉANCES AMÉLIORÉE ========== */
+        .chapters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .chapter-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .chapter-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .chapter-card.locked {
+            opacity: 0.7;
+            cursor: not-allowed;
+            background: #f5f5f5;
+        }
+        
+        .chapter-card.locked::before {
+            content: '🔒';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.8em;
+            animation: shake 2s ease-in-out infinite;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-5deg); }
+            75% { transform: rotate(5deg); }
+        }
+        
+        .chapter-number {
+            font-size: 3em;
+            margin-bottom: 10px;
+            display: inline-block;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .chapter-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        
+        .chapter-duration {
+            font-size: 0.9em;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .chapter-description {
+            font-size: 0.85em;
+            color: #777;
+            margin-top: 10px;
+            line-height: 1.4;
+        }
+        
+        /* ========== FEATURES ANIMÉES ========== */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .feature {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .feature:hover::before {
+            opacity: 0.05;
+        }
+        
+        .feature:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+        
+        .feature-icon {
+            font-size: 3.5em;
+            margin-bottom: 15px;
+            color: var(--primary);
+            display: inline-block;
+            animation: wiggle 2s ease-in-out infinite;
+        }
+        
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(3deg); }
+            75% { transform: rotate(-3deg); }
+        }
+        
+        .feature h3 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        /* ========== BOUTONS AMÉLIORÉS ========== */
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* ========== CONTRÔLES D'ACCESSIBILITÉ ========== */
+        .accessibility-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+        
+        .btn-accessibility {
+            padding: 8px 15px;
+            background: white;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn-accessibility:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-accessibility.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* ========== BARRE DE PROGRESSION ========== */
+        .progress-bar {
+            background: #e0e0e0;
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 30px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress-fill::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        /* ========== CRÉDITS ========== */
+        .credits {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 40px;
+            text-align: center;
+            border-top: 3px solid var(--primary);
+            box-shadow: var(--shadow);
+        }
+        
+        .credits h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        /* ========== MODE ACCESSIBLE ========== */
+        body.accessible-mode {
+            font-family: 'OpenDyslexic', 'Comic Sans MS', sans-serif;
+            line-height: 2;
+            letter-spacing: 0.1em;
+        }
+        
+        body.high-contrast {
+            background: #000;
+            color: #fff;
+        }
+        
+        body.high-contrast .header,
+        body.high-contrast .student-form,
+        body.high-contrast .chapter-card,
+        body.high-contrast .feature,
+        body.high-contrast .credits {
+            background: #222;
+            color: #fff;
+            border: 2px solid #fff;
+        }
+        
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            .logo-section {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .logo-inerweb {
+                font-size: 2em;
+            }
+            
+            .chapters-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .accessibility-controls {
+                flex-direction: column;
+                right: 10px;
+                top: 10px;
+            }
+            
+            .btn-accessibility {
+                font-size: 12px;
+                padding: 6px 10px;
+            }
+        }
+        
+        /* ========== MASCOTTES FLOTTANTES ========== */
+        .mascot {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 80px;
+            height: 80px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: var(--transition);
+            z-index: 100;
+        }
+        
+        .mascot:hover {
+            transform: scale(1.1) rotate(10deg);
+        }
+        
+        .mascot-bubble {
+            position: absolute;
+            bottom: 90px;
+            right: 0;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            width: 250px;
+            display: none;
+        }
+        
+        .mascot-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            right: 30px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 10px solid white;
+        }
+        
+        .mascot:hover .mascot-bubble {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+<script>/* (c) F. Henninot - inerWeb FRIGOLO - Tous droits reserves */
+document.addEventListener("contextmenu",function(e){e.preventDefault()});
+document.addEventListener("keydown",function(e){if((e.ctrlKey||e.metaKey)&&(e.key==="u"||e.key==="s"||e.key==="c")){e.preventDefault()}});
+document.addEventListener("selectstart",function(e){if(e.target.tagName\!=="INPUT"&&e.target.tagName\!=="TEXTAREA"){e.preventDefault()}});
+</script>
+</head>
+<body>
+    <!-- Contrôles d'accessibilité -->
+    <div class="accessibility-controls">
+        <button class="btn-accessibility" onclick="toggleAccessibleMode()" id="btnAccessible">
+            <span>📖</span>
+            <span>Police adaptée</span>
+        </button>
+        <button class="btn-accessibility" onclick="toggleHighContrast()" id="btnContrast">
+            <span>🌓</span>
+            <span>Contraste</span>
+        </button>
+        <button class="btn-accessibility" onclick="changeFontSize()" id="btnFontSize">
+            <span>🔍+</span>
+            <span>Taille</span>
+        </button>
+    </div>
+    
+    <!-- Mascotte d'aide -->
+    <div class="mascot">
+        <span>🦺</span>
+        <div class="mascot-bubble">
+            <strong>Salut ! 👋</strong><br>
+            Je suis Sécu, ton assistant sécurité ! Clique sur les mots soulignés pour avoir des explications 💡
+        </div>
+    </div>
+    
+    <!-- Container principal -->
+    <div class="main-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo-section">
+                <div class="logo-inerweb">
+                    <span class="snowflake">❄️</span>
+                    <span class="logo-text">inerWeb</span>
+                </div>
+                <div>
+                    <h1>Accueil Sécurité - Apprenants & Stagiaires 🛡️</h1>
+                    <p class="subtitle">Formation aux règles de sécurité en 
+                        <span class="tooltip">entreprise
+                            <span class="tooltiptext">Une entreprise est un lieu de travail où tu vas faire ton stage ou ton apprentissage</span>
+                        </span> 
+                        et 
+                        <span class="tooltip">atelier
+                            <span class="tooltiptext">L'atelier est la salle de travaux pratiques de ton lycée où tu apprends ton métier</span>
+                        </span>
+                    </p>
+                    <p style="font-size: 0.85em; opacity: 0.8; margin-top: 5px;">
+                        💡 Créé par F. Henninot - Enseignant en froid et conditionnement d'air
+                    </p>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Alerte sécurité -->
+        <div class="alert-security">
+            <span class="alert-icon">⚠️</span>
+            <div>
+                <strong>Important :</strong>
+                Les règles de sécurité que vous allez découvrir s'appliquent PARTOUT : 
+                en entreprise, à l'atelier du lycée, sur 
+                <span class="tooltip">chantier
+                    <span class="tooltiptext">Un chantier est un lieu où on construit ou répare quelque chose (bâtiment, installation...)</span>
+                </span>. 
+                Leur non-respect peut entraîner des 
+                <span class="tooltip">sanctions graves
+                    <span class="tooltiptext">Punitions sévères comme l'exclusion de l'école ou la perte de ton stage</span>
+                </span> 
+                allant jusqu'à l'exclusion ou la rupture de contrat.
+            </div>
+        </div>
+        
+        <!-- Formulaire d'identification -->
+        <div class="student-form">
+            <h2>👤 Identification</h2>
+            <form id="studentForm">
+                <div class="form-group">
+                    <label for="nom">Nom * 
+                        <span style="font-size: 0.8em; color: #666;">(Ton nom de famille)</span>
+                    </label>
+                    <input type="text" id="nom" name="nom" required placeholder="Ex: DUPONT">
+                </div>
+                
+                <div class="form-group">
+                    <label for="prenom">Prénom * 
+                        <span style="font-size: 0.8em; color: #666;">(Ton prénom)</span>
+                    </label>
+                    <input type="text" id="prenom" name="prenom" required placeholder="Ex: Mohamed">
+                </div>
+                
+                <div class="form-group">
+                    <label for="classe">Classe / Formation * 
+                        <span style="font-size: 0.8em; color: #666;">(Choisis ta classe dans la liste)</span>
+                    </label>
+                    <select id="classe" name="classe" required>
+                        <option value="">-- Clique ici pour choisir --</option>
+                        <optgroup label="🎓 Lycée Professionnel">
+                            <option value="2nde_TNE">2nde TNE</option>
+                            <option value="1CAP_IFCA">CAP IFCA - 1ère année</option>
+                            <option value="2CAP_IFCA">CAP IFCA - 2ème année</option>
+                            <option value="1re_MFER">1ère MFER</option>
+                            <option value="Term_MFER">Term MFER</option>
+                        </optgroup>
+                        <optgroup label="🔧 Apprentissage">
+                            <option value="CAP_IFCA_APP1">CAP IFCA Apprenti - 1ère année</option>
+                            <option value="CAP_IFCA_APP2">CAP IFCA Apprenti - 2ème année</option>
+                            <option value="BP_IFCA_APP1">BP IFCA Apprenti - 1ère année</option>
+                            <option value="BP_IFCA_APP2">BP IFCA Apprenti - 2ème année</option>
+                        </optgroup>
+                        <optgroup label="👨‍🎓 Formation Continue">
+                            <option value="TP_IFCA">Titre Pro IFCA</option>
+                            <option value="FC_ADULTE">Formation Continue Adulte</option>
+                        </optgroup>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn">
+                    <span style="margin-right: 8px;">🚀</span>
+                    Commencer la formation
+                </button>
+            </form>
+        </div>
+        
+        <!-- Barre de progression globale -->
+        <div class="progress-bar">
+            <div class="progress-fill" id="globalProgress">0%</div>
+        </div>
+        
+        <!-- Navigation des séances -->
+        <h2 style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 1.5em;">📚</span>
+            Programme de Formation
+        </h2>
+        <div class="chapters-grid">
+            <div class="chapter-card" onclick="accessChapter(1)" id="chapter1">
+                <div class="chapter-number">⚡</div>
+                <div class="chapter-title">Séance 1 : Les risques</div>
+                <div class="chapter-duration">
+                    <span>⏱️</span>
+                    <span>15 minutes</span>
+                </div>
+                <p class="chapter-description">
+                    🎯 Découvre les dangers du travail et pourquoi les jeunes sont plus exposés aux accidents
+                </p>
+            </div>
+            
+            <div class="chapter-card locked" onclick="accessChapter(2)" id="chapter2">
+                <div class="chapter-number">🤝</div>
+                <div class="chapter-title">Séance 2 : L'accueil</div>
+                <div class="chapter-duration">
+                    <span>⏱️</span>
+                    <span>20 minutes</span>
+                </div>
+                <p class="chapter-description">
+                    📋 Tes droits et ce que l'entreprise doit te fournir dès ton arrivée
+                </p>
+            </div>
+            
+            <div class="chapter-card locked" onclick="accessChapter(3)" id="chapter3">
+                <div class="chapter-number">🚫</div>
+                <div class="chapter-title">Séance 3 : Travaux interdits</div>
+                <div class="chapter-duration">
+                    <span>⏱️</span>
+                    <span>15 minutes</span>
+                </div>
+                <p class="chapter-description">
+                    ⛔ Les travaux dangereux interdits aux jeunes de moins de 18 ans
+                </p>
+            </div>
+            
+            <div class="chapter-card locked" onclick="accessChapter(4)" id="chapter4">
+                <div class="chapter-number">📋</div>
+                <div class="chapter-title">Séance 4 : Tes obligations</div>
+                <div class="chapter-duration">
+                    <span>⏱️</span>
+                    <span>20 minutes</span>
+                </div>
+                <p class="chapter-description">
+                    ✅ Les 10 commandements de l'apprenti et les règles à respecter
+                </p>
+            </div>
+            
+            <div class="chapter-card locked" onclick="accessChapter(5)" id="chapter5">
+                <div class="chapter-number">🛡️</div>
+                <div class="chapter-title">Séance 5 : Te protéger</div>
+                <div class="chapter-duration">
+                    <span>⏱️</span>
+                    <span>20 minutes</span>
+                </div>
+                <p class="chapter-description">
+                    🦺 Les équipements de protection (EPI) et comment alerter en cas de danger
+                </p>
+            </div>
+            
+            <div class="chapter-card locked" onclick="accessChapter(6)" id="chapter6">
+                <div class="chapter-number">🏆</div>
+                <div class="chapter-title">Séance 6 : Test final</div>
+                <div class="chapter-duration">
+                    <span>⏱️</span>
+                    <span>30 minutes</span>
+                </div>
+                <p class="chapter-description">
+                    📝 Évaluation finale pour obtenir ton certificat de formation
+                </p>
+            </div>
+        </div>
+        
+        <!-- Features -->
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">🎮</div>
+                <h3>Interactif</h3>
+                <p>Des jeux et activités pour apprendre en t'amusant !</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">📱</div>
+                <h3>Sur tous supports</h3>
+                <p>Fonctionne sur ordinateur, tablette et téléphone</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">💾</div>
+                <h3>Sauvegarde auto</h3>
+                <p>Ta progression est enregistrée automatiquement</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">♿</div>
+                <h3>Accessible</h3>
+                <p>Adapté pour tous, même si tu as des difficultés</p>
+            </div>
+        </div>
+        
+        <!-- Crédits -->
+        <div class="credits">
+            <h3>À propos de cette formation</h3>
+            <p>
+                Cette formation interactive a été développée dans le cadre du projet <strong>Inerweb</strong>, 
+                plateforme pédagogique pour l'enseignement professionnel.
+            </p>
+            <p style="margin-top: 15px;">
+                <strong>👨‍🏫 Conception pédagogique :</strong> F. Henninot<br>
+                <strong>💻 Développement :</strong> Inerweb Team<br>
+                <strong>📅 Version :</strong> 2.0 - Janvier 2025
+            </p>
+            <p style="margin-top: 15px; font-size: 0.9em; opacity: 0.8;">
+                📖 Basé sur le document IRIS-ST "Apprenti(e)s et prévention" et conforme aux référentiels de formation.
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        // Configuration du module
+        const MODULE_CONFIG = {
+            name: 'accueil_securite',
+            version: '2.0',
+            requiredScore: 70,
+            teacherCode: '4321',
+            totalChapters: 6
+        };
+        
+        // Initialisation au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSavedData();
+            updateProgress();
+            initializeAccessibility();
+            
+            // Animation d'entrée des éléments
+            animateElements();
+        });
+        
+        // Animation des éléments au chargement
+        function animateElements() {
+            const elements = document.querySelectorAll('.chapter-card, .feature');
+            elements.forEach((el, index) => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    el.style.transition = 'all 0.5s ease';
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        }
+        
+        // Gestion du formulaire
+        document.getElementById('studentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                nom: document.getElementById('nom').value,
+                prenom: document.getElementById('prenom').value,
+                classe: document.getElementById('classe').value,
+                dateInscription: new Date().toISOString()
+            };
+            
+            // Vérifier code enseignant
+            if (formData.nom.toLowerCase() === 'enseignant' && formData.prenom === '4321') {
+                unlockAllChapters();
+                showNotification('🔓 Mode enseignant activé !', 'success');
+                return;
+            }
+            
+            // Sauvegarder les données
+            saveStudentData(formData);
+            showNotification(`👋 Bienvenue ${formData.prenom} ! Tu peux commencer la formation.`, 'success');
+        });
+        
+        // Fonctions de sauvegarde
+        function saveStudentData(data) {
+            const storageKey = `inerweb_${MODULE_CONFIG.name}_data`;
+            let moduleData = JSON.parse(localStorage.getItem(storageKey) || '{}');
+            
+            moduleData.student = data;
+            if (!moduleData.progress) {
+                moduleData.progress = initializeProgress();
+            }
+            
+            localStorage.setItem(storageKey, JSON.stringify(moduleData));
+        }
+        
+        function initializeProgress() {
+            const progress = { global: { percentage: 0, totalTime: 0 } };
+            
+            for (let i = 1; i <= MODULE_CONFIG.totalChapters; i++) {
+                progress[`seance${i}`] = {
+                    completed: false,
+                    score: 0,
+                    attempts: 0,
+                    date: null
+                };
+            }
+            
+            return progress;
+        }
+        
+        function loadSavedData() {
+            const storageKey = `inerweb_${MODULE_CONFIG.name}_data`;
+            const savedData = JSON.parse(localStorage.getItem(storageKey) || '{}');
+            
+            if (savedData.student) {
+                document.getElementById('nom').value = savedData.student.nom || '';
+                document.getElementById('prenom').value = savedData.student.prenom || '';
+                document.getElementById('classe').value = savedData.student.classe || '';
+            }
+            
+            if (savedData.progress) {
+                updateChapterStates(savedData.progress);
+            }
+        }
+        
+        function updateProgress() {
+            const storageKey = `inerweb_${MODULE_CONFIG.name}_data`;
+            const savedData = JSON.parse(localStorage.getItem(storageKey) || '{}');
+            
+            if (savedData.progress) {
+                const completedChapters = Object.keys(savedData.progress)
+                    .filter(key => key.startsWith('seance') && savedData.progress[key].completed)
+                    .length;
+                
+                const percentage = Math.round((completedChapters / MODULE_CONFIG.totalChapters) * 100);
+                
+                const progressBar = document.getElementById('globalProgress');
+                progressBar.style.width = percentage + '%';
+                progressBar.textContent = percentage + '%';
+            }
+        }
+        
+        function updateChapterStates(progress) {
+            for (let i = 1; i <= MODULE_CONFIG.totalChapters; i++) {
+                const chapter = document.getElementById(`chapter${i}`);
+                const seanceData = progress[`seance${i}`];
+                
+                if (seanceData && seanceData.completed) {
+                    chapter.classList.remove('locked');
+                    chapter.style.background = 'linear-gradient(135deg, #e0f7fa, #b2ebf2)';
+                    
+                    // Ajouter indicateur de complétion
+                    if (!chapter.querySelector('.completed-badge')) {
+                        const badge = document.createElement('div');
+                        badge.className = 'completed-badge';
+                        badge.innerHTML = '✅ ' + seanceData.score + '%';
+                        badge.style.cssText = 'position: absolute; top: 10px; right: 10px; font-weight: bold; background: white; padding: 5px 10px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);';
+                        chapter.appendChild(badge);
+                    }
+                } else if (i === 1 || (progress[`seance${i-1}`] && progress[`seance${i-1}`].completed)) {
+                    chapter.classList.remove('locked');
+                }
+            }
+        }
+        
+        // Navigation vers les séances
+        function accessChapter(chapterNumber) {
+            const chapter = document.getElementById(`chapter${chapterNumber}`);
+            
+            if (chapter.classList.contains('locked')) {
+                showNotification('🔒 Cette séance est verrouillée. Tu dois d\'abord terminer la séance précédente !', 'warning');
+                return;
+            }
+            
+            // Mapping des fichiers
+            const chapterFiles = {
+                1: 'seance1_introduction_risques.html',
+                2: 'seance2_accueil_entreprise.html',
+                3: 'seance3_travaux_reglementes.html',
+                4: 'seance4_obligations_atelier.html',
+                5: 'seance5_protection_alerte.html',
+                6: 'seance6_evaluation_finale.html'
+            };
+            
+            window.location.href = chapterFiles[chapterNumber];
+        }
+        
+        // Mode enseignant
+        function unlockAllChapters() {
+            for (let i = 1; i <= MODULE_CONFIG.totalChapters; i++) {
+                document.getElementById(`chapter${i}`).classList.remove('locked');
+            }
+        }
+        
+        // Accessibilité
+        function toggleAccessibleMode() {
+            document.body.classList.toggle('accessible-mode');
+            const btn = document.getElementById('btnAccessible');
+            btn.classList.toggle('active');
+            
+            // Charger OpenDyslexic si activé
+            if (document.body.classList.contains('accessible-mode')) {
+                loadOpenDyslexicFont();
+            }
+            
+            // Sauvegarder préférence
+            saveAccessibilitySettings();
+        }
+        
+        function toggleHighContrast() {
+            document.body.classList.toggle('high-contrast');
+            document.getElementById('btnContrast').classList.toggle('active');
+            saveAccessibilitySettings();
+        }
+        
+        function changeFontSize() {
+            const currentSize = parseInt(getComputedStyle(document.body).fontSize);
+            const newSize = currentSize >= 20 ? 16 : currentSize + 2;
+            document.body.style.fontSize = newSize + 'px';
+            saveAccessibilitySettings();
+            showNotification(`📏 Taille de police : ${newSize}px`, 'info');
+        }
+        
+        function loadOpenDyslexicFont() {
+            if (!document.getElementById('openDyslexicFont')) {
+                const link = document.createElement('link');
+                link.id = 'openDyslexicFont';
+                link.rel = 'stylesheet';
+                link.href = 'https://fonts.cdnfonts.com/css/open-dyslexic';
+                document.head.appendChild(link);
+            }
+        }
+        
+        function initializeAccessibility() {
+            const savedSettings = JSON.parse(localStorage.getItem('inerweb_accessibility') || '{}');
+            
+            if (savedSettings.accessibleMode) toggleAccessibleMode();
+            if (savedSettings.highContrast) toggleHighContrast();
+            if (savedSettings.fontSize) document.body.style.fontSize = savedSettings.fontSize;
+        }
+        
+        function saveAccessibilitySettings() {
+            const settings = {
+                accessibleMode: document.body.classList.contains('accessible-mode'),
+                highContrast: document.body.classList.contains('high-contrast'),
+                fontSize: document.body.style.fontSize
+            };
+            localStorage.setItem('inerweb_accessibility', JSON.stringify(settings));
+        }
+        
+        // Notifications améliorées
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            
+            // Icônes selon le type
+            const icons = {
+                success: '✅',
+                warning: '⚠️',
+                danger: '❌',
+                info: 'ℹ️'
+            };
+            
+            notification.innerHTML = `
+                <span style="font-size: 1.5em; margin-right: 10px;">${icons[type]}</span>
+                <span>${message}</span>
+            `;
+            
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                padding: 15px 25px;
+                background: ${type === 'success' ? 'var(--parfait)' : type === 'warning' ? 'var(--en-cours)' : type === 'danger' ? 'var(--non-acquis)' : 'var(--acquis)'};
+                color: white;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                z-index: 9999;
+                animation: slideDown 0.3s ease;
+                display: flex;
+                align-items: center;
+                font-weight: 600;
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideUp 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+        
+        // Animations CSS additionnelles
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideDown {
+                from { transform: translateX(-50%) translateY(-100px); opacity: 0; }
+                to { transform: translateX(-50%) translateY(0); opacity: 1; }
+            }
+            
+            @keyframes slideUp {
+                from { transform: translateX(-50%) translateY(0); opacity: 1; }
+                to { transform: translateX(-50%) translateY(-100px); opacity: 0; }
+            }
+            
+            .notification {
+                animation: slideDown 0.3s ease;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

@@ -1,0 +1,1732 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Inerweb - Séance 4 : Les obligations et les 10 commandements de l'apprenti">
+    <meta name="author" content="F. Henninot">
+    
+    <title>Séance 4 - Tes Obligations en Atelier et Entreprise</title>
+    
+    <!-- Police Lexend -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ========== VARIABLES CSS ========== */
+        :root {
+            --primary: #FF6B35;
+            --secondary: #FF8E53;
+            --accent: #FFC300;
+            --non-acquis: #ef4444;
+            --en-cours: #f59e0b;
+            --acquis: #3b82f6;
+            --parfait: #10b981;
+            --background: #f8f9fa;
+            --text: #333333;
+            --border: #e0e0e0;
+            --shadow: 0 4px 12px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Lexend', system-ui, -apple-system, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        /* Header avec navigation */
+        .header {
+            background: white;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .snowflake {
+            display: inline-block;
+            animation: snowflakeRotate 4s linear infinite;
+            font-size: 1.5em;
+        }
+        
+        @keyframes snowflakeRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-nav {
+            padding: 8px 16px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn-nav:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+        
+        /* Container principal */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px 40px;
+        }
+        
+        /* Barre de progression locale */
+        .local-progress {
+            background: #e0e0e0;
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .local-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            width: 0%;
+            transition: width 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .local-progress-fill::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        /* Section d'apprentissage */
+        .learning-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .section-icon {
+            font-size: 2.5em;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .section-title {
+            font-size: 1.8em;
+            color: var(--primary);
+        }
+        
+        /* Objectifs pédagogiques */
+        .objectives {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .objectives::before {
+            content: '🎯';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 4em;
+            opacity: 0.1;
+        }
+        
+        .objectives h3 {
+            color: var(--acquis);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .objectives ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .objectives li {
+            padding: 8px 0;
+            padding-left: 30px;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+        
+        .objectives li:hover {
+            transform: translateX(5px);
+        }
+        
+        .objectives li::before {
+            content: '🎯';
+            position: absolute;
+            left: 0;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        /* Contenu pédagogique amélioré */
+        .content-box {
+            background: #f5f5f5;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border-left: 4px solid var(--primary);
+            position: relative;
+        }
+        
+        .content-box::before {
+            content: '💡';
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+            border: 2px solid var(--accent);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .highlight-box::before {
+            content: '⭐';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 4em;
+            opacity: 0.1;
+            animation: starPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes starPulse {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.2) rotate(180deg); }
+        }
+        
+        /* Tooltips améliorés */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 2px dotted var(--primary);
+            cursor: help;
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 250px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -125px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-weight: normal;
+            font-size: 0.9em;
+            line-height: 1.4;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* Activités interactives améliorées */
+        .activity {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border: 2px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .activity::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+            animation: colorWave 3s linear infinite;
+        }
+        
+        @keyframes colorWave {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .activity-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .activity-title {
+            font-size: 1.2em;
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        /* Les 10 commandements */
+        .commandments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .commandment-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid transparent;
+        }
+        
+        .commandment-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .commandment-card:hover::before {
+            opacity: 0.05;
+        }
+        
+        .commandment-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            border-color: var(--primary);
+        }
+        
+        .commandment-number {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            animation: commandmentBounce 3s ease-in-out infinite;
+        }
+        
+        @keyframes commandmentBounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .commandment-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            display: inline-block;
+            animation: wiggle 2s ease-in-out infinite;
+        }
+        
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(3deg); }
+            75% { transform: rotate(-3deg); }
+        }
+        
+        .commandment-title {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        
+        .commandment-desc {
+            font-size: 0.9em;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        /* Memory Game amélioré */
+        .memory-game {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            max-width: 600px;
+            margin: 20px auto;
+        }
+        
+        .memory-card {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+            cursor: pointer;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .memory-card:hover {
+            transform: scale(1.05);
+        }
+        
+        .memory-card.flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .memory-card.matched {
+            opacity: 0.7;
+            cursor: not-allowed;
+            animation: matchedPulse 0.5s ease;
+        }
+        
+        @keyframes matchedPulse {
+            0% { transform: scale(1) rotateY(180deg); }
+            50% { transform: scale(1.1) rotateY(180deg); }
+            100% { transform: scale(1) rotateY(180deg); }
+        }
+        
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+        }
+        
+        .card-front {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+        
+        .card-back {
+            background: white;
+            border: 2px solid var(--border);
+            transform: rotateY(180deg);
+            font-size: 3em;
+            padding: 10px;
+        }
+        
+        .memory-controls {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .memory-stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+        
+        /* Scénarios de décision */
+        .scenario-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .scenario-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .scenario-icon {
+            font-size: 2.5em;
+        }
+        
+        .scenario-title {
+            font-size: 1.2em;
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .scenario-content {
+            margin-bottom: 20px;
+            font-size: 1.05em;
+            line-height: 1.6;
+        }
+        
+        .decision-options {
+            display: grid;
+            gap: 12px;
+        }
+        
+        .decision-option {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            border: 2px solid var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .decision-option:hover {
+            transform: translateX(5px);
+            border-color: var(--primary);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .decision-option.selected {
+            background: #e3f2fd;
+            border-color: var(--acquis);
+        }
+        
+        .decision-option.correct {
+            background: #c8e6c9;
+            border-color: var(--parfait);
+        }
+        
+        .decision-option.incorrect {
+            background: #ffcdd2;
+            border-color: var(--non-acquis);
+        }
+        
+        .option-emoji {
+            font-size: 1.5em;
+        }
+        
+        /* Résumé interactif */
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .summary-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .summary-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+        
+        .summary-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+        
+        .summary-title {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        
+        .summary-text {
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        /* Boutons améliorés */
+        .btn {
+            padding: 12px 24px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .btn-validate {
+            background: var(--parfait);
+        }
+        
+        .btn-validate:hover {
+            background: #059862;
+        }
+        
+        /* Score et feedback */
+        .score-display {
+            background: linear-gradient(135deg, #e1f5fe, #b3e5fc);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .score-number {
+            font-size: 3em;
+            font-weight: 700;
+            color: var(--acquis);
+            animation: countUp 1s ease-out;
+        }
+        
+        @keyframes countUp {
+            from { transform: scale(0); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        /* Contrôles d'accessibilité */
+        .accessibility-controls {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 99;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+        
+        .btn-accessibility {
+            padding: 8px 15px;
+            background: white;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn-accessibility:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-accessibility.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* Mode accessible */
+        body.accessible-mode {
+            font-family: 'OpenDyslexic', 'Comic Sans MS', sans-serif;
+            line-height: 2;
+            letter-spacing: 0.1em;
+        }
+        
+        body.high-contrast {
+            background: #000;
+            color: #fff;
+        }
+        
+        body.high-contrast .learning-section,
+        body.high-contrast .activity,
+        body.high-contrast .header {
+            background: #222;
+            color: #fff;
+            border: 2px solid #fff;
+        }
+        
+        /* Mascotte helper */
+        .helper-mascot {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 70px;
+            height: 70px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2em;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: var(--transition);
+            z-index: 100;
+        }
+        
+        .helper-mascot:hover {
+            transform: scale(1.1) rotate(10deg);
+        }
+        
+        .helper-bubble {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            width: 250px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .helper-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            right: 25px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 10px solid white;
+        }
+        
+        .helper-mascot:hover .helper-bubble {
+            display: block;
+        }
+        
+        /* Animations supplémentaires */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+            }
+            
+            .commandments-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .memory-game {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+            
+            .accessibility-controls {
+                top: auto;
+                bottom: 100px;
+                flex-direction: row;
+            }
+            
+            .helper-mascot {
+                bottom: 20px;
+                right: 10px;
+                width: 60px;
+                height: 60px;
+                font-size: 1.8em;
+            }
+        }
+    </style>
+<script>/* (c) F. Henninot - inerWeb FRIGOLO - Tous droits reserves */
+document.addEventListener("contextmenu",function(e){e.preventDefault()});
+document.addEventListener("keydown",function(e){if((e.ctrlKey||e.metaKey)&&(e.key==="u"||e.key==="s"||e.key==="c")){e.preventDefault()}});
+document.addEventListener("selectstart",function(e){if(e.target.tagName\!=="INPUT"&&e.target.tagName\!=="TEXTAREA"){e.preventDefault()}});
+</script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <span class="snowflake">❄️</span>
+                <h1>Séance 4 : Tes Obligations - Les 10 Commandements 📋</h1>
+            </div>
+            <div class="nav-buttons">
+                <button class="btn-nav" onclick="viewPDF()">
+                    <span>📄</span>
+                    <span>Voir PDF</span>
+                </button>
+                <a href="index_accueil_securite.html" class="btn-nav">
+                    <span>🏠</span>
+                    <span>Retour</span>
+                </a>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Contrôles d'accessibilité -->
+    <div class="accessibility-controls">
+        <button class="btn-accessibility" onclick="toggleAccessibleMode()" id="btnAccessible">
+            <span>📖</span>
+            <span>Police adaptée</span>
+        </button>
+        <button class="btn-accessibility" onclick="toggleHighContrast()" id="btnContrast">
+            <span>🌓</span>
+            <span>Contraste</span>
+        </button>
+        <button class="btn-accessibility" onclick="changeFontSize()" id="btnFontSize">
+            <span>🔍+</span>
+            <span>Taille</span>
+        </button>
+    </div>
+    
+    <!-- Mascotte helper -->
+    <div class="helper-mascot">
+        <span>🦺</span>
+        <div class="helper-bubble">
+            <strong>Astuce de Sécu ! 💡</strong><br>
+            Les 10 commandements, c'est comme les règles d'un jeu : si tu les respectes, tout se passe bien !
+        </div>
+    </div>
+    
+    <!-- Container principal -->
+    <div class="container">
+        <!-- Barre de progression locale -->
+        <div class="local-progress">
+            <div class="local-progress-fill" id="localProgress"></div>
+        </div>
+        
+        <!-- Objectifs pédagogiques -->
+        <div class="objectives">
+            <h3>
+                <span style="font-size: 1.5em;">🎓</span>
+                Objectifs de cette séance
+            </h3>
+            <ul>
+                <li>Connaître les 10 commandements de l'apprenti 📜</li>
+                <li>Comprendre tes <span class="tooltip">obligations
+                    <span class="tooltiptext">Ce que tu DOIS faire obligatoirement selon la loi et le règlement</span>
+                </span> en atelier et entreprise</li>
+                <li>Savoir réagir face aux situations courantes</li>
+                <li>Développer les bons <span class="tooltip">réflexes professionnels
+                    <span class="tooltiptext">Les bonnes habitudes à prendre pour bien travailler et rester en sécurité</span>
+                </span> 💪</li>
+            </ul>
+        </div>
+        
+        <!-- Section 1 : Introduction -->
+        <div class="learning-section">
+            <div class="section-header">
+                <span class="section-icon">⚖️</span>
+                <h2 class="section-title">Tu as des droits... mais aussi des devoirs !</h2>
+            </div>
+            
+            <div class="highlight-box">
+                <h4 style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 1.5em;">🤝</span>
+                    Le contrat, c'est donnant-donnant !
+                </h4>
+                <p><strong>L'entreprise a des obligations envers toi (sécurité, formation, salaire...)</strong></p>
+                <p>MAIS <strong>tu as aussi des obligations envers l'entreprise !</strong></p>
+                <p style="margin-top: 10px;">Ces obligations sont là pour :</p>
+                <ul style="margin-top: 10px; margin-left: 20px;">
+                    <li>✓ Garantir ta sécurité et celle des autres 🛡️</li>
+                    <li>✓ Assurer le bon fonctionnement de l'entreprise 🏭</li>
+                    <li>✓ Te préparer à devenir un vrai professionnel 🎯</li>
+                </ul>
+            </div>
+            
+            <div class="content-box">
+                <p><strong>Les 10 commandements de l'apprenti</strong> résument tes principales obligations.</p>
+                <p>Ce ne sont pas juste des conseils : <strong>c'est LA LOI !</strong> ⚖️</p>
+                <p style="margin-top: 10px;">Ne pas les respecter peut entraîner :</p>
+                <ul style="margin-left: 20px;">
+                    <li>• Des <span class="tooltip">sanctions disciplinaires
+                        <span class="tooltiptext">Avertissement, mise à pied (suspension temporaire), ou même licenciement</span>
+                    </span> 📝</li>
+                    <li>• La rupture de ton contrat 📋❌</li>
+                    <li>• Des poursuites en cas d'accident ⚖️</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Section 2 : Les 10 commandements -->
+        <div class="learning-section">
+            <div class="section-header">
+                <span class="section-icon">📜</span>
+                <h2 class="section-title">Les 10 Commandements de l'Apprenti</h2>
+            </div>
+            
+            <div class="commandments-grid">
+                <div class="commandment-card" onclick="animateCommandment(this)">
+                    <div class="commandment-number">1</div>
+                    <div class="commandment-icon">⏰</div>
+                    <div class="commandment-title">PONCTUEL tu seras</div>
+                    <div class="commandment-desc">Arrive à l'heure, c'est la base du respect ! Préviens TOUJOURS en cas de retard.</div>
+                </div>
+                
+                <div class="commandment-card" onclick="animateCommandment(this)">
+                    <div class="commandment-number">2</div>
+                    <div class="commandment-icon">🦺</div>
+                    <div class="commandment-title">Tes EPI tu porteras</div>
+                    <div class="commandment-desc">Casque, chaussures de sécurité, gants... TOUJOURS, même pour 2 minutes !</div>
+                </div>
+                
+                <div class="commandment-card" onclick="animateCommandment(this)">
+                    <div class="commandment-number">3</div>
+                    <div class="commandment-icon">📋</div>
+                    <div class="commandment-title">Les consignes tu respecteras</div>
+                    <div class="commandment-desc">Les règles sont là pour te protéger. Pas d'improvisation !</div>
+                </div>
+                
+                <div class="commandment-card" onclick="animateCommandment(this)">
+                    <div class="commandment-number">4</div>
+                    <div class="commandment-icon">🧹</div>
+                    <div class="commandment-title">Ton poste tu rangeras</div>
+                    <div class="commandment-desc">Un poste propre = moins d'accidents. Range tes outils après usage !</div>
+                </div>
+                
+                <div class="commandment-card" onclick="animateCommandment(this)">
+                    <div class="commandment-number">5</div>
+                    <div class="commandment-icon">🚨</div>
+                    <div class="commandment-title">Les dangers tu signaleras</div>
+                    <div class="commandment-desc">Tu vois un problème ? ALERTE immédiatement ! Ne fais pas l'autruche.</div>
+                </div>
+                
+                <div class="commandment-card" onclick="animateCommandment(this)">
+                    <div class="commandment-number">6</div>
+                    <div class="commandment-icon">❓</div>
+                    <div class="commandment-title">Tu demanderas avant d'agir</div>
+                    <div class="commandment-desc">Un doute ? Une question ? DEMANDE ! Mieux vaut demander 10 fois que faire une erreur.</div>
+                </div>
+                
+                <div class="commandment-card" onclick="animateCommandment(this)">
+                    <div class="commandment-number">7</div>
+                    <div class="commandment-icon">🤝</div>
+                    <div class="commandment-title">Respectueux tu seras</div>
+                    <div class="commandment-desc">Collègues, clients, matériel... Le respect, c'est la base du travail en équipe !</div>
+                </div>
+                
+                <div class="commandment-card" onclick="animateCommandment(this)">
+                    <div class="commandment-number">8</div>
+                    <div class="commandment-icon">📵</div>
+                    <div class="commandment-title">Ton téléphone tu oublieras</div>
+                    <div class="commandment-desc">Au travail, le téléphone reste dans ta poche ! Sécurité et concentration avant tout.</div>
+                </div>
+                
+                <div class="commandment-card" onclick="animateCommandment(this)">
+                    <div class="commandment-number">9</div>
+                    <div class="commandment-icon">🏥</div>
+                    <div class="commandment-title">Ta santé tu préserveras</div>
+                    <div class="commandment-desc">Pas de substances interdites, sommeil suffisant, alimentation correcte...</div>
+                </div>
+                
+                <div class="commandment-card" onclick="animateCommandment(this)">
+                    <div class="commandment-number">10</div>
+                    <div class="commandment-icon">📚</div>
+                    <div class="commandment-title">Te former tu continueras</div>
+                    <div class="commandment-desc">Lycée, CFA, formations... Ta présence est OBLIGATOIRE ! C'est ton avenir.</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Activité 1 : Memory Game -->
+        <div class="activity">
+            <div class="activity-header">
+                <span style="font-size: 1.5em;">🧠</span>
+                <h3 class="activity-title">Activité 1 : Memory des Commandements</h3>
+            </div>
+            
+            <p>🎮 <strong>Retrouve les paires de cartes (emoji + numéro du commandement) :</strong></p>
+            
+            <div class="memory-stats">
+                <div class="stat-item">
+                    <span>⏱️</span>
+                    <span>Temps : <span id="timer">00:00</span></span>
+                </div>
+                <div class="stat-item">
+                    <span>👆</span>
+                    <span>Coups : <span id="moves">0</span></span>
+                </div>
+                <div class="stat-item">
+                    <span>🎯</span>
+                    <span>Paires : <span id="pairs">0</span>/8</span>
+                </div>
+            </div>
+            
+            <div class="memory-game" id="memoryGame">
+                <!-- Les cartes seront générées par JavaScript -->
+            </div>
+            
+            <div class="memory-controls">
+                <button class="btn" onclick="initMemoryGame()">
+                    <span>🔄</span>
+                    <span>Nouvelle partie</span>
+                </button>
+            </div>
+            
+            <div id="memory-feedback" style="margin-top: 15px; display: none;"></div>
+        </div>
+        
+        <!-- Activité 2 : Scénarios de décision -->
+        <div class="activity">
+            <div class="activity-header">
+                <span style="font-size: 1.5em;">🎯</span>
+                <h3 class="activity-title">Activité 2 : Que ferais-tu dans ces situations ?</h3>
+            </div>
+            
+            <div class="scenario-card">
+                <div class="scenario-header">
+                    <span class="scenario-icon">⏰</span>
+                    <h4 class="scenario-title">Scénario 1 : Le réveil en panne</h4>
+                </div>
+                <div class="scenario-content">
+                    Il est 7h45. Tu commences à 8h et tu habites à 30 minutes. Ton réveil n'a pas sonné ! 😱
+                </div>
+                <div class="decision-options">
+                    <div class="decision-option" onclick="selectDecision(this, 1, 'A')">
+                        <span class="option-emoji">🏃</span>
+                        <span>Tu te dépêches et tu arrives en retard sans prévenir</span>
+                    </div>
+                    <div class="decision-option" onclick="selectDecision(this, 1, 'B')">
+                        <span class="option-emoji">📱</span>
+                        <span>Tu appelles immédiatement pour prévenir de ton retard</span>
+                    </div>
+                    <div class="decision-option" onclick="selectDecision(this, 1, 'C')">
+                        <span class="option-emoji">🛌</span>
+                        <span>Tu te dis que c'est foutu et tu restes au lit</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="scenario-card">
+                <div class="scenario-header">
+                    <span class="scenario-icon">🦺</span>
+                    <h4 class="scenario-title">Scénario 2 : Les EPI oubliés</h4>
+                </div>
+                <div class="scenario-content">
+                    Tu dois faire une intervention rapide (5 minutes) mais tes chaussures de sécurité sont dans le vestiaire à l'autre bout de l'atelier...
+                </div>
+                <div class="decision-options">
+                    <div class="decision-option" onclick="selectDecision(this, 2, 'A')">
+                        <span class="option-emoji">👟</span>
+                        <span>Tu y vas en baskets, c'est juste 5 minutes</span>
+                    </div>
+                    <div class="decision-option" onclick="selectDecision(this, 2, 'B')">
+                        <span class="option-emoji">🚶</span>
+                        <span>Tu vas chercher tes chaussures de sécurité</span>
+                    </div>
+                    <div class="decision-option" onclick="selectDecision(this, 2, 'C')">
+                        <span class="option-emoji">🤝</span>
+                        <span>Tu demandes à un collègue de te prêter les siennes</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="scenario-card">
+                <div class="scenario-header">
+                    <span class="scenario-icon">🚨</span>
+                    <h4 class="scenario-title">Scénario 3 : Le danger repéré</h4>
+                </div>
+                <div class="scenario-content">
+                    Tu remarques une flaque d'huile sur le sol de l'atelier. Un collègue pourrait glisser ! 🛢️
+                </div>
+                <div class="decision-options">
+                    <div class="decision-option" onclick="selectDecision(this, 3, 'A')">
+                        <span class="option-emoji">🚶</span>
+                        <span>Tu contournes et tu continues ton travail</span>
+                    </div>
+                    <div class="decision-option" onclick="selectDecision(this, 3, 'B')">
+                        <span class="option-emoji">🧹</span>
+                        <span>Tu nettoies immédiatement et tu signales l'incident</span>
+                    </div>
+                    <div class="decision-option" onclick="selectDecision(this, 3, 'C')">
+                        <span class="option-emoji">🗣️</span>
+                        <span>Tu préviens juste tes copains de faire attention</span>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn btn-validate" onclick="validateScenarios()" style="margin-top: 20px;">
+                <span>✅</span>
+                <span>Valider mes choix</span>
+            </button>
+            
+            <div id="scenario-feedback" style="margin-top: 15px; display: none;"></div>
+        </div>
+        
+        <!-- Section 3 : Résumé des obligations clés -->
+        <div class="learning-section">
+            <div class="section-header">
+                <span class="section-icon">📌</span>
+                <h2 class="section-title">Les obligations à ne JAMAIS oublier</h2>
+            </div>
+            
+            <div class="summary-cards">
+                <div class="summary-card" onclick="showDetail(this, 'ponctualite')">
+                    <div class="summary-icon">⏰</div>
+                    <div class="summary-title">Ponctualité</div>
+                    <div class="summary-text">C'est la base du professionnalisme</div>
+                </div>
+                
+                <div class="summary-card" onclick="showDetail(this, 'securite')">
+                    <div class="summary-icon">🛡️</div>
+                    <div class="summary-title">Sécurité</div>
+                    <div class="summary-text">EPI + Consignes = Zéro accident</div>
+                </div>
+                
+                <div class="summary-card" onclick="showDetail(this, 'communication')">
+                    <div class="summary-icon">💬</div>
+                    <div class="summary-title">Communication</div>
+                    <div class="summary-text">Signaler, demander, informer</div>
+                </div>
+                
+                <div class="summary-card" onclick="showDetail(this, 'respect')">
+                    <div class="summary-icon">🤝</div>
+                    <div class="summary-title">Respect</div>
+                    <div class="summary-text">Des personnes et du matériel</div>
+                </div>
+                
+                <div class="summary-card" onclick="showDetail(this, 'formation')">
+                    <div class="summary-icon">📚</div>
+                    <div class="summary-title">Formation</div>
+                    <div class="summary-text">Présence obligatoire partout</div>
+                </div>
+            </div>
+            
+            <div class="content-box" style="margin-top: 30px; background: #e8f5e9; border-color: var(--parfait);">
+                <h4 style="display: flex; align-items: center; gap: 10px; color: var(--parfait);">
+                    <span style="font-size: 1.5em;">💡</span>
+                    Le secret pour réussir :
+                </h4>
+                <p style="margin-top: 10px;"><strong>Ces obligations ne sont pas des contraintes, mais des OUTILS pour :</strong></p>
+                <ul style="margin-top: 10px; margin-left: 20px;">
+                    <li>✓ Te protéger et protéger les autres 🛡️</li>
+                    <li>✓ Devenir un professionnel respecté 🌟</li>
+                    <li>✓ Réussir ton apprentissage et ta carrière 🚀</li>
+                    <li>✓ Créer une bonne ambiance de travail 😊</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Synthèse et validation -->
+        <div class="learning-section">
+            <div class="section-header">
+                <span class="section-icon">✅</span>
+                <h2 class="section-title">À retenir de cette séance</h2>
+            </div>
+            
+            <div class="content-box">
+                <h4 style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 1.5em;">📌</span>
+                    Les points essentiels :
+                </h4>
+                <div style="margin-top: 20px; display: grid; gap: 15px;">
+                    <div style="display: flex; align-items: center; gap: 15px; padding: 15px; background: #e3f2fd; border-radius: 8px;">
+                        <span style="font-size: 1.5em;">📜</span>
+                        <span>Les 10 commandements sont des <strong>OBLIGATIONS LÉGALES</strong>, pas des conseils</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px; padding: 15px; background: #fff3e0; border-radius: 8px;">
+                        <span style="font-size: 1.5em;">⏰</span>
+                        <span>La <strong>PONCTUALITÉ</strong> est la base du respect professionnel</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px; padding: 15px; background: #fce4ec; border-radius: 8px;">
+                        <span style="font-size: 1.5em;">🦺</span>
+                        <span>Les <strong>EPI</strong> sont obligatoires, même pour 2 minutes !</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px; padding: 15px; background: #e8f5e9; border-radius: 8px;">
+                        <span style="font-size: 1.5em;">🚨</span>
+                        <span><strong>SIGNALER</strong> les dangers est une obligation, pas une option</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="score-display" id="scoreDisplay" style="display: none;">
+                <p>Ton score pour cette séance :</p>
+                <div class="score-number" id="scoreNumber">0%</div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn" onclick="validateSession()" id="btnValidate">
+                    <span>🏁</span>
+                    <span>Terminer la séance</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Variables globales
+        let activities = {
+            memory: { completed: false, score: 0 },
+            scenarios: { completed: false, score: 0 }
+        };
+        
+        // Memory game variables
+        let memoryCards = [];
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let moves = 0;
+        let timer = null;
+        let seconds = 0;
+        
+        // Données du memory (emoji + numéro)
+        const memoryData = [
+            {emoji: '⏰', num: '1'},
+            {emoji: '🦺', num: '2'},
+            {emoji: '📋', num: '3'},
+            {emoji: '🧹', num: '4'},
+            {emoji: '🚨', num: '5'},
+            {emoji: '❓', num: '6'},
+            {emoji: '🤝', num: '7'},
+            {emoji: '📵', num: '8'}
+        ];
+        
+        // Scénarios variables
+        let scenarioAnswers = {
+            1: null,
+            2: null,
+            3: null
+        };
+        
+        const correctScenarioAnswers = {
+            1: 'B', // Appeler pour prévenir
+            2: 'B', // Aller chercher ses EPI
+            3: 'B'  // Nettoyer et signaler
+        };
+        
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeAccessibility();
+            updateLocalProgress();
+            initMemoryGame();
+        });
+        
+        // Animation des commandements
+        function animateCommandment(card) {
+            card.style.transform = 'scale(1.1) rotate(2deg)';
+            card.style.boxShadow = '0 10px 30px rgba(255,107,53,0.3)';
+            
+            setTimeout(() => {
+                card.style.transform = '';
+                card.style.boxShadow = '';
+            }, 300);
+        }
+        
+        // Memory Game Functions
+        function initMemoryGame() {
+            // Reset
+            matchedPairs = 0;
+            moves = 0;
+            seconds = 0;
+            flippedCards = [];
+            
+            // Update display
+            document.getElementById('moves').textContent = '0';
+            document.getElementById('pairs').textContent = '0';
+            document.getElementById('timer').textContent = '00:00';
+            
+            // Clear timer
+            if (timer) clearInterval(timer);
+            
+            // Create cards array (pairs)
+            memoryCards = [];
+            memoryData.forEach(item => {
+                memoryCards.push({type: 'emoji', value: item.emoji, pair: item.num});
+                memoryCards.push({type: 'num', value: item.num, pair: item.num});
+            });
+            
+            // Shuffle cards
+            memoryCards.sort(() => Math.random() - 0.5);
+            
+            // Create DOM
+            const gameContainer = document.getElementById('memoryGame');
+            gameContainer.innerHTML = '';
+            
+            memoryCards.forEach((card, index) => {
+                const cardElement = document.createElement('div');
+                cardElement.className = 'memory-card';
+                cardElement.dataset.index = index;
+                cardElement.onclick = () => flipCard(index);
+                
+                cardElement.innerHTML = `
+                    <div class="card-face card-front">?</div>
+                    <div class="card-face card-back">${card.value}</div>
+                `;
+                
+                gameContainer.appendChild(cardElement);
+            });
+            
+            // Start timer
+            timer = setInterval(() => {
+                seconds++;
+                const mins = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                document.getElementById('timer').textContent = 
+                    `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+        
+        function flipCard(index) {
+            const card = document.querySelectorAll('.memory-card')[index];
+            const cardData = memoryCards[index];
+            
+            // Ignore if already flipped or matched
+            if (card.classList.contains('flipped') || card.classList.contains('matched')) {
+                return;
+            }
+            
+            // Ignore if 2 cards already flipped
+            if (flippedCards.length >= 2) {
+                return;
+            }
+            
+            // Flip the card
+            card.classList.add('flipped');
+            flippedCards.push({index, card, data: cardData});
+            
+            // Check for match if 2 cards flipped
+            if (flippedCards.length === 2) {
+                moves++;
+                document.getElementById('moves').textContent = moves;
+                
+                setTimeout(() => checkMatch(), 600);
+            }
+        }
+        
+        function checkMatch() {
+            const [card1, card2] = flippedCards;
+            
+            if (card1.data.pair === card2.data.pair && card1.data.type !== card2.data.type) {
+                // Match!
+                card1.card.classList.add('matched');
+                card2.card.classList.add('matched');
+                matchedPairs++;
+                document.getElementById('pairs').textContent = matchedPairs;
+                
+                // Check if game complete
+                if (matchedPairs === 8) {
+                    clearInterval(timer);
+                    showMemoryComplete();
+                }
+            } else {
+                // No match
+                card1.card.classList.remove('flipped');
+                card2.card.classList.remove('flipped');
+            }
+            
+            flippedCards = [];
+        }
+        
+        function showMemoryComplete() {
+            const score = Math.max(100 - (moves - 8) * 5, 50); // Min 50%
+            activities.memory.score = score;
+            activities.memory.completed = true;
+            
+            const feedback = document.getElementById('memory-feedback');
+            feedback.innerHTML = `
+                <div style="color: var(--parfait); font-weight: 600; padding: 15px; background: #e8f5e9; border-radius: 8px; display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 2em;">🎉</span>
+                    <div>
+                        <strong>Bravo !</strong> Memory terminé en ${moves} coups et ${Math.floor(seconds/60)}:${(seconds%60).toString().padStart(2,'0')} !<br>
+                        Score : <strong>${score}%</strong>
+                    </div>
+                </div>
+            `;
+            feedback.style.display = 'block';
+            
+            updateLocalProgress();
+        }
+        
+        // Scénarios de décision
+        function selectDecision(element, scenarioId, choice) {
+            // Désélectionner les autres options
+            const scenario = element.parentElement;
+            scenario.querySelectorAll('.decision-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // Sélectionner cette option
+            element.classList.add('selected');
+            scenarioAnswers[scenarioId] = choice;
+        }
+        
+        function validateScenarios() {
+            let correct = 0;
+            let total = 3;
+            
+            // Vérifier chaque scénario
+            Object.keys(correctScenarioAnswers).forEach(scenarioId => {
+                const userAnswer = scenarioAnswers[scenarioId];
+                const correctAnswer = correctScenarioAnswers[scenarioId];
+                
+                const options = document.querySelectorAll(`.scenario-card:nth-of-type(${scenarioId}) .decision-option`);
+                
+                options.forEach(opt => {
+                    const optionChoice = opt.getAttribute('onclick').match(/'([A-C])'/)[1];
+                    if (optionChoice === correctAnswer) {
+                        opt.classList.add('correct');
+                    } else if (optionChoice === userAnswer && optionChoice !== correctAnswer) {
+                        opt.classList.add('incorrect');
+                    }
+                });
+                
+                if (userAnswer === correctAnswer) {
+                    correct++;
+                }
+            });
+            
+            const score = Math.round((correct / total) * 100);
+            activities.scenarios.score = score;
+            activities.scenarios.completed = true;
+            
+            const feedback = document.getElementById('scenario-feedback');
+            const feedbackDetails = {
+                1: "Toujours prévenir en cas de retard ! C'est professionnel et respectueux.",
+                2: "JAMAIS de compromis sur la sécurité ! Même pour 5 minutes.",
+                3: "Un danger repéré = un danger signalé ET traité ! Tu protèges tout le monde."
+            };
+            
+            let detailsHTML = '<div style="margin-top: 10px; font-size: 0.9em;">';
+            Object.keys(feedbackDetails).forEach(id => {
+                detailsHTML += `<p><strong>Scénario ${id} :</strong> ${feedbackDetails[id]}</p>`;
+            });
+            detailsHTML += '</div>';
+            
+            feedback.innerHTML = `
+                <div style="color: ${score >= 70 ? 'var(--parfait)' : 'var(--non-acquis)'}; font-weight: 600; padding: 15px; background: ${score >= 70 ? '#e8f5e9' : '#ffebee'}; border-radius: 8px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 2em;">${score >= 70 ? '👏' : '💪'}</span>
+                        <div>
+                            Score : <strong>${correct}/${total} bonnes décisions (${score}%)</strong><br>
+                            ${score >= 70 ? 'Excellent ! Tu as les bons réflexes !' : 'Continue à développer tes réflexes professionnels !'}
+                        </div>
+                    </div>
+                    ${detailsHTML}
+                </div>
+            `;
+            feedback.style.display = 'block';
+            
+            updateLocalProgress();
+            
+            // Désactiver les clics
+            document.querySelectorAll('.decision-option').forEach(opt => {
+                opt.onclick = null;
+                opt.style.cursor = 'default';
+            });
+        }
+        
+        // Afficher détails résumé
+        function showDetail(card, topic) {
+            const details = {
+                ponctualite: "Arrive 5-10 min en avance. En cas de retard : appelle IMMÉDIATEMENT !",
+                securite: "EPI = TOUJOURS, même 2 minutes. Consignes = À RESPECTER sans exception.",
+                communication: "Un doute ? DEMANDE ! Un danger ? SIGNALE ! Une info importante ? PARTAGE !",
+                respect: "Bonjour, s'il te plaît, merci. Prends soin du matériel comme si c'était le tien.",
+                formation: "Lycée + Entreprise = OBLIGATOIRE. Chaque absence doit être justifiée !"
+            };
+            
+            showNotification(details[topic], 'info');
+        }
+        
+        // Progression locale
+        function updateLocalProgress() {
+            let completedCount = 0;
+            let totalScore = 0;
+            
+            Object.values(activities).forEach(activity => {
+                if (activity.completed) {
+                    completedCount++;
+                    totalScore += activity.score;
+                }
+            });
+            
+            const progress = (completedCount / Object.keys(activities).length) * 100;
+            const avgScore = completedCount > 0 ? totalScore / completedCount : 0;
+            
+            document.getElementById('localProgress').style.width = progress + '%';
+            
+            return avgScore;
+        }
+        
+        // Validation de la séance
+        function validateSession() {
+            const avgScore = updateLocalProgress();
+            
+            if (Object.values(activities).some(a => !a.completed)) {
+                showNotification('📝 Tu dois compléter toutes les activités avant de terminer !', 'warning');
+                return;
+            }
+            
+            // Afficher le score
+            document.getElementById('scoreNumber').textContent = Math.round(avgScore) + '%';
+            document.getElementById('scoreDisplay').style.display = 'block';
+            
+            // Sauvegarder la progression
+            saveProgress(avgScore);
+            
+            // Message de validation
+            if (avgScore >= 70) {
+                showNotification('🎉 Séance validée ! Tu connais maintenant tes obligations.', 'success');
+                document.getElementById('btnValidate').innerHTML = '<span>➡️</span><span>Séance suivante</span>';
+                document.getElementById('btnValidate').onclick = () => {
+                    window.location.href = 'seance5_protection_alerte.html';
+                };
+            } else {
+                showNotification('💪 Score insuffisant. Relis les 10 commandements et réessaye !', 'warning');
+            }
+        }
+        
+        // Sauvegarde progression
+        function saveProgress(score) {
+            const moduleData = JSON.parse(localStorage.getItem('inerweb_accueil_securite_data') || '{}');
+            
+            moduleData.progress = moduleData.progress || {};
+            moduleData.progress.seance4 = {
+                completed: true,
+                score: Math.round(score),
+                attempts: (moduleData.progress.seance4?.attempts || 0) + 1,
+                date: new Date().toISOString()
+            };
+            
+            localStorage.setItem('inerweb_accueil_securite_data', JSON.stringify(moduleData));
+        }
+        
+        // Gestion du PDF
+        function viewPDF() {
+            showNotification('📄 Le document PDF s\'ouvrirait ici', 'info');
+        }
+        
+        // Accessibilité
+        function toggleAccessibleMode() {
+            document.body.classList.toggle('accessible-mode');
+            document.getElementById('btnAccessible').classList.toggle('active');
+            if (document.body.classList.contains('accessible-mode')) {
+                loadOpenDyslexicFont();
+            }
+        }
+        
+        function toggleHighContrast() {
+            document.body.classList.toggle('high-contrast');
+            document.getElementById('btnContrast').classList.toggle('active');
+        }
+        
+        function changeFontSize() {
+            const currentSize = parseInt(getComputedStyle(document.body).fontSize);
+            const newSize = currentSize >= 20 ? 16 : currentSize + 2;
+            document.body.style.fontSize = newSize + 'px';
+            showNotification(`📏 Taille de police : ${newSize}px`, 'info');
+        }
+        
+        function loadOpenDyslexicFont() {
+            if (!document.getElementById('openDyslexicFont')) {
+                const link = document.createElement('link');
+                link.id = 'openDyslexicFont';
+                link.rel = 'stylesheet';
+                link.href = 'https://fonts.cdnfonts.com/css/open-dyslexic';
+                document.head.appendChild(link);
+            }
+        }
+        
+        function initializeAccessibility() {
+            const savedSettings = JSON.parse(localStorage.getItem('inerweb_accessibility') || '{}');
+            
+            if (savedSettings.accessibleMode) toggleAccessibleMode();
+            if (savedSettings.highContrast) toggleHighContrast();
+            if (savedSettings.fontSize) document.body.style.fontSize = savedSettings.fontSize;
+        }
+        
+        // Notifications améliorées
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                padding: 15px 25px;
+                background: ${type === 'success' ? 'var(--parfait)' : type === 'warning' ? 'var(--en-cours)' : 'var(--acquis)'};
+                color: white;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                z-index: 9999;
+                animation: slideDown 0.3s ease;
+                font-weight: 600;
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideUp 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+        
+        // Animations CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideDown {
+                from { transform: translateX(-50%) translateY(-100px); opacity: 0; }
+                to { transform: translateX(-50%) translateY(0); opacity: 1; }
+            }
+            
+            @keyframes slideUp {
+                from { transform: translateX(-50%) translateY(0); opacity: 1; }
+                to { transform: translateX(-50%) translateY(-100px); opacity: 0; }
+            }
+            
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

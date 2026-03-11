@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapitre 2 - Risques pour la santé des fluides frigorigènes | ÉNERWEB</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=OpenDyslexic:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6B73FF; --secondary: #9C88FF; --accent: #4ECDC4; --coral: #FF6B9D;
+            --orange: #FFA726; --success: #4CAF50; --warning: #FF9800; --danger: #F44336;
+            --dark: #2C3E50; --light: #F8FAFC; --border: #E2E8F0;
+            --shadow: 0 4px 15px rgba(0,0,0,0.1); --radius: 12px; --transition: all 0.3s ease;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Lexend', sans-serif; font-size: 18px; line-height: 1.8; 
+            letter-spacing: 0.5px; background: var(--light); color: var(--dark);
+        }
+        body.accessibility-mode { font-size: 20px; line-height: 2.2; letter-spacing: 1px; }
+        body.police-adaptee {
+            font-family: 'OpenDyslexic', 'Comic Sans MS', 'Lexend', sans-serif;
+            font-size: 22px; line-height: 2.5; letter-spacing: 2px; word-spacing: 0.4em;
+        }
+        body.police-adaptee .btn { padding: 32px 65px; font-size: 24px; }
+        body.police-adaptee p, body.police-adaptee div, body.police-adaptee span { word-spacing: 0.4em; }
+
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+
+        /* Tooltips */
+        .tooltip {
+            position: relative; cursor: help; color: var(--primary); font-weight: 600;
+            border-bottom: 2px dotted var(--primary); transition: var(--transition);
+        }
+        .tooltip:hover { color: var(--secondary); border-bottom-color: var(--secondary); }
+        .tooltip .tooltip-content {
+            visibility: hidden; background: white; color: var(--dark); text-align: left;
+            border-radius: 8px; padding: 15px; position: absolute; z-index: 1000;
+            bottom: 125%; left: 50%; margin-left: -200px; width: 400px; opacity: 0;
+            transition: opacity 0.3s; border: 2px solid var(--primary); box-shadow: var(--shadow);
+            font-size: 16px; line-height: 1.6; font-weight: 400; word-spacing: normal;
+        }
+        .tooltip .tooltip-content::after {
+            content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px;
+            border-width: 5px; border-style: solid; border-color: var(--primary) transparent transparent;
+        }
+        .tooltip:hover .tooltip-content { visibility: visible; opacity: 1; }
+
+        /* Header */
+        .header {
+            background: linear-gradient(45deg, var(--primary) 0%, var(--orange) 50%, var(--accent) 100%);
+            border-radius: 15px; padding: 25px 35px; margin-bottom: 30px; color: white;
+            display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow);
+            position: relative; overflow: hidden;
+        }
+        .header::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float { 0%, 100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-20px) rotate(180deg); } }
+        .logo-section { display: flex; align-items: center; gap: 20px; z-index: 2; position: relative; }
+        .logo-enerweb { display: flex; align-items: center; gap: 15px; }
+        .snowflake { font-size: 2.5em; animation: rotate 4s linear infinite; filter: drop-shadow(0 0 10px rgba(255,255,255,0.3)); }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .logo-text { font-size: 2.2em; font-weight: 700; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.3); letter-spacing: 2px; }
+        .chapter-info h1 { font-size: 1.6em; font-weight: 600; margin-bottom: 5px; }
+        .chapter-info .subtitle { font-size: 1em; opacity: 0.9; }
+        .progress-section { text-align: right; z-index: 2; position: relative; }
+        .progress-bar { width: 250px; height: 8px; background: rgba(255,255,255,0.3); border-radius: 4px; overflow: hidden; margin-bottom: 8px; }
+        .progress-fill { height: 100%; background: white; width: 33.33%; transition: width 0.3s; border-radius: 4px; }
+        .btn-home {
+            background: rgba(255,255,255,0.2); color: white; border: 2px solid white;
+            padding: 12px 20px; border-radius: 10px; text-decoration: none; font-weight: 500;
+            transition: var(--transition); margin-left: 20px;
+        }
+        .btn-home:hover { background: white; color: var(--primary); }
+
+        /* Accessibility */
+        .accessibility-controls {
+            position: fixed; top: 20px; right: 20px; display: flex; flex-direction: column;
+            gap: 10px; z-index: 1000; background: white; padding: 15px; border-radius: 10px; box-shadow: var(--shadow);
+        }
+        .btn-accessibility {
+            background: var(--warning); color: white; border: none; padding: 8px 15px;
+            border-radius: 6px; font-size: 12px; cursor: pointer; transition: var(--transition); font-weight: 500;
+        }
+        .btn-accessibility:hover { background: var(--orange); transform: translateY(-1px); }
+        .btn-accessibility.active { background: var(--success); }
+
+        /* Sections */
+        .content-section {
+            background: white; border-radius: 20px; padding: 30px; margin-bottom: 30px;
+            box-shadow: var(--shadow); border-top: 4px solid var(--primary);
+        }
+        .content-section.intro-section { border-top-color: var(--danger); }
+        .content-section.activity-section { border-top-color: var(--accent); }
+        .content-section.evaluation-section { border-top-color: var(--coral); }
+        .content-section h2 { color: var(--primary); margin-bottom: 20px; display: flex; align-items: center; gap: 15px; font-size: 1.8em; }
+
+        /* Introduction */
+        .introduction { display: flex; align-items: center; gap: 30px; padding: 40px; }
+        .intro-content { flex: 1; }
+        .intro-text {
+            font-size: 1.1em; line-height: 1.7; background: rgba(244, 67, 54, 0.08);
+            padding: 20px; border-radius: var(--radius); border-left: 4px solid var(--danger);
+        }
+        .intro-icon { font-size: 5em; color: var(--danger); text-align: center; filter: drop-shadow(0 0 10px rgba(244, 67, 54, 0.3)); }
+
+        /* PDF */
+        .pdf-container { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 25px; }
+        .pdf-viewer { border: 2px solid var(--border); border-radius: var(--radius); overflow: hidden; height: 500px; position: relative; }
+        .pdf-controls { position: absolute; top: 10px; right: 10px; z-index: 10; display: flex; gap: 5px; }
+        .pdf-btn { background: rgba(0,0,0,0.7); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+        .pdf-btn:hover { background: rgba(0,0,0,0.9); }
+
+        /* Points clés */
+        .points-cles-hybrid { display: grid; grid-template-columns: 1fr; gap: 20px; margin: 25px 0; }
+        .point-card {
+            background: white; border-radius: var(--radius); padding: 25px; box-shadow: var(--shadow);
+            border-left: 5px solid var(--primary); transition: var(--transition);
+        }
+        .point-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+        .point-card.risque-inhalation { border-left-color: var(--warning); background: linear-gradient(135deg, rgba(255, 152, 0, 0.05) 0%, white 100%); }
+        .point-card.risque-contact { border-left-color: var(--danger); background: linear-gradient(135deg, rgba(244, 67, 54, 0.05) 0%, white 100%); }
+        .point-card.risque-ammoniac { border-left-color: var(--coral); background: linear-gradient(135deg, rgba(255, 107, 157, 0.05) 0%, white 100%); }
+        .point-card.premiers-secours { border-left-color: var(--success); background: linear-gradient(135deg, rgba(76, 175, 80, 0.05) 0%, white 100%); }
+        .point-card.explosion-technique { border-left-color: var(--accent); background: linear-gradient(135deg, rgba(78, 205, 196, 0.05) 0%, white 100%); }
+        .point-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+        .point-icon { font-size: 2.5em; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
+        .point-header h4 { font-size: 1.3em; font-weight: 600; color: var(--dark); }
+        .point-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+        .point-item { background: rgba(255,255,255,0.8); padding: 12px 16px; border-radius: 8px; border: 1px solid var(--border); font-weight: 500; }
+
+        /* Fluides grid */
+        .fluides-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin: 20px 0; }
+        .fluide-card { padding: 20px; border-radius: var(--radius); border-left: 4px solid var(--orange); position: relative; cursor: pointer; transition: var(--transition); }
+        .fluide-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+        .fluide-card.nh3 { background: rgba(244, 67, 54, 0.08); border-left-color: var(--danger); }
+        .fluide-card.co2 { background: rgba(255, 167, 38, 0.08); border-left-color: var(--orange); }
+        .fluide-card.hfc { background: rgba(107, 115, 255, 0.08); border-left-color: var(--primary); }
+        .fluide-card.hydrocarbures { background: rgba(255, 152, 0, 0.08); border-left-color: var(--warning); }
+        .fluide-card h3 { margin-bottom: 15px; font-size: 1.1em; display: flex; align-items: center; gap: 10px; }
+        .fluide-card.nh3 h3 { color: var(--danger); }
+        .fluide-card.co2 h3 { color: var(--orange); }
+        .fluide-card.hfc h3 { color: var(--primary); }
+        .fluide-card.hydrocarbures h3 { color: var(--warning); }
+        .technical-link { color: var(--primary); cursor: pointer; font-weight: 600; text-decoration: underline; position: relative; }
+        .technical-link:hover { color: var(--secondary); }
+        .technical-link::after { content: "🩺"; margin-left: 5px; font-size: 0.8em; }
+
+        /* Popup */
+        .technical-popup {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7);
+            z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 20px;
+        }
+        .popup-content {
+            background: white; border-radius: 15px; padding: 30px; max-width: 800px; max-height: 90vh;
+            overflow-y: auto; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .popup-close { position: absolute; top: 15px; right: 20px; background: none; border: none; font-size: 24px; cursor: pointer; color: #999; }
+        .popup-close:hover { color: var(--danger); }
+        .popup-content h3 { margin-bottom: 20px; color: var(--primary); font-size: 1.4em; border-bottom: 2px solid var(--border); padding-bottom: 10px; }
+        .symptome-section { margin-bottom: 20px; padding: 15px; border-radius: 8px; border-left: 4px solid var(--border); }
+        .symptome-section.critique { background: rgba(244, 67, 54, 0.05); border-left-color: var(--danger); }
+        .symptome-section.urgence { background: rgba(255, 152, 0, 0.05); border-left-color: var(--warning); }
+        .symptome-section h4 { margin-bottom: 10px; color: var(--dark); display: flex; align-items: center; gap: 8px; }
+        .symptome-section ul { margin-left: 0; padding-left: 0; }
+        .symptome-section li { margin-bottom: 8px; list-style: none; padding-left: 20px; position: relative; }
+        .symptome-section li::before { content: "▸"; position: absolute; left: 0; color: var(--primary); font-weight: bold; }
+
+        /* Activities */
+        .activity-instructions { background: rgba(107, 115, 255, 0.08); border-left: 4px solid var(--primary); padding: 15px; border-radius: 8px; margin-bottom: 25px; }
+        .activity-instructions h3 { color: var(--primary); margin-bottom: 10px; font-size: 1.1em; }
+
+        /* Drag & Drop */
+        .symptom-game { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin: 25px 0; }
+        .symptoms-column, .causes-column { min-height: 300px; padding: 20px; border-radius: var(--radius); }
+        .symptoms-column { background: rgba(244, 67, 54, 0.08); border: 2px solid rgba(244, 67, 54, 0.2); }
+        .causes-column { background: rgba(78, 205, 196, 0.08); border: 2px solid rgba(78, 205, 196, 0.2); }
+        .symptoms-column h4, .causes-column h4 { text-align: center; margin-bottom: 20px; color: var(--dark); font-weight: 600; }
+        .draggable-item, .drop-zone {
+            background: white; border: 2px solid var(--border); border-radius: 10px; padding: 15px;
+            margin-bottom: 10px; cursor: move; transition: var(--transition); display: flex;
+            align-items: center; gap: 10px; min-height: 60px;
+        }
+        .draggable-item:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: var(--danger); }
+        .drop-zone { cursor: default; background: rgba(78, 205, 196, 0.05); border-style: dashed; justify-content: center; border-color: var(--accent); }
+        .drop-zone.dragover { background: rgba(78, 205, 196, 0.15); border-color: var(--accent); }
+        .drop-zone.filled { background: rgba(76, 175, 80, 0.15); border-color: var(--success); border-style: solid; }
+
+        /* Fill text */
+        .fill-text {
+            background: rgba(76, 175, 80, 0.05); padding: 25px; border-radius: var(--radius);
+            margin: 25px 0; line-height: 2; font-size: 1.1em; border: 2px solid rgba(76, 175, 80, 0.2);
+        }
+        .fill-blank {
+            display: inline-block; min-width: 120px; padding: 5px 10px; background: white;
+            border: 2px solid var(--border); border-radius: 6px; margin: 0 5px; cursor: pointer; transition: var(--transition);
+        }
+        .fill-blank:hover { border-color: var(--primary); background: rgba(107, 115, 255, 0.05); }
+        .fill-blank.filled { background: var(--success); color: white; border-color: var(--success); }
+        .word-bank {
+            display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; padding: 20px;
+            background: rgba(78, 205, 196, 0.08); border-radius: var(--radius); border: 2px solid rgba(78, 205, 196, 0.2);
+        }
+        .word-option {
+            background: var(--accent); color: white; padding: 8px 16px; border-radius: 20px;
+            cursor: pointer; transition: var(--transition); user-select: none; font-weight: 500;
+        }
+        .word-option:hover { background: var(--secondary); transform: translateY(-2px); }
+        .word-option.used { background: #bbb; cursor: not-allowed; opacity: 0.6; }
+
+        /* QCM */
+        .qcm-section { background: white; border-radius: 20px; padding: 30px; margin-bottom: 30px; box-shadow: var(--shadow); border-top: 4px solid var(--coral); }
+        .competence-badge { background: rgba(255, 107, 157, 0.08); border: 2px solid var(--coral); border-radius: var(--radius); padding: 15px; margin-bottom: 20px; font-weight: 500; }
+        .qcm-question { background: var(--light); padding: 25px; border-radius: var(--radius); margin-bottom: 20px; border-left: 4px solid var(--warning); position: relative; }
+        .qcm-question h3 { color: var(--dark); margin-bottom: 15px; font-size: 1.2em; display: flex; align-items: center; gap: 10px; }
+        .help-system { position: absolute; top: 15px; right: 15px; }
+        .help-btn {
+            background: var(--primary); color: white; border: none; border-radius: 50%; width: 40px; height: 40px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px;
+            transition: var(--transition); position: relative;
+        }
+        .help-btn:hover { background: var(--secondary); transform: scale(1.1); }
+        .help-badge {
+            position: absolute; top: -5px; right: -5px; background: var(--warning); color: white;
+            border-radius: 50%; width: 20px; height: 20px; font-size: 12px; display: flex; align-items: center; justify-content: center;
+        }
+        .qcm-options { display: grid; gap: 12px; }
+        .qcm-option {
+            background: white; border: 2px solid var(--border); padding: 18px; border-radius: 10px;
+            cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 12px;
+        }
+        .qcm-option:hover { border-color: var(--primary); transform: translateY(-2px); background: rgba(107, 115, 255, 0.05); }
+        .qcm-option.selected { background: var(--primary); color: white; border-color: var(--primary); }
+        .qcm-option.correct { background: var(--success); color: white; border-color: var(--success); }
+        .qcm-option.incorrect { background: var(--danger); color: white; border-color: var(--danger); }
+
+        /* Results */
+        .recapitulatif-resultats { background: rgba(76, 175, 80, 0.08); border: 2px solid var(--success); border-radius: var(--radius); padding: 20px; margin: 20px 0; }
+        .feedback { background: var(--light); border-radius: var(--radius); padding: 20px; margin: 20px 0; border-left: 4px solid var(--border); }
+        .feedback.niveau-vert { background: rgba(76, 175, 80, 0.08); border-left-color: var(--success); color: var(--success); }
+        .feedback.niveau-bleu { background: rgba(107, 115, 255, 0.08); border-left-color: var(--primary); color: var(--primary); }
+        .feedback.niveau-orange { background: rgba(255, 152, 0, 0.08); border-left-color: var(--warning); color: var(--warning); }
+        .feedback.niveau-rouge { background: rgba(244, 67, 54, 0.08); border-left-color: var(--danger); color: var(--danger); }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex; align-items: center; gap: 12px; padding: 18px 30px; background: var(--primary);
+            color: white; border: none; border-radius: var(--radius); font-size: 16px; font-weight: 500;
+            cursor: pointer; transition: var(--transition); text-decoration: none; justify-content: center;
+        }
+        .btn:hover { background: var(--secondary); transform: translateY(-2px); box-shadow: 0 4px 15px rgba(107, 115, 255, 0.3); }
+        .btn:disabled { background: #ccc; cursor: not-allowed; transform: none; box-shadow: none; }
+        .btn-success { background: var(--success); }
+        .btn-warning { background: var(--warning); }
+        .btn-danger { background: var(--danger); }
+
+        /* Navigation */
+        .navigation {
+            display: flex; justify-content: space-between; align-items: center; margin-top: 40px;
+            padding: 25px; background: white; border-radius: 20px; box-shadow: var(--shadow); border-top: 4px solid var(--accent);
+        }
+        .nav-left { display: flex; gap: 15px; }
+
+        /* Alerts */
+        .alert { border-radius: var(--radius); padding: 18px; margin: 20px 0; display: flex; align-items: center; gap: 12px; }
+        .alert-success { background: rgba(76, 175, 80, 0.08); border: 2px solid var(--success); color: var(--success); }
+        .alert-warning { background: rgba(255, 152, 0, 0.08); border: 2px solid var(--warning); color: var(--warning); }
+        .alert-danger { background: rgba(244, 67, 54, 0.08); border: 2px solid var(--danger); color: var(--danger); }
+
+        .toast {
+            position: fixed; top: 20px; right: 20px; background: var(--success); color: white;
+            padding: 18px 25px; border-radius: var(--radius); box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transform: translateX(100%); transition: transform 0.3s; z-index: 1000;
+        }
+        .toast.show { transform: translateX(0); }
+
+        .credits {
+            background: white; border-radius: 15px; padding: 20px; margin-top: 20px;
+            box-shadow: var(--shadow); border-top: 4px solid var(--primary); font-size: 0.9em; color: #666;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .pdf-container, .symptom-game, .fluides-grid { grid-template-columns: 1fr; }
+            .pdf-viewer { height: 400px; }
+            .accessibility-controls { position: relative; top: auto; right: auto; margin-bottom: 20px; flex-direction: row; }
+        }
+        @media (max-width: 768px) {
+            .container { padding: 15px; }
+            .header { flex-direction: column; gap: 20px; text-align: center; }
+            .progress-bar { width: 100%; }
+            .introduction { flex-direction: column; text-align: center; }
+            .navigation { flex-direction: column; gap: 15px; }
+            .nav-left { flex-direction: column; width: 100%; }
+            .logo-enerweb { flex-direction: column; gap: 10px; }
+            .logo-text { font-size: 1.8em; }
+            .point-grid { grid-template-columns: 1fr; }
+            .tooltip .tooltip-content { width: 300px; margin-left: -150px; }
+        }
+    </style>
+<script>/* (c) F. Henninot - inerWeb FRIGOLO - Tous droits reserves */
+document.addEventListener("contextmenu",function(e){e.preventDefault()});
+document.addEventListener("keydown",function(e){if((e.ctrlKey||e.metaKey)&&(e.key==="u"||e.key==="s"||e.key==="c")){e.preventDefault()}});
+document.addEventListener("selectstart",function(e){if(e.target.tagName\!=="INPUT"&&e.target.tagName\!=="TEXTAREA"){e.preventDefault()}});
+</script>
+</head>
+<body>
+    <!-- Contrôles d'accessibilité -->
+    <div class="accessibility-controls">
+        <button class="btn-accessibility" onclick="toggleAccessibility()" id="btnAccessibility">🔍 Mode accessibilité</button>
+        <button class="btn-accessibility" onclick="togglePoliceAdaptee()" id="btnPoliceAdaptee">📖 Police adaptée</button>
+    </div>
+    
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo-section">
+                <div class="logo-enerweb">
+                    <span class="snowflake">❅</span>
+                    <span class="logo-text">ÉNERWEB</span>
+                </div>
+                <div class="chapter-info">
+                    <h1>Chapitre 2 - Risques pour la <span class="tooltip">santé<span class="tooltip-content"><strong>Santé au travail :</strong> Protection physique et mentale des travailleurs contre les risques professionnels. Les fluides frigorigènes présentent des dangers immédiats (gelures, intoxication) et différés (effets chroniques).</span></span> des fluides frigorigènes</h1>
+                    <p class="subtitle">Comprendre les effets sur l'organisme humain</p>
+                    <p style="font-size: 0.85em; opacity: 0.8; margin-top: 5px;">💡 Créé par F. HENNINOT - Enseignant Froid & Climatisation</p>
+                </div>
+            </div>
+            <div class="progress-section">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="globalProgress"></div>
+                </div>
+                <p style="font-size: 0.9em; margin-bottom: 10px;">Chapitre 2/6 - Progression globale</p>
+                <a href="index.html" class="btn-home">← Accueil</a>
+            </div>
+        </div>
+
+        <!-- Affichage données élève -->
+        <div id="student-display" class="content-section" style="display: none; background: rgba(76, 175, 80, 0.08); border-top-color: var(--success);">
+            <h2>👤 Session en cours</h2>
+            <div id="student-info-display"></div>
+        </div>
+
+        <!-- Introduction -->
+        <div class="content-section intro-section introduction">
+            <div class="intro-content">
+                <h2>🩺 Les risques pour votre <span class="tooltip">santé<span class="tooltip-content"><strong>Santé des frigoristes :</strong> Les professionnels du froid sont exposés à des risques spécifiques : contact avec les fluides très froids, inhalation de vapeurs toxiques, projections lors d'explosions. Protection obligatoire selon la réglementation du travail.</span></span></h2>
+                <div class="intro-text">
+                    Les <strong>fluides frigorigènes ne sont pas des produits inoffensifs</strong>. Leur manipulation peut présenter des risques pour votre santé en cas de <span class="tooltip">contact cutané<span class="tooltip-content"><strong>Contact cutané :</strong> Le fluide liquide très froid (-30°C à -50°C) provoque des gelures instantanées. Les tissus se cristallisent et meurent, causant des nécroses nécessitant parfois une amputation.</span></span> ou d'<span class="tooltip">inhalation<span class="tooltip-content"><strong>Inhalation :</strong> Les vapeurs de fluides frigorigènes remplacent l'oxygène dans l'air respiré, provoquant vertiges, nausées, puis asphyxie. Effet anoxiant en milieu confiné.</span></span>.
+                    <br><br>
+                    Dans ce chapitre, vous découvrirez les <strong>mécanismes physiologiques</strong> en jeu, les symptômes à surveiller, et les gestes de <span class="tooltip">premiers secours<span class="tooltip-content"><strong>Premiers secours spécialisés :</strong> Techniques d'urgence adaptées aux accidents liés aux fluides frigorigènes : réchauffement progressif des gelures, ventilation pour intoxication, mise en sécurité en cas d'explosion.</span></span> spécialisés. 
+                    Votre vie et celle de vos collègues en dépendent !
+                </div>
+            </div>
+            <div class="intro-icon">🚨</div>
+        </div>
+
+        <!-- Lecture dirigée avec PDF -->
+        <div class="content-section">
+            <h2>📖 Lecture dirigée : Effets sur la <span class="tooltip">santé humaine<span class="tooltip-content"><strong>Document IRIS-ST page 2 :</strong> Référentiel officiel de prévention des risques professionnels spécialisé dans les métiers du froid et de la climatisation. Base réglementaire pour la formation sécurité.</span></span></h2>
+            
+            <div class="pdf-container">
+                <div class="pdf-viewer">
+                    <div class="pdf-controls">
+                        <button class="pdf-btn" onclick="openPDFFullscreen()">🔍 Plein écran</button>
+                        <button class="pdf-btn" onclick="downloadPDF()">📥 Télécharger</button>
+                    </div>
+                    <iframe id="pdfViewer" src="./pdf/Iris-ST-Depliant-Frigoriste-chauffagistes-Fluides-2016-Internet-100x150-1.pdf#page=2" 
+                            width="100%" height="100%" frameborder="0" style="border-radius: 10px;">
+                        <p>Votre navigateur ne peut pas afficher ce PDF. 
+                           <a href="./pdf/Iris-ST-Depliant-Frigoriste-chauffagistes-Fluides-2016-Internet-100x150-1.pdf" target="_blank">Cliquez ici pour l'ouvrir</a>
+                        </p>
+                    </iframe>
+                </div>
+                
+                <div class="points-cles-hybrid">
+                    <div class="point-card risque-inhalation">
+                        <div class="point-header">
+                            <div class="point-icon">💨</div>
+                            <h4>Risques par <span class="tooltip">inhalation<span class="tooltip-content"><strong>Mécanisme d'inhalation :</strong> Les vapeurs de fluides frigorigènes sont plus lourdes que l'air. Elles s'accumulent au sol et remplacent l'oxygène dans les poumons, provoquant l'anoxie.</span></span></h4>
+                        </div>
+                        <div class="point-grid">
+                            <div class="point-item"><span class="tooltip">Vertiges, nausées<span class="tooltip-content"><strong>Premiers symptômes :</strong> Manque d'oxygène au cerveau → troubles de l'équilibre et du comportement → perte de coordination → évanouissement possible.</span></span></div>
+                            <div class="point-item"><span class="tooltip">Effet anoxiant<span class="tooltip-content"><strong>Anoxie :</strong> Diminution critique de l'oxygène dans le sang. Seuils : < 16% d'O₂ = dangers, < 12% = perte de conscience, < 6% = arrêt cardiaque.</span></span></div>
+                            <div class="point-item"><span class="tooltip">Asphyxie (milieu confiné)<span class="tooltip-content"><strong>Asphyxie :</strong> Étouffement par manque total d'oxygène. Mortel en quelques minutes. Risque maximum dans les sous-sols, chambres froides, véhicules.</span></span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="point-card risque-contact">
+                        <div class="point-header">
+                            <div class="point-icon">🧊</div>
+                            <h4>Risques par <span class="tooltip">contact cutané<span class="tooltip-content"><strong>Contact direct :</strong> Le fluide frigorigène liquide sort du circuit à très basse température. Contact avec la peau = congélation instantanée des tissus.</span></span></h4>
+                        </div>
+                        <div class="point-grid">
+                            <div class="point-item"><span class="tooltip">Brûlures par le froid (gelures)<span class="tooltip-content"><strong>Gelures :</strong> Cristallisation de l'eau dans les cellules → destruction tissulaire → nécroses profondes. Stades : engelures → gelures superficielles → gelures profondes.</span></span></div>
+                            <div class="point-item"><span class="tooltip">Nécroses tissulaires<span class="tooltip-content"><strong>Nécroses :</strong> Mort définitive des tissus gelés. Peau noire, insensible, dure. Peut nécessiter une amputation selon l'étendue et la profondeur.</span></span></div>
+                            <div class="point-item"><span class="tooltip">Atteinte oculaire<span class="tooltip-content"><strong>Yeux :</strong> Projection de fluide dans les yeux → gelure de la cornée → cécité possible. Port de lunettes de protection obligatoire.</span></span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="point-card risque-ammoniac">
+                        <div class="point-header">
+                            <div class="point-icon">☠️</div>
+                            <h4>Cas critique : <span class="tooltip">Ammoniac (NH₃)<span class="tooltip-content"><strong>Ammoniac :</strong> Gaz naturel incolore, odeur piquante caractéristique. Très toxique dès 25 ppm. Utilisé en réfrigération industrielle pour son excellent rendement énergétique.</span></span></h4>
+                        </div>
+                        <div class="point-grid">
+                            <div class="point-item"><span class="tooltip">Brûlures pulmonaires graves<span class="tooltip-content"><strong>Mécanisme :</strong> NH₃ + humidité des poumons → ammoniaque corrosive → brûlures chimiques des alvéoles → œdème pulmonaire différé → noyade interne.</span></span></div>
+                            <div class="point-item"><span class="tooltip">Brûlures oculaires<span class="tooltip-content"><strong>Yeux :</strong> Contact NH₃ → brûlures cornéennes immédiates → risque de cécité permanente. Rinçage immédiat 15 min minimum obligatoire.</span></span></div>
+                            <div class="point-item"><span class="tooltip">EPI spéciaux obligatoires<span class="tooltip-content"><strong>EPI NH₃ :</strong> ARIA (Appareil Respiratoire Isolant Autonome), combinaison étanche, gants nitrile, lunettes étanches. Douche oculaire à proximité obligatoire.</span></span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="point-card explosion-technique">
+                        <div class="point-header">
+                            <div class="point-icon">💥</div>
+                            <h4>Risques <span class="tooltip">explosion/projections<span class="tooltip-content"><strong>Explosion sous pression :</strong> Rupture brutale d'un équipement sous pression → onde de choc + projections de fragments métalliques à haute vitesse → blessures graves.</span></span></h4>
+                        </div>
+                        <div class="point-grid">
+                            <div class="point-item"><span class="tooltip">Rupture haute pression<span class="tooltip-content"><strong>Causes :</strong> Surpression, vieillissement, corrosion, choc mécanique. Pression jusqu'à 40 bars dans les circuits classiques, 100+ bars pour le CO₂.</span></span></div>
+                            <div class="point-item"><span class="tooltip">Projections métalliques<span class="tooltip-content"><strong>Projections :</strong> Fragments de tuyauterie, raccords, bouteilles propulsés à très haute vitesse. Peuvent traverser les EPI classiques.</span></span></div>
+                            <div class="point-item"><span class="tooltip">Traumatismes multiples<span class="tooltip-content"><strong>Traumatismes :</strong> Plaies par projections, contusions par onde de choc, fractures, hémorragies. Pronostic vital engagé.</span></span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="point-card premiers-secours">
+                        <div class="point-header">
+                            <div class="point-icon">🩹</div>
+                            <h4><span class="tooltip">Premiers secours<span class="tooltip-content"><strong>Premiers secours spécialisés :</strong> Gestes d'urgence adaptés aux accidents liés aux fluides frigorigènes. Formation SST renforcée recommandée pour les frigoristes.</span></span> spécialisés</h4>
+                        </div>
+                        <div class="point-grid">
+                            <div class="point-item"><span class="tooltip">Gelures : réchauffement progressif<span class="tooltip-content"><strong>Réchauffement :</strong> Bain d'eau tiède 37-40°C, jamais chaud. Pas de friction. Protection par pansements stériles. Évacuation médicale urgente.</span></span></div>
+                            <div class="point-item"><span class="tooltip">Inhalation : air frais, position assise<span class="tooltip-content"><strong>Conduite :</strong> Évacuer la victime à l'air libre, position demi-assise, desserrer les vêtements, surveillance respiratoire, oxygénothérapie si disponible.</span></span></div>
+                            <div class="point-item"><span class="tooltip">Contact yeux : rinçage 15 min<span class="tooltip-content"><strong>Rinçage oculaire :</strong> Eau claire 15 minutes minimum, paupières maintenues ouvertes, rincer du coin interne vers l'externe. Consultation ophtalmologique urgente.</span></span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="./pdf/Iris-ST-Depliant-Frigoriste-chauffagistes-Fluides-2016-Internet-100x150-1.pdf" target="_blank" class="btn btn-warning">
+                    📄 Consulter le support PDF complet
+                </a>
+            </div>
+        </div>
+
+        <!-- Focus fluides spécifiques santé -->
+        <div class="content-section">
+            <h2>🧪 Focus : Effets physiologiques par <span class="tooltip">type de fluide<span class="tooltip-content"><strong>Toxicité variable :</strong> Chaque famille de fluides présente des risques spécifiques selon sa composition chimique et ses propriétés physiques. Classification ASHRAE A1 à B3.</span></span></h2>
+            
+            <div class="fluides-grid">
+                <div class="fluide-card nh3" onclick="showHealthDetails('nh3')">
+                    <h3>☠️ <span class="technical-link"><span class="tooltip">Ammoniac (NH₃ - R717)<span class="tooltip-content"><strong>Ammoniac :</strong> Classe B2 = haute toxicité. Seuil olfactif 5 ppm, irritation 25 ppm, danger immédiat 300 ppm, mortel 1500 ppm. Brûlures chimiques des muqueuses.</span></span></span></h3>
+                    <ul style="line-height: 1.6;">
+                        <li><strong>Toxicité :</strong> <span class="tooltip">Très élevée (classe B2)<span class="tooltip-content"><strong>Classification B2 :</strong> Haute toxicité. Concentration létale 50% (CL50) < 400 ppm. Plus dangereux que tous les autres fluides frigorigènes courants.</span></span></li>
+                        <li><strong>Symptômes :</strong> <span class="tooltip">Brûlures respiratoires<span class="tooltip-content"><strong>Brûlures NH₃ :</strong> L'ammoniac se dissout dans l'humidité → formation d'ammoniaque → brûlures chimiques → œdème pulmonaire différé (24-72h) potentiellement mortel.</span></span>, <span class="tooltip">oculaires<span class="tooltip-content"><strong>Atteinte oculaire :</strong> Brûlures cornéennes sévères, risque de perforation, cécité définitive possible. Urgence ophtalmologique absolue.</span></span></li>
+                        <li><strong>Urgence :</strong> <span class="tooltip">Rinçage immédiat<span class="tooltip-content"><strong>Décontamination :</strong> Eau abondante 15 min minimum, douche corporelle complète, retrait vêtements contaminés. Surveillance médicale 72h (œdème différé).</span></span>, évacuation médicale, surveillance 72h</li>
+                    </ul>
+                </div>
+                
+                <div class="fluide-card co2" onclick="showHealthDetails('co2')">
+                    <h3>🫁 <span class="technical-link"><span class="tooltip">CO₂ (R744)<span class="tooltip-content"><strong>Dioxyde de carbone :</strong> Non toxique à faibles doses mais asphyxiant à partir de 3% dans l'air. Plus lourd que l'air, accumulation en points bas.</span></span></span></h3>
+                    <ul style="line-height: 1.6;">
+                        <li><strong>Toxicité :</strong> <span class="tooltip">Faible directe, anoxiant<span class="tooltip-content"><strong>Anoxie par CO₂ :</strong> Le CO₂ ne tue pas par toxicité mais en remplaçant l'oxygène. > 7% = perte de conscience rapide, > 10% = convulsions, arrêt cardiaque.</span></span></li>
+                        <li><strong>Symptômes :</strong> <span class="tooltip">Somnolence<span class="tooltip-content"><strong>Narcose au CO₂ :</strong> 3-5% = somnolence, ralentissement, 5-7% = vertiges, nausées, augmentation du rythme cardiaque.</span></span>, vertiges, <span class="tooltip">perte de conscience<span class="tooltip-content"><strong>Évanouissement :</strong> Perte de conscience brutale sans signe précurseur à partir de 7%. Chute = risque de traumatisme crânien.</span></span></li>
+                        <li><strong>Spécificité :</strong> <span class="tooltip">Accumulation en points bas<span class="tooltip-content"><strong>Densité CO₂ :</strong> 1,5 fois plus lourd que l'air. Stagne dans les fosses, sous-sols, véhicules. Ventilation basse obligatoire.</span></span>, <span class="tooltip">détection obligatoire<span class="tooltip-content"><strong>Détecteurs CO₂ :</strong> Obligatoires pour installations > 50 kg. Seuils : 5000 ppm (alarme), 30000 ppm (évacuation automatique).</span></span></li>
+                    </ul>
+                </div>
+                
+                <div class="fluide-card hfc" onclick="showHealthDetails('hfc')">
+                    <h3>💙 <span class="technical-link"><span class="tooltip">HFC (R410A, R134a, R404A)<span class="tooltip-content"><strong>HydroFluoroCarbures :</strong> Famille de fluides synthétiques à faible toxicité mais présentant des risques d'anoxie et de gelures. Remplacent les anciens CFC.</span></span></span></h3>
+                    <ul style="line-height: 1.6;">
+                        <li><strong>Toxicité :</strong> <span class="tooltip">Faible (classe A1)<span class="tooltip-content"><strong>Classe A1 :</strong> Faible toxicité, non inflammable. Concentration létale > 400 ppm. Risque principal = anoxie en cas de fuite massive.</span></span></li>
+                        <li><strong>Symptômes :</strong> <span class="tooltip">Gelures sévères<span class="tooltip-content"><strong>Gelures HFC :</strong> R410A liquide = -51°C, R404A = -47°C. Contact cutané = gelures profondes instantanées, nécroses possibles.</span></span>, anoxie en milieu confiné</li>
+                        <li><strong>Précautions :</strong> <span class="tooltip">EPI systématiques<span class="tooltip-content"><strong>EPI pour HFC :</strong> Gants isolants thermiques, lunettes de protection, vêtements manches longues. Ventilation des locaux de travail.</span></span>, ventilation, <span class="tooltip">manipulation prudente<span class="tooltip-content"><strong>Manipulation :</strong> Jamais de contact direct peau/fluide, ouverture progressive des vannes, contrôle étanchéité des flexibles.</span></span></li>
+                    </ul>
+                </div>
+                
+                <div class="fluide-card hydrocarbures" onclick="showHealthDetails('hydrocarbures')">
+                    <h3>🔥 <span class="technical-link"><span class="tooltip">Hydrocarbures (R290, R600a)<span class="tooltip-content"><strong>Hydrocarbures frigorigènes :</strong> R290 = propane, R600a = isobutane. Faible toxicité directe mais très inflammables. Risque d'explosion > risque toxicologique.</span></span></span></h3>
+                    <ul style="line-height: 1.6;">
+                        <li><strong>Toxicité :</strong> <span class="tooltip">Très faible (classe A3)<span class="tooltip-content"><strong>Classe A3 :</strong> Faible toxicité, haute inflammabilité. Pas d'effet toxique direct aux concentrations d'usage normal. Risque = anoxie simple.</span></span></li>
+                        <li><strong>Effets :</strong> <span class="tooltip">Anoxie simple<span class="tooltip-content"><strong>Anoxie simple :</strong> Remplacement de l'oxygène sans effet toxique ajouté. Concentrations élevées = somnolence, vertiges, évanouissement.</span></span>, <span class="tooltip">narcose légère<span class="tooltip-content"><strong>Narcose :</strong> Effet anesthésique léger à forte concentration. Diminution des réflexes, perte de vigilance, comportement inhabituel.</span></span> à forte dose</li>
+                        <li><strong>Risque principal :</strong> <span class="tooltip">Explosion/brûlures<span class="tooltip-content"><strong>Brûlures par explosion :</strong> Déflagration → brûlures cutanées étendues, inhalation de gaz de combustion, projections de matériaux en fusion.</span></span>, inhalation de gaz de combustion</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="alert alert-danger">
+                <span style="font-size: 1.5em;">⚠️</span>
+                <div>
+                    <strong>Important :</strong> Même les fluides "peu toxiques" deviennent dangereux en cas de <span class="tooltip">fuite massive<span class="tooltip-content"><strong>Fuite massive :</strong> Libération rapide de grandes quantités de fluide (> 1 kg) dans un espace confiné. Risque d'anoxie même avec des fluides de classe A1.</span></span> en milieu confiné. 
+                    La <span class="tooltip">ventilation<span class="tooltip-content"><strong>Ventilation obligatoire :</strong> Renouvellement d'air minimum 4 volumes/heure dans les locaux techniques. Extraction mécanique en points bas recommandée.</span></span> des locaux est toujours obligatoire !
+                </div>
+            </div>
+        </div>
+
+        <!-- Activité 1 : Drag & Drop symptômes -->
+        <div class="content-section activity-section">
+            <h2>🎮 Activité 1 : Association symptômes-causes</h2>
+            
+            <div class="activity-instructions">
+                <h3>📝 Instructions :</h3>
+                <p>Glissez chaque <span class="tooltip">symptôme<span class="tooltip-content"><strong>Symptômes :</strong> Manifestations visibles ou ressenties par la victime d'un accident lié aux fluides frigorigènes. Permettent d'identifier le type d'exposition et d'adapter les secours.</span></span> vers sa cause d'exposition correspondante. Tous les symptômes doivent être associés pour valider l'activité.</p>
+                <button class="btn btn-warning" onclick="resetSymptoms()" style="margin-top: 10px;">🔄 Recommencer</button>
+            </div>
+            
+            <div class="symptom-game">
+                <div class="symptoms-column">
+                    <h4>🩺 Symptômes observés</h4>
+                    <div class="draggable-item" draggable="true" data-symptom="gelure">
+                        <span style="font-size: 1.5em;">🧊</span>
+                        <span><span class="tooltip">Peau blanche, dure, insensible<span class="tooltip-content"><strong>Gelures :</strong> Congélation des tissus cutanés. Stades : peau blanche → cloques → noircissement → nécrose. Peut nécessiter une amputation.</span></span></span>
+                    </div>
+                    <div class="draggable-item" draggable="true" data-symptom="vertiges">
+                        <span style="font-size: 1.5em;">😵</span>
+                        <span><span class="tooltip">Vertiges, nausées, confusion<span class="tooltip-content"><strong>Signes neurologiques :</strong> Manque d'oxygène au cerveau → troubles de l'équilibre, nausées, désorientation, comportement inhabituel.</span></span></span>
+                    </div>
+                    <div class="draggable-item" draggable="true" data-symptom="brulure_oeil">
+                        <span style="font-size: 1.5em;">👁️</span>
+                        <span><span class="tooltip">Yeux rouges, douloureux, larmoiement<span class="tooltip-content"><strong>Atteinte oculaire :</strong> Irritation, brûlures cornéennes, vision floue, photophobie. Urgence ophtalmologique si contact avec NH₃ ou fluide liquide.</span></span></span>
+                    </div>
+                    <div class="draggable-item" draggable="true" data-symptom="dyspnee">
+                        <span style="font-size: 1.5em;">🫁</span>
+                        <span><span class="tooltip">Difficultés respiratoires, toux<span class="tooltip-content"><strong>Atteinte respiratoire :</strong> Irritation des voies respiratoires, toux, dyspnée, sensation d'étouffement. Risque d'œdème pulmonaire différé avec NH₃.</span></span></span>
+                    </div>
+                </div>
+                
+                <div class="causes-column">
+                    <h4>🎯 Causes d'exposition</h4>
+                    <div class="drop-zone" data-target="gelure">
+                        <span><span class="tooltip">Contact cutané<span class="tooltip-content"><strong>Contact direct :</strong> Peau en contact avec le fluide liquide très froid sortant du circuit sous pression. Gelure instantanée.</span></span> avec fluide liquide froid</span>
+                    </div>
+                    <div class="drop-zone" data-target="vertiges">
+                        <span><span class="tooltip">Inhalation<span class="tooltip-content"><strong>Inhalation :</strong> Respiration de vapeurs de fluide frigorigène qui remplacent l'oxygène dans l'air ambiant.</span></span> de vapeurs en milieu confiné</span>
+                    </div>
+                    <div class="drop-zone" data-target="brulure_oeil">
+                        <span><span class="tooltip">Projection<span class="tooltip-content"><strong>Projections :</strong> Éclaboussures de fluide liquide ou de vapeurs acides (NH₃) dans les yeux lors de fuites ou ouverture de circuits.</span></span> dans les yeux</span>
+                    </div>
+                    <div class="drop-zone" data-target="dyspnee">
+                        <span><span class="tooltip">Inhalation directe<span class="tooltip-content"><strong>Inhalation toxique :</strong> Respiration directe de gaz toxiques (NH₃) ou irritants qui brûlent les voies respiratoires.</span></span> de gaz toxique (NH₃)</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="alert" id="symptoms-result" style="display: none;">
+                <span id="symptoms-icon"></span>
+                <div id="symptoms-text"></div>
+            </div>
+        </div>
+
+        <!-- Activité 2 : Texte à compléter premiers secours -->
+        <div class="content-section activity-section">
+            <h2>🩹 Activité 2 : Procédure de premiers secours</h2>
+            
+            <div class="activity-instructions">
+                <h3>📝 Instructions :</h3>
+                <p>Complétez la procédure de premiers secours en cliquant sur chaque case vide et en sélectionnant le mot approprié.</p>
+                <button class="btn btn-warning" onclick="resetFirstAid()" style="margin-top: 10px;">🔄 Recommencer</button>
+            </div>
+            
+            <div class="fill-text">
+                En cas de <span class="tooltip">gelures<span class="tooltip-content"><strong>Gelures :</strong> Lésions dues au froid extrême. Nécessitent un réchauffement progressif et une surveillance médicale pour éviter les complications.</span></span> causées par un fluide frigorigène, il faut <span class="fill-blank" data-answer="réchauffer"></span> 
+                progressivement la zone atteinte avec de l'eau <span class="fill-blank" data-answer="tiède"></span> 
+                (37-40°C) pendant <span class="fill-blank" data-answer="15"></span> minutes.
+                <br><br>
+                En cas d'<span class="tooltip">inhalation<span class="tooltip-content"><strong>Conduite à tenir :</strong> Évacuation rapide vers l'air libre, position demi-assise pour faciliter la respiration, surveillance continue des fonctions vitales.</span></span> de vapeurs, sortir immédiatement la victime à l'<span class="fill-blank" data-answer="air"></span> 
+                libre et la mettre en position <span class="fill-blank" data-answer="assise"></span>. 
+                Surveiller la <span class="fill-blank" data-answer="respiration"></span> et alerter les secours.
+                <br><br>
+                En cas de contact avec les <span class="fill-blank" data-answer="yeux"></span>, 
+                rincer abondamment à l'eau claire pendant <span class="fill-blank" data-answer="15"></span> minutes 
+                et consulter un <span class="tooltip">ophtalmologue<span class="tooltip-content"><strong>Ophtalmologue :</strong> Médecin spécialiste des yeux. Consultation urgente obligatoire en cas de contact fluide frigorigène/yeux pour éviter les séquelles visuelles.</span></span> en urgence.
+            </div>
+            
+            <div class="word-bank">
+                <div class="word-option" data-word="réchauffer">réchauffer</div>
+                <div class="word-option" data-word="tiède">tiède</div>
+                <div class="word-option" data-word="15">15</div>
+                <div class="word-option" data-word="air">air</div>
+                <div class="word-option" data-word="assise">assise</div>
+                <div class="word-option" data-word="respiration">respiration</div>
+                <div class="word-option" data-word="yeux">yeux</div>
+                <div class="word-option" data-word="ophtalmologue">ophtalmologue</div>
+                <div class="word-option" data-word="chaude">chaude</div>
+                <div class="word-option" data-word="couchée">couchée</div>
+                <div class="word-option" data-word="10">10</div>
+            </div>
+            
+            <div class="alert" id="firstaid-result" style="display: none;">
+                <span id="firstaid-icon"></span>
+                <div id="firstaid-text-result"></div>
+            </div>
+        </div>
+
+        <!-- QCM hybride enrichi -->
+        <div class="qcm-section evaluation-section">
+            <div class="competence-badge">
+                🧠 <strong>Compétence visée :</strong> Identifier les risques pour la <span class="tooltip">santé<span class="tooltip-content"><strong>Compétence santé :</strong> Capacité à reconnaître les symptômes d'exposition, appliquer les gestes de premiers secours, utiliser les EPI adaptés selon le type de fluide.</span></span> liés aux fluides frigorigènes
+                <br><small>Référentiel : <span id="referentiel-eleve">Générique</span></small>
+            </div>
+            
+            <h2>🎯 QCM Final : Évaluation des connaissances santé</h2>
+            
+            <!-- Questions basées sur PDF IRIS-ST -->
+            <div class="qcm-question" data-source="PDF">
+                <div class="help-system">
+                    <button class="help-btn" onclick="showContextualHelp(1)">
+                        ❓
+                        <span class="help-badge" id="help-badge-1">📖</span>
+                    </button>
+                </div>
+                <h3>1. Quels sont les principaux risques pour la santé lors de la manipulation des <span class="tooltip">fluides frigorigènes<span class="tooltip-content"><strong>Risques santé :</strong> Dangers directs pour l'organisme humain : gelures, intoxication, asphyxie, brûlures chimiques selon le type de fluide et le mode d'exposition.</span></span> ?</h3>
+                <div class="qcm-options">
+                    <div class="qcm-option" data-question="1" data-correct="true">
+                        <span>🔸</span> <span class="tooltip">Vertiges<span class="tooltip-content"><strong>Vertiges :</strong> Troubles de l'équilibre dus au manque d'oxygène au cerveau lors de l'inhalation de vapeurs.</span></span>, <span class="tooltip">nausées<span class="tooltip-content"><strong>Nausées :</strong> Envie de vomir due à l'intoxication par inhalation de vapeurs frigorigènes.</span></span>, <span class="tooltip">brûlures par le froid<span class="tooltip-content"><strong>Brûlures cryogéniques :</strong> Gelures dues au contact avec le fluide liquide très froid (-30°C à -50°C).</span></span>, <span class="tooltip">asphyxie<span class="tooltip-content"><strong>Asphyxie :</strong> Étouffement par manque d'oxygène, remplacé par les vapeurs de fluide frigorigène plus lourdes que l'air.</span></span>
+                    </div>
+                    <div class="qcm-option" data-question="1" data-correct="false">
+                        <span>🔸</span> Seulement des irritations cutanées légères
+                    </div>
+                    <div class="qcm-option" data-question="1" data-correct="false">
+                        <span>🔸</span> Uniquement des risques d'allergies
+                    </div>
+                </div>
+            </div>
+            
+            <div class="qcm-question" data-source="PDF">
+                <div class="help-system">
+                    <button class="help-btn" onclick="showContextualHelp(2)">
+                        ❓
+                        <span class="help-badge" id="help-badge-2">📖</span>
+                    </button>
+                </div>
+                <h3>2. Pourquoi l'<span class="tooltip">ammoniac (NH₃)<span class="tooltip-content"><strong>Ammoniac (NH₃) :</strong> Gaz naturel très toxique utilisé en réfrigération industrielle depuis 1876. Excellent rendement énergétique mais manipulation très dangereuse.</span></span> est-il particulièrement dangereux pour la santé ?</h3>
+                <div class="qcm-options">
+                    <div class="qcm-option" data-question="2" data-correct="false">
+                        <span>🔸</span> Il est seulement inflammable
+                    </div>
+                    <div class="qcm-option" data-question="2" data-correct="true">
+                        <span>🔸</span> Il provoque des <span class="tooltip">brûlures pulmonaires<span class="tooltip-content"><strong>Brûlures pulmonaires :</strong> L'ammoniac se dissout dans l'humidité des poumons → forme de l'ammoniaque → brûle chimiquement les alvéoles → œdème → suffocation.</span></span> et <span class="tooltip">oculaires<span class="tooltip-content"><strong>Brûlures oculaires :</strong> Contact avec les yeux → brûlures cornéennes graves → risque de cécité permanente.</span></span> graves
+                    </div>
+                    <div class="qcm-option" data-question="2" data-correct="false">
+                        <span>🔸</span> Il n'est pas plus dangereux que les autres fluides
+                    </div>
+                </div>
+            </div>
+            
+            <div class="qcm-question" data-source="PDF">
+                <div class="help-system">
+                    <button class="help-btn" onclick="showContextualHelp(3)">
+                        ❓
+                        <span class="help-badge" id="help-badge-3">📖</span>
+                    </button>
+                </div>
+                <h3>3. Que faut-il faire en cas de <span class="tooltip">gelures<span class="tooltip-content"><strong>Gelures :</strong> Lésions dues au froid extrême des fluides frigorigènes liquides. Nécessitent un traitement spécialisé pour éviter les complications.</span></span> causées par un fluide frigorigène ?</h3>
+                <div class="qcm-options">
+                    <div class="qcm-option" data-question="3" data-correct="false">
+                        <span>🔸</span> Réchauffer rapidement avec de l'eau très chaude
+                    </div>
+                    <div class="qcm-option" data-question="3" data-correct="true">
+                        <span>🔸</span> <span class="tooltip">Réchauffement progressif<span class="tooltip-content"><strong>Réchauffement progressif :</strong> Bain d'eau tiède 37-40°C pendant 15-20 minutes, jamais chaud. Pas de friction. Protection par pansements stériles.</span></span> avec de l'eau tiède (37-40°C)
+                    </div>
+                    <div class="qcm-option" data-question="3" data-correct="false">
+                        <span>🔸</span> Frotter vigoureusement la zone gelée
+                    </div>
+                </div>
+            </div>
+            
+            <div class="qcm-question" data-source="PDF">
+                <div class="help-system">
+                    <button class="help-btn" onclick="showContextualHelp(4)">
+                        ❓
+                        <span class="help-badge" id="help-badge-4">📖</span>
+                    </button>
+                </div>
+                <h3>4. En cas d'<span class="tooltip">inhalation<span class="tooltip-content"><strong>Inhalation de vapeurs :</strong> Respiration de fluides frigorigènes qui remplacent l'oxygène dans l'air. Provoque anoxie, vertiges, perte de conscience.</span></span> de vapeurs de fluides frigorigènes, que faire ?</h3>
+                <div class="qcm-options">
+                    <div class="qcm-option" data-question="4" data-correct="false">
+                        <span>🔸</span> Rester sur place et attendre que ça passe
+                    </div>
+                    <div class="qcm-option" data-question="4" data-correct="true">
+                        <span>🔸</span> Sortir immédiatement à l'<span class="tooltip">air libre<span class="tooltip-content"><strong>Air libre :</strong> Zone non confinée avec renouvellement naturel d'oxygène. Indispensable pour éliminer les vapeurs inhalées et restaurer l'oxygénation.</span></span>, position <span class="tooltip">demi-assise<span class="tooltip-content"><strong>Position demi-assise :</strong> Facilite la respiration en dégageant les voies aériennes et en aidant la ventilation pulmonaire.</span></span>
+                    </div>
+                    <div class="qcm-option" data-question="4" data-correct="false">
+                        <span>🔸</span> Boire beaucoup d'eau
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn btn-warning" id="submit-qcm" onclick="evaluateQCM()">
+                Valider le QCM
+            </button>
+            
+            <!-- Récapitulatif des résultats -->
+            <div class="recapitulatif-resultats" id="recapitulatif" style="display: none;">
+                📝 <strong>Résumé :</strong> Vous avez répondu correctement à <span id="score-detail">0 sur 4</span> questions. 
+                <br>Votre niveau : <span id="niveau-atteint">En cours d'évaluation...</span>
+                <br>
+                <button class="btn btn-success" onclick="exportProgress()" style="margin-top: 10px;">📤 Exporter ma progression</button>
+            </div>
+            
+            <!-- Feedback visuel par niveau -->
+            <div class="feedback" id="feedback-niveau" style="display: none;">
+                <!-- Contenu généré dynamiquement -->
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="navigation">
+            <div class="nav-left">
+                <a href="index.html" class="btn" style="background: #6c757d;">← Accueil</a>
+                <button class="btn btn-warning" onclick="exportToPDF()">📄 Exporter PDF</button>
+                <button class="btn btn-success" onclick="saveProgress()">💾 Sauvegarder</button>
+            </div>
+            
+            <div style="text-align: center;">
+                <p style="margin: 0; color: #666;">Score global : <span id="global-score">0%</span></p>
+                <p style="margin: 0; color: #666;">Temps passé : <span id="time-spent">0 min</span></p>
+            </div>
+            
+            <button class="btn btn-success" id="next-chapter" onclick="goToNextChapter()" disabled>
+                Chapitre 3 : Impact environnemental →
+            </button>
+        </div>
+
+        <!-- Crédits -->
+        <div class="credits">
+            <strong>Sources :</strong> Mémo IRIS-ST "Les fluides frigorigènes" - www.iris-st.org | 
+            <strong>Plateforme ÉNERWEB</strong> - Formation professionnelle interactive créée par F. HENNINOT
+        </div>
+    </div>
+
+    <!-- Toast pour feedback -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Configuration
+        const CURRENT_CHAPTER_ID = 2;
+        const CHAPTER_TITLE = "Risques pour la santé";
+        
+        // Variables globales
+        let chapterProgress = {
+            symptoms: false, firstAid: false, qcmCompleted: false, qcmScore: 0,
+            qcmCorrectAnswers: 0, qcmTotalQuestions: 4, globalScore: 0,
+            timeSpent: 0, competenceLevel: '', competenceClass: '', helpUsed: {}
+        };
+        
+        let startTime = Date.now(), selectedBlank = null, qcmAnswers = {}, studentData = null;
+
+        // Référentiels par classe
+        const REFERENTIELS = {
+            'CAP_IFCA_1': 'CAP IFCA - C2.4, C3.1', 'CAP_IFCA_2': 'CAP IFCA - C2.4, C3.1',
+            'TNE_2': '2nde TNE - Sécurité, Environnement', 'MFER_1': 'Bac Pro MFER - C9',
+            'MFER_T': 'Bac Pro MFER - C9', 'TECVC_1': 'Titre Pro CVC - Manipulation',
+            'TECVC_2': 'Titre Pro CVC - Manipulation'
+        };
+
+        // Contenu technique santé
+        const HEALTH_CONTENT = {
+            nh3: {
+                title: "☠️ NH₃ (Ammoniac) - Effets sur la santé",
+                content: `
+                    <div class="symptome-section critique">
+                        <h4>💀 Toxicité élevée (Classe B2)</h4>
+                        <ul>
+                            <li><strong>Seuil olfactif :</strong> 5 ppm (détection immédiate, odeur piquante)</li>
+                            <li><strong>Seuil irritation :</strong> 25 ppm (yeux, nez, gorge)</li>
+                            <li><strong>Danger immédiat :</strong> 300 ppm (IDLH - Immediately Dangerous to Life)</li>
+                            <li><strong>Concentration mortelle :</strong> > 1500 ppm en 30 minutes</li>
+                        </ul>
+                    </div>
+                    <div class="symptome-section urgence">
+                        <h4>🚨 Conduite d'urgence spécialisée</h4>
+                        <ul>
+                            <li><strong>Fuite importante :</strong> Evacuation immédiate, alerte pompiers</li>
+                            <li><strong>Contact peau :</strong> Rinçage abondant 15 min, surveillance médicale</li>
+                            <li><strong>Inhalation :</strong> Air libre + surveillance médicale 72h (œdème différé)</li>
+                            <li><strong>Neutralisation :</strong> Pulvérisation d'eau, pas d'acides</li>
+                        </ul>
+                    </div>
+                `
+            },
+            co2: {
+                title: "🫁 CO₂ (R744) - Effets anoxiants",
+                content: `
+                    <div class="symptome-section">
+                        <h4>💨 Anoxie par substitution d'oxygène</h4>
+                        <ul>
+                            <li><strong>3-5% CO₂ :</strong> Somnolence, ralentissement psychomoteur</li>
+                            <li><strong>5-7% CO₂ :</strong> Vertiges, nausées, tachycardie</li>
+                            <li><strong>7-10% CO₂ :</strong> Perte de conscience rapide</li>
+                        </ul>
+                    </div>
+                `
+            },
+            hfc: {
+                title: "💙 HFC - Effets cryogéniques",
+                content: `
+                    <div class="symptome-section">
+                        <h4>🧊 Gelures par contact</h4>
+                        <ul>
+                            <li><strong>R410A liquide :</strong> -51°C (gelures instantanées)</li>
+                            <li><strong>R404A liquide :</strong> -47°C (nécroses profondes)</li>
+                            <li><strong>R134a liquide :</strong> -26°C (gelures sévères)</li>
+                        </ul>
+                    </div>
+                `
+            },
+            hydrocarbures: {
+                title: "🔥 Hydrocarbures - Risques combustion",
+                content: `
+                    <div class="symptome-section">
+                        <h4>🔥 Risques par combustion</h4>
+                        <ul>
+                            <li><strong>Brûlures thermiques :</strong> Déflagration, flammes</li>
+                            <li><strong>Inhalation fumées :</strong> Monoxyde de carbone, suies</li>
+                            <li><strong>Onde de choc :</strong> Traumatismes par explosion</li>
+                        </ul>
+                    </div>
+                `
+            }
+        };
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStudentData(); setupDragAndDrop(); setupFirstAid(); setupQCMListeners();
+            setupTimeCounter(); loadAccessibilityPreferences(); checkPDFAvailability();
+        });
+
+        // Fonctions utilitaires
+        function loadStudentData() {
+            const globalProgress = JSON.parse(localStorage.getItem('enerweb_fluides_frigorigenes_progress') || '{}');
+            if (globalProgress.student) {
+                studentData = globalProgress.student; displayStudentInfo();
+                if (studentData.formation && REFERENTIELS[studentData.formation]) {
+                    document.getElementById('referentiel-eleve').textContent = REFERENTIELS[studentData.formation];
+                }
+            }
+        }
+
+        function displayStudentInfo() {
+            if (studentData && (studentData.nom || studentData.isAnonymous)) {
+                const studentDisplay = document.getElementById('student-display');
+                const infoDisplay = document.getElementById('student-info-display');
+                
+                if (studentData.isAnonymous) {
+                    infoDisplay.innerHTML = `<p><strong>Session :</strong> Utilisateur anonyme</p>
+                        <p><strong>Démarré le :</strong> ${new Date(studentData.dateInscription || Date.now()).toLocaleDateString('fr-FR')}</p>`;
+                } else {
+                    infoDisplay.innerHTML = `<p><strong>Nom :</strong> ${studentData.nom} ${studentData.prenom}</p>
+                        <p><strong>Formation :</strong> ${studentData.formation || 'Non spécifiée'}</p>
+                        <p><strong>Date :</strong> ${new Date(studentData.dateTest || studentData.dateInscription || Date.now()).toLocaleDateString('fr-FR')}</p>`;
+                }
+                studentDisplay.style.display = 'block';
+            }
+        }
+
+        // Contrôles accessibilité
+        function toggleAccessibility() {
+            document.body.classList.toggle('accessibility-mode');
+            const isActive = document.body.classList.contains('accessibility-mode');
+            localStorage.setItem('enerweb_accessibility', isActive);
+            const button = document.getElementById('btnAccessibility');
+            button.textContent = isActive ? '🔍 Mode normal' : '🔍 Mode accessibilité';
+            button.classList.toggle('active', isActive);
+        }
+
+        function togglePoliceAdaptee() {
+            document.body.classList.toggle('police-adaptee');
+            const isActive = document.body.classList.contains('police-adaptee');
+            localStorage.setItem('enerweb_police_adaptee', isActive);
+            const button = document.getElementById('btnPoliceAdaptee');
+            button.textContent = isActive ? '📖 Police normale' : '📖 Police adaptée';
+            button.classList.toggle('active', isActive);
+        }
+
+        function loadAccessibilityPreferences() {
+            if (localStorage.getItem('enerweb_accessibility') === 'true') {
+                document.body.classList.add('accessibility-mode');
+                document.getElementById('btnAccessibility').classList.add('active');
+                document.getElementById('btnAccessibility').textContent = '🔍 Mode normal';
+            }
+            if (localStorage.getItem('enerweb_police_adaptee') === 'true') {
+                document.body.classList.add('police-adaptee');
+                document.getElementById('btnPoliceAdaptee').classList.add('active');
+                document.getElementById('btnPoliceAdaptee').textContent = '📖 Police normale';
+            }
+        }
+
+        // Gestion PDF
+        function checkPDFAvailability() {
+            const iframe = document.getElementById('pdfViewer');
+            iframe.onerror = function() {
+                iframe.innerHTML = `<div style="padding: 50px; text-align: center; color: #999;">
+                    <h3>📄 Document PDF non disponible</h3>
+                    <p>Le fichier PDF n'a pas pu être chargé.</p>
+                    <a href="./pdf/Iris-ST-Depliant-Frigoriste-chauffagistes-Fluides-2016-Internet-100x150-1.pdf" 
+                       target="_blank" class="btn btn-warning">Télécharger le PDF</a></div>`;
+            };
+        }
+
+        function openPDFFullscreen() {
+            window.open('./pdf/Iris-ST-Depliant-Frigoriste-chauffagistes-Fluides-2016-Internet-100x150-1.pdf', '_blank');
+        }
+
+        function downloadPDF() {
+            const link = document.createElement('a');
+            link.href = './pdf/Iris-ST-Depliant-Frigoriste-chauffagistes-Fluides-2016-Internet-100x150-1.pdf';
+            link.download = 'IRIS-ST-Fluides-Frigorigenes.pdf';
+            link.click();
+        }
+
+        // Popups techniques
+        function showHealthDetails(fluidType) {
+            const content = HEALTH_CONTENT[fluidType];
+            if (!content) return;
+            
+            const popup = document.createElement('div');
+            popup.className = 'technical-popup';
+            popup.innerHTML = `<div class="popup-content">
+                <button class="popup-close" onclick="closeHealthPopup()">&times;</button>
+                <h3>${content.title}</h3>${content.content}</div>`;
+            
+            document.body.appendChild(popup);
+            popup.addEventListener('click', function(e) {
+                if (e.target === popup) closeHealthPopup();
+            });
+        }
+
+        function closeHealthPopup() {
+            const popup = document.querySelector('.technical-popup');
+            if (popup) popup.remove();
+        }
+
+        // Système d'aide
+        function showContextualHelp(questionId) {
+            chapterProgress.helpUsed[questionId] = true;
+            const iframe = document.getElementById('pdfViewer');
+            iframe.src = './pdf/Iris-ST-Depliant-Frigoriste-chauffagistes-Fluides-2016-Internet-100x150-1.pdf#page=2';
+            iframe.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // Drag & Drop symptômes
+        function setupDragAndDrop() {
+            const draggables = document.querySelectorAll('.draggable-item');
+            const dropZones = document.querySelectorAll('.drop-zone');
+
+            draggables.forEach(item => {
+                item.addEventListener('dragstart', e => {
+                    e.dataTransfer.setData('text/plain', e.target.dataset.symptom);
+                    e.target.classList.add('dragging');
+                });
+                item.addEventListener('dragend', e => e.target.classList.remove('dragging'));
+            });
+
+            dropZones.forEach(zone => {
+                zone.addEventListener('dragover', e => {
+                    e.preventDefault(); e.currentTarget.classList.add('dragover');
+                });
+                zone.addEventListener('drop', e => {
+                    e.preventDefault();
+                    const symptom = e.dataTransfer.getData('text/plain');
+                    const target = e.currentTarget.dataset.target;
+                    e.currentTarget.classList.remove('dragover');
+                    
+                    if (symptom === target) {
+                        e.currentTarget.classList.add('filled');
+                        e.currentTarget.innerHTML = '<span>✅ Association correcte</span>';
+                        document.querySelector(`[data-symptom="${symptom}"]`).style.display = 'none';
+                        checkSymptomsComplete();
+                    } else {
+                        e.currentTarget.innerHTML = '<span>❌ Réessayez</span>';
+                        setTimeout(() => {
+                            const originalTexts = {
+                                'gelure': 'Contact cutané avec fluide liquide froid',
+                                'vertiges': 'Inhalation de vapeurs en milieu confiné',
+                                'brulure_oeil': 'Projection dans les yeux',
+                                'dyspnee': 'Inhalation directe de gaz toxique (NH₃)'
+                            };
+                            e.currentTarget.innerHTML = `<span>${originalTexts[target]}</span>`;
+                        }, 1500);
+                    }
+                });
+                zone.addEventListener('dragleave', e => e.currentTarget.classList.remove('dragover'));
+            });
+        }
+
+        function checkSymptomsComplete() {
+            const filledZones = document.querySelectorAll('.drop-zone.filled');
+            const totalZones = document.querySelectorAll('.drop-zone');
+            
+            if (filledZones.length === totalZones.length) {
+                chapterProgress.symptoms = true;
+                showAlert('symptoms-result', 'success', '🎉', '<strong>Activité terminée !</strong> Toutes les associations sont complètes.');
+                updateGlobalScore();
+            }
+        }
+
+        function resetSymptoms() {
+            const originalTexts = {
+                'gelure': 'Contact cutané avec fluide liquide froid',
+                'vertiges': 'Inhalation de vapeurs en milieu confiné',
+                'brulure_oeil': 'Projection dans les yeux',
+                'dyspnee': 'Inhalation directe de gaz toxique (NH₃)'
+            };
+            
+            document.querySelectorAll('.drop-zone').forEach(zone => {
+                zone.classList.remove('filled');
+                const target = zone.dataset.target;
+                zone.innerHTML = `<span>${originalTexts[target]}</span>`;
+            });
+            
+            document.querySelectorAll('.draggable-item').forEach(item => item.style.display = 'flex');
+            document.getElementById('symptoms-result').style.display = 'none';
+            chapterProgress.symptoms = false; updateGlobalScore();
+        }
+
+        // Texte à compléter premiers secours
+        function setupFirstAid() {
+            const blanks = document.querySelectorAll('.fill-blank');
+            const words = document.querySelectorAll('.word-option');
+
+            blanks.forEach(blank => {
+                blank.addEventListener('click', function() {
+                    if (selectedBlank) selectedBlank.style.border = '2px solid var(--border)';
+                    selectedBlank = this; this.style.border = '2px solid var(--primary)';
+                });
+            });
+
+            words.forEach(word => {
+                word.addEventListener('click', function() {
+                    if (selectedBlank && !this.classList.contains('used')) {
+                        selectedBlank.textContent = this.dataset.word;
+                        selectedBlank.classList.add('filled');
+                        this.classList.add('used');
+                        selectedBlank.style.border = '2px solid var(--border)';
+                        selectedBlank = null; checkFirstAidComplete();
+                    }
+                });
+            });
+        }
+
+        function checkFirstAidComplete() {
+            const blanks = document.querySelectorAll('.fill-blank');
+            const filledBlanks = document.querySelectorAll('.fill-blank.filled');
+            
+            if (filledBlanks.length === blanks.length) {
+                let correctCount = 0;
+                blanks.forEach(blank => {
+                    if (blank.textContent === blank.dataset.answer) correctCount++;
+                });
+                
+                const accuracy = (correctCount / blanks.length) * 100;
+                chapterProgress.firstAid = true;
+                showAlert('firstaid-result', 'success', '📝', `<strong>Activité terminée !</strong> Score : ${Math.round(accuracy)}%`);
+                updateGlobalScore();
+            }
+        }
+
+        function resetFirstAid() {
+            document.querySelectorAll('.fill-blank').forEach(blank => {
+                blank.textContent = ''; blank.classList.remove('filled');
+                blank.style.border = '2px solid var(--border)';
+            });
+            document.querySelectorAll('.word-option').forEach(word => word.classList.remove('used'));
+            document.getElementById('firstaid-result').style.display = 'none';
+            chapterProgress.firstAid = false; selectedBlank = null; updateGlobalScore();
+        }
+
+        // QCM évaluation
+        function setupQCMListeners() {
+            const qcmOptions = document.querySelectorAll('.qcm-option');
+            qcmOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const question = this.dataset.question;
+                    const questionOptions = document.querySelectorAll(`[data-question="${question}"]`);
+                    questionOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    qcmAnswers[question] = this.dataset.correct === 'true';
+                });
+            });
+        }
+
+        function evaluateQCM() {
+            const questions = document.querySelectorAll('.qcm-question');
+            let correctAnswers = 0; let totalQuestions = questions.length;
+            
+            questions.forEach((question, index) => {
+                const selectedOption = question.querySelector('.qcm-option.selected');
+                const correctOption = question.querySelector('.qcm-option[data-correct="true"]');
+                
+                if (selectedOption) {
+                    if (selectedOption.dataset.correct === 'true') {
+                        selectedOption.classList.add('correct'); correctAnswers++;
+                    } else {
+                        selectedOption.classList.add('incorrect');
+                    }
+                    if (correctOption && correctOption !== selectedOption) {
+                        correctOption.classList.add('correct');
+                    }
+                }
+            });
+            
+            chapterProgress.qcmScore = Math.round((correctAnswers / totalQuestions) * 100);
+            chapterProgress.qcmCorrectAnswers = correctAnswers;
+            chapterProgress.qcmTotalQuestions = totalQuestions; chapterProgress.qcmCompleted = true;
+            
+            document.getElementById('recapitulatif').style.display = 'block';
+            document.getElementById('score-detail').textContent = `${correctAnswers} sur ${totalQuestions}`;
+            
+            const niveau = calculateCompetenceLevel(chapterProgress.qcmScore);
+            chapterProgress.competenceLevel = niveau.text; chapterProgress.competenceClass = niveau.class;
+            
+            document.getElementById('niveau-atteint').innerHTML = `<span class="${niveau.class}">${niveau.text}</span>`;
+            showCompetenceFeedback(niveau); document.getElementById('submit-qcm').style.display = 'none';
+            updateGlobalScore(); showToast(`QCM terminé ! Score : ${chapterProgress.qcmScore}%`);
+        }
+
+        function calculateCompetenceLevel(score) {
+            if (score >= 86) return { text: '🟢 Parfaitement acquis', class: 'niveau-vert' };
+            else if (score >= 67) return { text: '🟦 Acquis', class: 'niveau-bleu' };
+            else if (score >= 34) return { text: '🟠 En cours d\'acquisition', class: 'niveau-orange' };
+            else return { text: '🔴 Non acquis', class: 'niveau-rouge' };
+        }
+
+        function showCompetenceFeedback(niveau) {
+            const feedbackDiv = document.getElementById('feedback-niveau');
+            let message = '';
+            
+            switch(niveau.class) {
+                case 'niveau-vert':
+                    message = 'Excellent ! Vous maîtrisez parfaitement les risques pour la santé liés aux fluides frigorigènes.';
+                    break;
+                case 'niveau-bleu':
+                    message = 'Très bien ! Vous comprenez les principales notions de sécurité sanitaire.';
+                    break;
+                case 'niveau-orange':
+                    message = 'Bien ! Quelques révisions sur les premiers secours seraient bénéfiques.';
+                    break;
+                case 'niveau-rouge':
+                    message = 'Il est nécessaire de réviser les notions de base. Consultez à nouveau le support.';
+                    break;
+            }
+            
+            feedbackDiv.innerHTML = `<strong>${niveau.text}</strong><br>${message}`;
+            feedbackDiv.className = `feedback ${niveau.class}`;
+            feedbackDiv.style.display = 'block';
+        }
+
+        // Fonctions utilitaires
+        function updateGlobalScore() {
+            let totalScore = 0;
+            if (chapterProgress.symptoms) totalScore += 20;
+            if (chapterProgress.firstAid) totalScore += 20;
+            if (chapterProgress.qcmCompleted) totalScore += (chapterProgress.qcmScore / 100) * 60;
+            
+            chapterProgress.globalScore = Math.round(totalScore);
+            document.getElementById('global-score').textContent = chapterProgress.globalScore + '%';
+            
+            if (chapterProgress.globalScore >= 70) {
+                document.getElementById('next-chapter').disabled = false;
+            }
+        }
+
+        function showAlert(elementId, type, icon, text) {
+            const alert = document.getElementById(elementId);
+            alert.style.display = 'flex'; alert.className = `alert alert-${type}`;
+            document.getElementById(elementId.replace('-result', '-icon')).textContent = icon;
+            document.getElementById(elementId.replace('-result', '-text')).innerHTML = text;
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message; toast.className = 'toast show';
+            
+            const colors = { 'success': 'var(--success)', 'warning': 'var(--warning)', 'danger': 'var(--danger)', 'info': 'var(--primary)' };
+            toast.style.background = colors[type] || colors.success;
+            
+            setTimeout(() => toast.classList.remove('show'), 4000);
+        }
+
+        function updateTimeSpent() {
+            const elapsed = Math.round((Date.now() - startTime) / 60000);
+            document.getElementById('time-spent').textContent = elapsed + ' min';
+            chapterProgress.timeSpent = elapsed;
+        }
+
+        function setupTimeCounter() { setInterval(updateTimeSpent, 60000); }
+
+        // Sauvegarde et export
+        function saveProgress() {
+            let globalProgress = JSON.parse(localStorage.getItem('enerweb_fluides_frigorigenes_progress') || '{}');
+            
+            globalProgress.chapters = globalProgress.chapters || {};
+            globalProgress.chapters[`chapter${CURRENT_CHAPTER_ID}`] = {
+                completed: chapterProgress.globalScore >= 70, score: chapterProgress.globalScore,
+                timeSpent: chapterProgress.timeSpent, lastAccess: new Date().toISOString(),
+                activities: chapterProgress
+            };
+            
+            globalProgress.lastAccess = new Date().toISOString();
+            localStorage.setItem('enerweb_fluides_frigorigenes_progress', JSON.stringify(globalProgress));
+            showToast('💾 Progression sauvegardée !');
+        }
+
+        function exportProgress() {
+            const currentStudentData = studentData || { nom: "", prenom: "", formation: "", numero: "", isAnonymous: true };
+            
+            const resultsData = {
+                eleve: currentStudentData,
+                chapitre: { id: `chapter${CURRENT_CHAPTER_ID}_final`, titre: `Chapitre ${CURRENT_CHAPTER_ID} – ${CHAPTER_TITLE}`, date_realisation: new Date().toISOString() },
+                evaluation: [{ competence: "Identifier un danger lié aux fluides frigorigènes", referentiel: REFERENTIELS[currentStudentData.formation] || "Générique", niveau: chapterProgress.competenceLevel, score: chapterProgress.qcmScore, classe_css: chapterProgress.competenceClass }],
+                activites: { symptoms: chapterProgress.symptoms, firstAid: chapterProgress.firstAid, qcm: { completed: chapterProgress.qcmCompleted, score: chapterProgress.qcmScore, correctAnswers: chapterProgress.qcmCorrectAnswers, totalQuestions: chapterProgress.qcmTotalQuestions }, helpUsed: chapterProgress.helpUsed },
+                note_suivi: chapterProgress.globalScore, note_evaluation: chapterProgress.qcmScore,
+                statut_ccf: chapterProgress.qcmScore >= 67 ? "Validé" : "En cours d'acquisition"
+            };
+            
+            localStorage.setItem(`enerweb_chapter${CURRENT_CHAPTER_ID}_results`, JSON.stringify(resultsData));
+            
+            const dataStr = JSON.stringify(resultsData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            const exportFileDefaultName = `enerweb_chapter${CURRENT_CHAPTER_ID}_${currentStudentData.nom || 'anonyme'}_${new Date().toISOString().split('T')[0]}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri); linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click(); showToast('📤 Progression exportée !');
+        }
+
+        function goToNextChapter() { saveProgress(); window.location.href = 'chapter3_optimized.html'; }
+        function exportToPDF() { showToast('⚠️ Fonctionnalité PDF en cours de développement', 'warning'); }
+
+        // Sauvegarde automatique
+        window.addEventListener('beforeunload', () => saveProgress());
+        setInterval(() => { if (chapterProgress.globalScore > 0) saveProgress(); }, 120000);
+    </script>
+</body>
+</html>

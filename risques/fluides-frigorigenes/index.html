@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ÉNERWEB - Formation Fluides Frigorigènes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=OpenDyslexic:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6B73FF;
+            --secondary: #9C88FF;
+            --accent: #4ECDC4;
+            --coral: #FF6B9D;
+            --orange: #FFA726;
+            --success: #4CAF50;
+            --warning: #FF9800;
+            --danger: #F44336;
+            --dark: #2C3E50;
+            --light: #F8FAFC;
+            --border: #E2E8F0;
+            --gradient: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, var(--accent) 100%);
+            --shadow: 0 4px 15px rgba(0,0,0,0.1);
+            --radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Lexend', 'Comic Sans MS', 'OpenDyslexic', 'Segoe UI', sans-serif;
+            font-size: 18px;
+            line-height: 1.8;
+            letter-spacing: 0.5px;
+            background: var(--light);
+            color: var(--dark);
+        }
+
+        body.accessibility-mode {
+            font-size: 20px;
+            line-height: 2;
+            letter-spacing: 1px;
+        }
+
+        body.police-adaptee {
+            font-family: 'OpenDyslexic', 'Comic Sans MS', 'Lexend', sans-serif;
+            font-size: 22px;
+            line-height: 2.5;
+            letter-spacing: 2px;
+            word-spacing: 0.4em;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            background: var(--gradient);
+            border-radius: 20px;
+            padding: 25px;
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .logo-enerweb {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .snowflake {
+            font-size: 2.5em;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .logo-text {
+            font-size: 2.2em;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        /* Contrôles accessibilité */
+        .accessibility-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1000;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-accessibility {
+            background: var(--warning);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .btn-accessibility:hover {
+            background: var(--orange);
+            transform: translateY(-1px);
+        }
+
+        .btn-accessibility.active {
+            background: var(--success);
+        }
+
+        /* Sections principales */
+        .content-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            border-top: 4px solid var(--primary);
+        }
+
+        .content-section h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.8em;
+        }
+
+        /* Formulaire étudiant */
+        .student-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--dark);
+        }
+
+        .form-group input, .form-group select {
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(107, 115, 255, 0.1);
+        }
+
+        /* Info box */
+        .info-box {
+            background: rgba(76, 175, 80, 0.08);
+            border: 2px solid var(--success);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* Progression globale */
+        .global-progress {
+            text-align: center;
+            margin: 25px 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 6px;
+            overflow: hidden;
+            margin: 15px 0;
+            border: 2px solid var(--border);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--coral));
+            width: 0%;
+            transition: width 1s ease;
+        }
+
+        /* Navigation chapitres */
+        .chapters-navigation {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .chapter-card {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 15px;
+            padding: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chapter-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(107, 115, 255, 0.15);
+        }
+
+        .chapter-card.locked {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background: #f5f5f5;
+        }
+
+        .chapter-card.current {
+            border-color: var(--success);
+            background: rgba(76, 175, 80, 0.05);
+        }
+
+        .chapter-card.completed {
+            border-color: var(--accent);
+            background: rgba(78, 205, 196, 0.05);
+        }
+
+        .chapter-status {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5em;
+        }
+
+        .chapter-number {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .chapter-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+
+        .chapter-duration {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        /* Boutons */
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: var(--radius);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(107, 115, 255, 0.3);
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+        }
+
+        .start-section {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        /* Fonctionnalités */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .feature {
+            text-align: center;
+            padding: 25px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            border-top: 4px solid var(--accent);
+        }
+
+        .feature-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+
+        .feature h3 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .modal input {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 16px;
+            text-align: center;
+        }
+
+        /* Credits */
+        .credits {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: var(--shadow);
+            border-top: 4px solid var(--primary);
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 18px 25px;
+            border-radius: var(--radius);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transform: translateX(100%);
+            transition: transform 0.3s;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .logo-enerweb {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .logo-text {
+                font-size: 1.8em;
+            }
+
+            .student-form {
+                grid-template-columns: 1fr;
+            }
+
+            .chapters-navigation {
+                grid-template-columns: 1fr;
+            }
+
+            .accessibility-controls {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin-bottom: 20px;
+                flex-direction: row;
+                justify-content: center;
+            }
+        }
+    </style>
+<script>/* (c) F. Henninot - inerWeb FRIGOLO - Tous droits reserves */
+document.addEventListener("contextmenu",function(e){e.preventDefault()});
+document.addEventListener("keydown",function(e){if((e.ctrlKey||e.metaKey)&&(e.key==="u"||e.key==="s"||e.key==="c")){e.preventDefault()}});
+document.addEventListener("selectstart",function(e){if(e.target.tagName\!=="INPUT"&&e.target.tagName\!=="TEXTAREA"){e.preventDefault()}});
+</script>
+</head>
+<body>
+    <!-- Contrôles d'accessibilité -->
+    <div class="accessibility-controls">
+        <button class="btn-accessibility" onclick="toggleAccessibilityMode()" id="accessibilityBtn">
+            👁️ Accessibilité
+        </button>
+        <button class="btn-accessibility" onclick="togglePoliceAdaptee()" id="policeBtn">
+            🔤 Police adaptée
+        </button>
+        <button class="btn-accessibility" onclick="showUnlockModal()" title="Code enseignant">
+            🔓 Enseignant
+        </button>
+    </div>
+
+    <div class="container">
+        <!-- En-tête -->
+        <div class="header">
+            <div class="logo-enerweb">
+                <div class="snowflake">❅</div>
+                <div>
+                    <div class="logo-text">ÉNERWEB</div>
+                    <div class="subtitle">Formation Fluides Frigorigènes</div>
+                </div>
+            </div>
+            <div>
+                <div style="font-size: 1.2em; font-weight: 600;">Formation Interactive</div>
+                <div style="opacity: 0.9;">Mémo Sécurité IRIS-ST</div>
+            </div>
+        </div>
+
+        <!-- Informations apprenant -->
+        <div class="content-section">
+            <h2>👤 Vos informations</h2>
+            <form class="student-form" id="studentForm">
+                <div class="form-group">
+                    <label for="nom">Nom *</label>
+                    <input type="text" id="nom" name="nom" required>
+                </div>
+                <div class="form-group">
+                    <label for="prenom">Prénom *</label>
+                    <input type="text" id="prenom" name="prenom" required>
+                </div>
+                <div class="form-group">
+                    <label for="formation">Formation/Niveau *</label>
+                    <select id="formation" name="formation" required>
+                        <option value="">Sélectionnez votre formation</option>
+                        <option value="1CAP_IFCA">1CAP IFCA</option>
+                        <option value="2CAP_IFCA">2CAP IFCA</option>
+                        <option value="2nde_TNE">2nde TNE</option>
+                        <option value="1re_MFER">1re MFER</option>
+                        <option value="Term_MFER">Term MFER</option>
+                        <option value="TP_CVC_1">TP CVC 1</option>
+                        <option value="TP_CVC_2">TP CVC 2</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="numero">N° candidat</label>
+                    <input type="text" id="numero" name="numero">
+                </div>
+                <div class="form-group">
+                    <label for="dateTest">Date du test</label>
+                    <input type="date" id="dateTest" name="dateTest">
+                </div>
+            </form>
+
+            <div class="info-box">
+                <span style="font-size: 1.5em;">💡</span>
+                <div>
+                    <strong>Apprentissage autonome :</strong> Progressez à votre rythme. Votre progression est sauvegardée automatiquement 
+                    et vous pouvez reprendre à tout moment.
+                </div>
+            </div>
+        </div>
+
+        <!-- Vue d'ensemble de la séquence -->
+        <div class="content-section">
+            <h2>📚 Séquence de formation</h2>
+            <p style="font-size: 1.1em; margin-bottom: 20px;">
+                Formation interactive de <strong>2 heures</strong> pour maîtriser la sécurité lors de la manipulation des fluides frigorigènes, 
+                basée sur le mémo officiel <strong>IRIS-ST</strong> (<a href="https://www.iris-st.org" target="_blank" style="color: var(--primary); text-decoration: none;">www.iris-st.org</a>).
+            </p>
+
+            <!-- Progression globale -->
+            <div class="global-progress" id="globalProgressSection" style="display: none;">
+                <h3>📊 Votre progression</h3>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="globalProgressBar"></div>
+                </div>
+                <p id="globalProgressText">0% complété</p>
+            </div>
+
+            <!-- Navigation chapitres -->
+            <div class="chapters-navigation" id="chaptersNavigation">
+                <div class="chapter-card" data-chapter="1" onclick="accessChapter(1)">
+                    <div class="chapter-status" id="status1">▶️</div>
+                    <div class="chapter-number">📋</div>
+                    <div class="chapter-title">Chapitre 1 : Introduction</div>
+                    <div class="chapter-duration">⏱️ 15 minutes</div>
+                </div>
+                <div class="chapter-card locked" data-chapter="2" onclick="accessChapter(2)">
+                    <div class="chapter-status" id="status2">🔒</div>
+                    <div class="chapter-number">🤢</div>
+                    <div class="chapter-title">Chapitre 2 : Risques pour la santé</div>
+                    <div class="chapter-duration">⏱️ 20 minutes</div>
+                </div>
+                <div class="chapter-card locked" data-chapter="3" onclick="accessChapter(3)">
+                    <div class="chapter-status" id="status3">🔒</div>
+                    <div class="chapter-number">🌍</div>
+                    <div class="chapter-title">Chapitre 3 : Environnement</div>
+                    <div class="chapter-duration">⏱️ 15 minutes</div>
+                </div>
+                <div class="chapter-card locked" data-chapter="4" onclick="accessChapter(4)">
+                    <div class="chapter-status" id="status4">🔒</div>
+                    <div class="chapter-number">🚛</div>
+                    <div class="chapter-title">Chapitre 4 : Transport et stockage</div>
+                    <div class="chapter-duration">⏱️ 20 minutes</div>
+                </div>
+                <div class="chapter-card locked" data-chapter="5" onclick="accessChapter(5)">
+                    <div class="chapter-status" id="status5">🔒</div>
+                    <div class="chapter-number">💨</div>
+                    <div class="chapter-title">Chapitre 5 : Fuites et environnement</div>
+                    <div class="chapter-duration">⏱️ 25 minutes</div>
+                </div>
+                <div class="chapter-card locked" data-chapter="6" onclick="accessChapter(6)">
+                    <div class="chapter-status" id="status6">🔒</div>
+                    <div class="chapter-number">🎯</div>
+                    <div class="chapter-title">Chapitre 6 : Évaluation finale</div>
+                    <div class="chapter-duration">⏱️ 25 minutes</div>
+                </div>
+            </div>
+
+            <!-- Fonctionnalités -->
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Interactif</h3>
+                    <p>Activités variées et engageantes</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">📱</div>
+                    <h3>Responsive</h3>
+                    <p>Fonctionne sur tous les écrans</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">📊</div>
+                    <h3>Suivi</h3>
+                    <p>Progression et scores en temps réel</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🏆</div>
+                    <h3>Compétences</h3>
+                    <p>Évaluation par référentiel</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Démarrage -->
+        <div class="start-section">
+            <button class="btn" id="startButton" onclick="startSequence()">
+                🚀 Commencer la formation
+            </button>
+            <p style="margin-top: 15px; color: #666; font-size: 0.9em;">
+                ⚠️ Assurez-vous d'avoir rempli vos informations ci-dessus
+            </p>
+        </div>
+
+        <!-- Crédits et sources -->
+        <div class="credits">
+            <h3>📄 Sources et crédits</h3>
+            <p style="margin-bottom: 10px;">
+                <strong>Document source :</strong> Mémo Sécurité "Les fluides frigorigènes"<br/>
+                <strong>Auteur document :</strong> IRIS-ST, pôle prévention des artisans du Bâtiment<br/>
+                <strong>Site web :</strong> <a href="https://www.iris-st.org" style="color: var(--primary); text-decoration: none; font-weight: 600;" target="_blank">www.iris-st.org</a>
+            </p>
+            <p style="font-size: 0.9em; color: #666; margin-top: 15px;">
+                🏢 Rédigé par l'IRIS-ST en collaboration avec l'UNA CPC de la CAPEB, la CAPEB Picardie et la Région des Hauts-de-France<br/>
+                📅 ©IRIS-ST 2016 – Tous droits réservés – Édition N°1
+            </p>
+            <p style="font-size: 0.9em; color: #666; margin-top: 10px;">
+                ⚙️ <strong>Plateforme ÉNERWEB :</strong> Adaptation pédagogique interactive créée par <strong>F. HENNINOT</strong><br/>
+                🎓 Formation professionnelle Froid & Climatisation
+            </p>
+        </div>
+    </div>
+
+    <!-- Modale de déverrouillage enseignant -->
+    <div class="modal" id="unlockModal">
+        <div class="modal-content">
+            <h3 style="color: var(--primary); margin-bottom: 15px;">🔓 Déverrouillage enseignant</h3>
+            <p>Entrez le code de déverrouillage :</p>
+            <input type="password" id="unlockCode" maxlength="4" placeholder="Code enseignant">
+            <div style="margin-top: 15px;">
+                <button class="btn" onclick="unlockChapters()" style="padding: 10px 20px; font-size: 16px;">Valider</button>
+                <button class="btn" onclick="closeUnlockModal()" style="padding: 10px 20px; font-size: 16px; background: #ccc;">Annuler</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // ========== CONFIGURATION ========== 
+        const CHAPTERS = [
+            { id: 1, name: 'Chapitre1_Introduction.html', title: 'Introduction' },
+            { id: 2, name: 'Chapitre2_Risques pour la santé.html', title: 'Risques pour la santé' },
+            { id: 3, name: 'Chapitre3_Environnement.html', title: 'Environnement' },
+            { id: 4, name: 'Chapitre4_Transport et stockage.html', title: 'Transport et stockage' },
+            { id: 5, name: 'Chapitre5_Fuites et environnement.html', title: 'Fuites et environnement' },
+            { id: 6, name: 'Chapitre6_Évaluation finale_les fluides frigo.html', title: 'Évaluation finale - Fluides frigorigènes' }
+        ];
+
+        const FORMATIONS_CONFIG = {
+            '1CAP_IFCA': { 
+                name: '1CAP IFCA', 
+                competences: ['C2.4', 'C3.1'],
+                description: 'Installation Froid & Climatisation - 1ère année'
+            },
+            '2CAP_IFCA': { 
+                name: '2CAP IFCA', 
+                competences: ['C2.4', 'C3.1'],
+                description: 'Installation Froid & Climatisation - 2ème année'
+            },
+            '2nde_TNE': { 
+                name: '2nde TNE', 
+                competences: ['Sécurité', 'Environnement'],
+                description: 'Transition Numérique & Énergétique'
+            },
+            '1re_MFER': { 
+                name: '1re MFER', 
+                competences: ['C9'],
+                description: 'Maintenance & Efficacité Énergétique - 1ère'
+            },
+            'Term_MFER': { 
+                name: 'Term MFER', 
+                competences: ['C9'],
+                description: 'Maintenance & Efficacité Énergétique - Terminale'
+            },
+            'TP_CVC_1': { 
+                name: 'TP CVC 1', 
+                competences: ['Manipulation'],
+                description: 'Titre Pro CVC - 1ère année'
+            },
+            'TP_CVC_2': { 
+                name: 'TP CVC 2', 
+                competences: ['Manipulation'],
+                description: 'Titre Pro CVC - 2ème année'
+            }
+        };
+
+        // ========== DONNÉES DE PROGRESSION ========== 
+        let progressData = {
+            sessionId: null,
+            student: {},
+            chapters: {},
+            competences: {},
+            startDate: null,
+            lastAccess: null,
+            globalProgress: 0,
+            teacherUnlocked: false
+        };
+
+        // ========== INITIALISATION ========== 
+        document.addEventListener('DOMContentLoaded', function() {
+            // Date du test automatique (aujourd'hui)
+            document.getElementById('dateTest').value = new Date().toISOString().split('T')[0];
+            
+            // Charger la progression sauvegardée
+            loadProgress();
+            
+            // Mettre à jour l'affichage
+            updateChaptersDisplay();
+            updateStartButton();
+            updateGlobalProgress();
+            
+            // Remplir le formulaire avec les données sauvegardées
+            populateForm();
+        });
+
+        // ========== GESTION SAUVEGARDE ========== 
+        function saveProgress() {
+            localStorage.setItem('enerweb_fluides_frigorigenes_progress', JSON.stringify(progressData));
+        }
+
+        function loadProgress() {
+            const saved = localStorage.getItem('enerweb_fluides_frigorigenes_progress');
+            if (saved) {
+                progressData = { ...progressData, ...JSON.parse(saved) };
+            }
+        }
+
+        function updateGlobalProgress() {
+            const progress = calculateGlobalProgress();
+            if (progress > 0) {
+                document.getElementById('globalProgressSection').style.display = 'block';
+                document.getElementById('globalProgressBar').style.width = progress + '%';
+                document.getElementById('globalProgressText').textContent = Math.round(progress) + '% complété';
+            }
+        }
+
+        function populateForm() {
+            if (progressData.student) {
+                document.getElementById('nom').value = progressData.student.nom || '';
+                document.getElementById('prenom').value = progressData.student.prenom || '';
+                document.getElementById('formation').value = progressData.student.formation || '';
+                document.getElementById('numero').value = progressData.student.numero || '';
+            }
+        }
+
+        function updateStartButton() {
+            const hasData = progressData.student && progressData.student.nom;
+            const button = document.getElementById('startButton');
+            
+            if (hasData) {
+                const progress = calculateGlobalProgress();
+                if (progress === 0) {
+                    button.innerHTML = '🚀 Commencer la formation';
+                } else if (progress === 100) {
+                    button.innerHTML = '📊 Voir les résultats';
+                } else {
+                    button.innerHTML = '📖 Continuer la formation';
+                }
+            }
+        }
+
+        // ========== CALCUL PROGRESSION ========== 
+        function calculateGlobalProgress() {
+            const completedChapters = Object.values(progressData.chapters || {})
+                .filter(chapter => chapter.completed).length;
+            return (completedChapters / CHAPTERS.length) * 100;
+        }
+
+        function updateChaptersDisplay() {
+            CHAPTERS.forEach(chapter => {
+                const card = document.querySelector(`[data-chapter="${chapter.id}"]`);
+                const status = document.getElementById(`status${chapter.id}`);
+                const chapterData = progressData.chapters?.[`chapter${chapter.id}`];
+                
+                if (chapterData?.completed) {
+                    card.classList.remove('locked', 'current');
+                    card.classList.add('completed');
+                    status.textContent = '✅';
+                } else if (isChapterAccessible(chapter.id)) {
+                    card.classList.remove('locked', 'completed');
+                    card.classList.add('current');
+                    status.textContent = '▶️';
+                } else {
+                    card.classList.remove('completed', 'current');
+                    card.classList.add('locked');
+                    status.textContent = '🔒';
+                }
+            });
+        }
+
+        function isChapterAccessible(chapterId) {
+            if (progressData.teacherUnlocked) return true;
+            if (chapterId === 1) return true;
+            
+            const previousChapter = progressData.chapters?.[`chapter${chapterId - 1}`];
+            return previousChapter?.completed === true;
+        }
+
+        function findNextChapter() {
+            for (let chapter of CHAPTERS) {
+                const chapterData = progressData.chapters?.[`chapter${chapter.id}`];
+                if (!chapterData?.completed) {
+                    return chapter;
+                }
+            }
+            return null;
+        }
+
+        // ========== ACCÈS CHAPITRE ========== 
+        function accessChapter(chapterId) {
+            if (!progressData.student?.nom) {
+                alert('⚠️ Veuillez d\'abord remplir vos informations !');
+                return;
+            }
+
+            if (!isChapterAccessible(chapterId)) {
+                alert('🔒 Vous devez terminer le chapitre précédent pour accéder à celui-ci !\n\nOu demandez à votre enseignant de déverrouiller la navigation.');
+                return;
+            }
+
+            const chapter = CHAPTERS.find(ch => ch.id === chapterId);
+            if (chapter) {
+                progressData.lastAccess = new Date().toISOString();
+                saveProgress();
+                window.location.href = chapter.name;
+            }
+        }
+
+        // ========== DÉVERROUILLAGE ENSEIGNANT ========== 
+        function showUnlockModal() {
+            document.getElementById('unlockModal').style.display = 'block';
+            document.getElementById('unlockCode').focus();
+        }
+
+        function closeUnlockModal() {
+            document.getElementById('unlockModal').style.display = 'none';
+            document.getElementById('unlockCode').value = '';
+        }
+
+        function unlockChapters() {
+            const code = document.getElementById('unlockCode').value;
+            if (code === '4321') {
+                progressData.teacherUnlocked = true;
+                saveProgress();
+                updateChaptersDisplay();
+                closeUnlockModal();
+                alert('🔓 Navigation déverrouillée ! Les élèves peuvent maintenant accéder à tous les chapitres.');
+            } else {
+                alert('❌ Code incorrect !');
+                document.getElementById('unlockCode').value = '';
+            }
+        }
+
+        // ========== DÉMARRAGE FORMATION ========== 
+        function startSequence() {
+            // Récupérer les données du formulaire
+            const nom = document.getElementById('nom').value.trim();
+            const prenom = document.getElementById('prenom').value.trim();
+            const formation = document.getElementById('formation').value;
+            const numero = document.getElementById('numero').value.trim();
+
+            // Validation
+            if (!nom || !prenom || !formation) {
+                alert('⚠️ Veuillez remplir au minimum votre nom, prénom et formation !');
+                return;
+            }
+
+            // Sauvegarder les données élève
+            progressData.student = {
+                nom: nom,
+                prenom: prenom,
+                formation: formation,
+                numero: numero,
+                dateInscription: new Date().toISOString()
+            };
+
+            progressData.startDate = progressData.startDate || new Date().toISOString();
+            progressData.lastAccess = new Date().toISOString();
+
+            // Initialiser les compétences selon la formation
+            initializeCompetences(formation);
+
+            // Sauvegarder
+            saveProgress();
+
+            // Redirection ou affichage selon progression
+            const progress = calculateGlobalProgress();
+            if (progress === 100) {
+                window.location.href = 'synthese-resultats.html';
+            } else {
+                const nextChapter = findNextChapter();
+                if (nextChapter) {
+                    window.location.href = nextChapter.name;
+                } else {
+                    window.location.href = 'Chapitre1_Introduction.html';
+                }
+            }
+        }
+
+        function initializeCompetences(formation) {
+            const config = FORMATIONS_CONFIG[formation];
+            if (config && config.competences) {
+                progressData.competences = progressData.competences || {};
+                config.competences.forEach(comp => {
+                    if (!progressData.competences[comp]) {
+                        progressData.competences[comp] = {
+                            level: 1,
+                            score: 0,
+                            activities: []
+                        };
+                    }
+                });
+            }
+        }
+
+        // ========== ACCESSIBILITÉ ========== 
+        function toggleAccessibilityMode() {
+            document.body.classList.toggle('accessibility-mode');
+            const btn = document.getElementById('accessibilityBtn');
+            btn.classList.toggle('active');
+            
+            const isActive = document.body.classList.contains('accessibility-mode');
+            localStorage.setItem('accessibility-mode', isActive);
+            showToast(isActive ? '👁️ Mode accessibilité activé' : '👁️ Mode accessibilité désactivé');
+        }
+
+        function togglePoliceAdaptee() {
+            document.body.classList.toggle('police-adaptee');
+            const btn = document.getElementById('policeBtn');
+            btn.classList.toggle('active');
+            
+            const isActive = document.body.classList.contains('police-adaptee');
+            localStorage.setItem('police-adaptee', isActive);
+            showToast(isActive ? '🔤 Police adaptée activée' : '🔤 Police adaptée désactivée');
+        }
+
+        // ========== NOTIFICATIONS ========== 
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // ========== GESTION CLAVIER ========== 
+        document.addEventListener('keydown', function(e) {
+            // Fermer modal avec Échap
+            if (e.key === 'Escape') {
+                closeUnlockModal();
+            }
+            
+            // Valider code enseignant avec Entrée
+            if (e.key === 'Enter' && document.getElementById('unlockModal').style.display === 'block') {
+                unlockChapters();
+            }
+        });
+
+        // ========== RESTAURATION PRÉFÉRENCES ========== 
+        document.addEventListener('DOMContentLoaded', function() {
+            // Restaurer les préférences d'accessibilité
+            if (localStorage.getItem('accessibility-mode') === 'true') {
+                document.body.classList.add('accessibility-mode');
+                document.getElementById('accessibilityBtn').classList.add('active');
+            }
+            
+            if (localStorage.getItem('police-adaptee') === 'true') {
+                document.body.classList.add('police-adaptee');
+                document.getElementById('policeBtn').classList.add('active');
+            }
+        });
+
+        // ========== SAUVEGARDE AUTOMATIQUE ========== 
+        // Sauvegarder avant fermeture
+        window.addEventListener('beforeunload', () => {
+            if (progressData.student?.nom) {
+                saveProgress();
+            }
+        });
+
+        // Sauvegarder périodiquement
+        setInterval(() => {
+            if (progressData.student?.nom) {
+                saveProgress();
+            }
+        }, 30000); // Toutes les 30 secondes
+    </script>
+</body>
+</html>

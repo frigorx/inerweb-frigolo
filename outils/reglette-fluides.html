@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reglette Fluides v6.6 - InerWeb Suite</title>
+    <!-- CSP stricte : aucune connexion externe autorisée -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'none'; frame-src 'none';">
+    <!-- 
+    ============================================================
+    RÉGLETTE FLUIDES FRIGORIGÈNES v6.4 - RGPD CLEAN
+    ============================================================
+    Auteur : F. Henninot - LPP Jacques Raynaud, Marseille
+    Licence code : Propriétaire (usage éducatif autorisé)
+    
+    SOURCES DES DONNÉES :
+    - Tables P/T : Générées via interpolation linéaire sur 
+      données publiques de saturation (équations d'Antoine/Wagner)
+    - Classifications sécurité : Désignations ASHRAE 34 (A1, A2L, etc.)
+      sans reproduction du texte normatif
+    - GWP : Valeurs indicatives issues de sources publiques variées
+      (non contractuel, vérification obligatoire)
+    
+    RGPD : Aucune collecte de données, aucun appel réseau,
+           aucun tracking, stockage local uniquement (préférences)
+    ============================================================
+    -->
+    <style>
+        :root {
+            --primary: #0066cc;
+            --accent: #ff6b35;
+            --text: #1a1a2e;
+            --muted: #6c757d;
+            --border: #dee2e6;
+            --good: #10b981;
+            --warn: #f59e0b;
+            --bad: #ef4444;
+            --shadow: 0 8px 24px rgba(0,0,0,0.12);
+            --gradient-orange: linear-gradient(135deg, #ff6b35 0%, #ff8c42 50%, #ffa947 100%);
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        /* POLICES SYSTÈME - Pas de CDN = RGPD OK */
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(180deg, #f7f9fc 0%, #e8eef5 100%); 
+            min-height: 100vh; 
+            color: var(--text); 
+            line-height: 1.4;
+        }
+        
+        .font-display {
+            font-family: Impact, "Arial Black", sans-serif;
+            font-weight: 900;
+            letter-spacing: 1px;
+        }
+        
+        /* === HEADER === */
+        .main-header {
+            background: var(--gradient-orange);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            box-shadow: 0 4px 20px rgba(255,107,53,0.3);
+        }
+        .header-left { display: flex; align-items: center; gap: 0.8rem; }
+        .logo-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 10px;
+            padding: 6px 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .logo-card:hover { transform: translateY(-2px); }
+        .logo-card span { font-size: 0.6rem; font-weight: 700; color: var(--text); text-align: center; line-height: 1.1; display: block; }
+        .header-center { flex: 1; text-align: center; }
+        .header-center h1 {
+            font-size: 1.6rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+        .header-center p { font-size: 0.7rem; opacity: 0.9; }
+        .version-badge {
+            background: var(--good);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            margin-left: 0.4rem;
+        }
+        
+        /* === BANDEAU === */
+        .action-banner {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            padding: 0.4rem 1rem;
+            display: flex;
+            justify-content: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            border-bottom: 2px solid #f59e0b;
+        }
+        .action-btn {
+            padding: 0.3rem 0.7rem;
+            background: white;
+            border-radius: 15px;
+            color: var(--text);
+            font-weight: 600;
+            font-size: 0.7rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .action-btn:hover { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .action-btn.highlight { border: 2px solid #f59e0b; }
+        
+        /* === CONTENU === */
+        .main-content { max-width: 1400px; margin: 0 auto; padding: 1rem; }
+        
+        .panel-card {
+            background: white;
+            border-radius: 14px;
+            padding: 1rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1rem;
+        }
+        
+        .panel-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--accent);
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        /* === CONFIG === */
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 0.5rem;
+            margin-bottom: 0.8rem;
+        }
+        .config-item {
+            background: #f8fafc;
+            padding: 0.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        .config-item label {
+            display: block;
+            font-size: 0.6rem;
+            font-weight: 700;
+            color: var(--muted);
+            margin-bottom: 0.2rem;
+            text-transform: uppercase;
+        }
+        .config-item input, .config-item select {
+            width: 100%;
+            padding: 5px 8px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            font-family: inherit;
+        }
+        .config-item input:focus, .config-item select:focus {
+            border-color: var(--accent);
+            outline: none;
+        }
+        
+        .pressure-input-group {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+        .pressure-input-group input {
+            flex: 1;
+            text-align: center;
+            font-size: 1rem;
+            font-weight: 800;
+            padding: 6px 2px;
+        }
+        .btn-adj {
+            width: 30px;
+            height: 30px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--accent);
+        }
+        .btn-adj:hover { background: var(--accent); color: white; border-color: var(--accent); }
+        
+        .step-selector { display: flex; gap: 2px; margin-top: 4px; }
+        .step-btn {
+            flex: 1;
+            padding: 2px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+            font-size: 0.6rem;
+            font-weight: 700;
+            color: var(--muted);
+        }
+        .step-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+        
+        /* === FLUIDES === */
+        .fluids-section { margin-top: 0.5rem; }
+        .category-row {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-bottom: 0.3rem;
+            flex-wrap: wrap;
+        }
+        .category-label {
+            font-size: 0.55rem;
+            font-weight: 800;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            min-width: 80px;
+            text-align: center;
+        }
+        .cat-cfc { background: #6b7280; }
+        .cat-hcfc { background: #9ca3af; }
+        .cat-hfc { background: #3b82f6; }
+        .cat-hfo { background: #10b981; }
+        .cat-nat { background: #22c55e; }
+        .cat-blend { background: #8b5cf6; }
+        
+        .fluids-grid { display: flex; flex-wrap: wrap; gap: 3px; flex: 1; }
+        .fluid-chip {
+            padding: 3px 7px;
+            border-radius: 10px;
+            border: 2px solid;
+            font-weight: 700;
+            font-size: 0.6rem;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+        .fluid-chip.active { box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+        .fluid-chip:not(.active) { opacity: 0.3; }
+        .fluid-chip:hover { transform: scale(1.05); opacity: 1; }
+        .fluid-chip .status-dot { width: 5px; height: 5px; border-radius: 50%; }
+        .status-banned { background: #dc2626; }
+        .status-restrict { background: #f59e0b; }
+        .status-future { background: #fbbf24; }
+        .status-ok { background: #10b981; }
+        
+        .legend-bar {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            padding: 0.4rem;
+            background: #f8fafc;
+            border-radius: 6px;
+            margin-top: 0.4rem;
+            font-size: 0.55rem;
+        }
+        .legend-item { display: flex; align-items: center; gap: 3px; }
+        .legend-dot { width: 6px; height: 6px; border-radius: 50%; }
+        
+        /* === AFFICHAGE === */
+        .main-display {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.6rem;
+            margin: 0.6rem 0;
+        }
+        .display-box {
+            background: linear-gradient(135deg, #1e3a5f, #2d4a6f);
+            border-radius: 10px;
+            padding: 0.6rem;
+            text-align: center;
+            color: white;
+        }
+        .display-box.pressure { background: var(--gradient-orange); }
+        .display-box .label { font-size: 0.55rem; opacity: 0.8; text-transform: uppercase; }
+        .display-box .value { font-size: 1.8rem; font-weight: 900; }
+        .display-box .unit { font-size: 0.65rem; opacity: 0.9; }
+        
+        /* === REGLETTE === */
+        .reglette-container {
+            background: linear-gradient(180deg, #e8eef5, #dde5ed);
+            border-radius: 10px;
+            padding: 0.6rem;
+            margin: 0.6rem 0;
+        }
+        .pressure-scale {
+            height: 50px;
+            background: linear-gradient(90deg, #3b82f6 0%, #10b981 20%, #84cc16 40%, #eab308 60%, #f97316 80%, #ef4444 100%);
+            border-radius: 6px;
+            position: relative;
+        }
+        .scale-marks { position: absolute; top: 0; left: 0; right: 0; height: 100%; }
+        .scale-mark { position: absolute; top: 0; transform: translateX(-50%); }
+        .scale-mark.major .tick { width: 2px; height: 20px; background: white; }
+        .scale-mark.major .val { font-size: 0.6rem; font-weight: 800; color: white; margin-top: 1px; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+        .scale-mark.medium .tick { width: 1px; height: 14px; background: rgba(255,255,255,0.7); }
+        .scale-mark.minor .tick { width: 1px; height: 8px; background: rgba(255,255,255,0.4); }
+        
+        .cursor-line {
+            position: absolute;
+            width: 3px;
+            top: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, #dc2626, #991b1b);
+            border-radius: 2px;
+            box-shadow: 0 0 10px rgba(220,38,38,0.5);
+            cursor: ew-resize;
+            z-index: 50;
+        }
+        .cursor-handle {
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 16px;
+            height: 16px;
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            border-radius: 50%;
+            border: 2px solid white;
+            cursor: grab;
+        }
+        .cursor-value {
+            position: absolute;
+            bottom: -16px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #dc2626;
+            color: white;
+            padding: 1px 5px;
+            border-radius: 3px;
+            font-size: 0.55rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        
+        .fluid-lines { margin-top: 1.2rem; }
+        .fluid-line { display: flex; align-items: center; height: 28px; margin-bottom: 3px; }
+        .fluid-line-label {
+            width: 60px;
+            padding: 3px 5px;
+            border-radius: 4px;
+            color: white;
+            font-weight: 800;
+            font-size: 0.55rem;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .fluid-line-scale {
+            flex: 1;
+            height: 100%;
+            margin-left: 5px;
+            background: rgba(0,0,0,0.03);
+            border-radius: 3px;
+            position: relative;
+        }
+        .temp-marker { position: absolute; top: 0; height: 100%; transform: translateX(-50%); }
+        .temp-marker.major .temp-tick { width: 2px; height: 16px; }
+        .temp-marker.major .temp-val { font-size: 0.45rem; font-weight: 800; position: absolute; top: 0; text-shadow: 0 0 2px white; }
+        .temp-marker.medium .temp-tick { width: 1px; height: 10px; opacity: 0.5; }
+        
+        /* === RESULTATS === */
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 0.6rem;
+            margin-top: 0.6rem;
+        }
+        .result-card {
+            background: white;
+            border-radius: 8px;
+            padding: 0.6rem;
+            border-top: 4px solid;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .result-card:hover { transform: translateY(-2px); }
+        .result-card .fluid-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.2rem; }
+        .result-card .fluid-name { font-weight: 900; font-size: 0.9rem; }
+        .result-card .safety-badge {
+            font-size: 0.5rem;
+            padding: 1px 4px;
+            border-radius: 3px;
+            font-weight: 800;
+        }
+        .safety-A1 { background: #d1fae5; color: #065f46; }
+        .safety-A2L { background: #fef3c7; color: #92400e; }
+        .safety-A2 { background: #fed7aa; color: #9a3412; }
+        .safety-A3 { background: #fecaca; color: #991b1b; }
+        .safety-B1 { background: #dbeafe; color: #1e40af; }
+        .safety-B2L { background: #e0e7ff; color: #3730a3; }
+        
+        .result-card .temp-main { 
+            font-size: 1.6rem; 
+            font-weight: 900;
+            text-align: center;
+            margin: 0.2rem 0;
+        }
+        .result-card .temp-footer {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.3rem;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 0.4rem;
+        }
+        .result-card .val-box { background: #f8fafc; padding: 0.25rem; border-radius: 3px; text-align: center; }
+        .result-card .val-label { font-size: 0.45rem; color: var(--muted); display: block; text-transform: uppercase; font-weight: 700; }
+        .result-card .val-num { font-weight: 800; font-size: 0.7rem; }
+        .result-card .info-row { display: flex; justify-content: center; gap: 0.2rem; margin-top: 0.3rem; flex-wrap: wrap; }
+        .result-card .info-tag { font-size: 0.45rem; padding: 1px 4px; border-radius: 2px; font-weight: 700; }
+        .tag-gwp { background: #fee2e2; color: #991b1b; }
+        .tag-gwp.low { background: #d1fae5; color: #065f46; }
+        .tag-gwp.medium { background: #fef3c7; color: #92400e; }
+        .tag-status { background: #f1f5f9; color: #475569; }
+        
+        .result-card.error .temp-main { font-size: 0.7rem; color: var(--bad); }
+        
+        /* === FICHE DETAIL === */
+        .fluid-info-panel {
+            display: none;
+            background: white;
+            border-radius: 10px;
+            padding: 0.8rem;
+            margin-top: 0.8rem;
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--accent);
+        }
+        .fluid-info-panel.visible { display: block; }
+        .fluid-info-panel h3 { font-size: 1rem; margin-bottom: 0.6rem; }
+        .fluid-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 0.6rem;
+        }
+        .info-cell { background: #f8fafc; padding: 0.5rem; border-radius: 5px; }
+        .info-cell .label { font-size: 0.55rem; color: var(--muted); text-transform: uppercase; font-weight: 700; }
+        .info-cell .value { font-size: 0.85rem; font-weight: 800; margin-top: 0.1rem; }
+        
+        /* === FOOTER === */
+        footer {
+            background: var(--gradient-orange);
+            color: white;
+            padding: 0.8rem;
+            text-align: center;
+            font-size: 0.65rem;
+        }
+        footer a { color: white; }
+        
+        /* === MODAL === */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+        }
+        .modal.active { display: flex; align-items: center; justify-content: center; }
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            max-width: 550px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 1.2rem;
+            position: relative;
+        }
+        .modal-close {
+            position: absolute;
+            top: 0.6rem; right: 0.6rem;
+            width: 26px; height: 26px;
+            border-radius: 50%;
+            background: var(--gradient-orange);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .modal h2 { font-size: 1rem; margin-bottom: 0.8rem; color: var(--primary); }
+        .modal p { font-size: 0.75rem; margin-bottom: 0.5rem; }
+        
+        /* Classification tableau simplifié */
+        .class-simple {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 0.5rem;
+            font-size: 0.7rem;
+            margin-top: 0.8rem;
+        }
+        .class-simple dt { font-weight: 800; }
+        .class-simple dd { margin: 0; }
+        
+        .warning-box {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 6px;
+            padding: 0.6rem;
+            margin-top: 0.8rem;
+            font-size: 0.7rem;
+        }
+        
+        @media (max-width: 768px) {
+            .header-left { display: none; }
+            .config-grid { grid-template-columns: 1fr 1fr; }
+            .main-display { grid-template-columns: 1fr; }
+            .results-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+<script>/* (c) F. Henninot - inerWeb FRIGOLO - Tous droits reserves */
+document.addEventListener("contextmenu",function(e){e.preventDefault()});
+document.addEventListener("keydown",function(e){if((e.ctrlKey||e.metaKey)&&(e.key==="u"||e.key==="s"||e.key==="c")){e.preventDefault()}});
+document.addEventListener("selectstart",function(e){if(e.target.tagName\!=="INPUT"&&e.target.tagName\!=="TEXTAREA"){e.preventDefault()}});
+</script>
+</head>
+<body>
+
+<header class="main-header">
+    <div class="header-left">
+        <!-- Liens externes avec avertissement -->
+        <div class="logo-card" onclick="openExternal('https://equatio.org')"><span>CAMPUS<br>EQUATIO</span></div>
+        <div class="logo-card" onclick="openExternal('https://equatio.org/lycee-ufa-jacques-raynaud/')"><span>LPP<br>J. RAYNAUD</span></div>
+        <div class="logo-card"><span>INERWEB<br>EDU</span></div>
+    </div>
+    <div class="header-center">
+        <h1 class="font-display">REGLETTE FLUIDES <span class="version-badge">v6.6</span></h1>
+        <p>50 fluides • Tables interpolees • RGPD OK • F. Henninot</p>
+    </div>
+</header>
+
+<div class="action-banner">
+    <button class="action-btn" onclick="showModal('legalModal')">📋 Mentions</button>
+    <button class="action-btn" onclick="showModal('classModal')">🏷️ Securite</button>
+    <button class="action-btn" onclick="showModal('rgpdModal')">🔒 RGPD</button>
+    <button class="action-btn" onclick="resetPreferences()" title="Effacer les preferences locales">🗑️ Reset</button>
+    <button class="action-btn highlight" onclick="showModal('taxeModal')">💰 Taxe</button>
+</div>
+
+<main class="main-content">
+
+    <div class="panel-card">
+        <h2 class="panel-title">⚙️ CONFIGURATION</h2>
+        
+        <div class="config-grid">
+            <div class="config-item">
+                <label>Pression</label>
+                <div class="pressure-input-group">
+                    <button class="btn-adj" onclick="adjustP(-1)">−</button>
+                    <input type="number" id="pressureInput" value="10.00" step="0.1">
+                    <button class="btn-adj" onclick="adjustP(1)">+</button>
+                </div>
+                <div class="step-selector">
+                    <button class="step-btn" data-step="0.1" onclick="setStep(0.1)">0.1</button>
+                    <button class="step-btn active" data-step="0.5" onclick="setStep(0.5)">0.5</button>
+                    <button class="step-btn" data-step="1" onclick="setStep(1)">1</button>
+                    <button class="step-btn" data-step="5" onclick="setStep(5)">5</button>
+                </div>
+            </div>
+            <div class="config-item">
+                <label>Mode</label>
+                <select id="pressureMode" onchange="rebuildAll()">
+                    <option value="gauge">Bar relatif</option>
+                    <option value="absolute">Bar absolu</option>
+                </select>
+            </div>
+            <div class="config-item">
+                <label>Patm</label>
+                <input type="number" id="patmInput" value="1.013" step="0.001" onchange="rebuildAll()">
+            </div>
+            <div class="config-item">
+                <label>P min</label>
+                <input type="number" id="pMinInput" value="-1" step="1" onchange="rebuildAll()">
+            </div>
+            <div class="config-item">
+                <label>P max</label>
+                <input type="number" id="pMaxInput" value="30" step="1" onchange="rebuildAll()">
+            </div>
+            <div class="config-item">
+                <label>Graduations T</label>
+                <select id="showTempMarkers" onchange="rebuildAll()">
+                    <option value="all">Tous fluides</option>
+                    <option value="ref">Fluide ref. seul</option>
+                    <option value="none">Masquer</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="fluids-section">
+            <div class="category-row"><span class="category-label cat-cfc">🚫 CFC</span><div class="fluids-grid" id="gridCFC"></div></div>
+            <div class="category-row"><span class="category-label cat-hcfc">⚠️ HCFC</span><div class="fluids-grid" id="gridHCFC"></div></div>
+            <div class="category-row"><span class="category-label cat-hfc">🔵 HFC</span><div class="fluids-grid" id="gridHFC"></div></div>
+            <div class="category-row"><span class="category-label cat-blend">🟣 Melanges</span><div class="fluids-grid" id="gridBLEND"></div></div>
+            <div class="category-row"><span class="category-label cat-hfo">🌱 HFO</span><div class="fluids-grid" id="gridHFO"></div></div>
+            <div class="category-row"><span class="category-label cat-nat">🌍 Naturels</span><div class="fluids-grid" id="gridNAT"></div></div>
+        </div>
+        
+        <div class="legend-bar">
+            <div class="legend-item"><div class="legend-dot status-banned"></div> Interdit</div>
+            <div class="legend-item"><div class="legend-dot status-restrict"></div> En restriction</div>
+            <div class="legend-item"><div class="legend-dot status-future"></div> Restr. future</div>
+            <div class="legend-item"><div class="legend-dot status-ok"></div> Perenne</div>
+        </div>
+    </div>
+
+    <div class="panel-card">
+        <h2 class="panel-title">🎯 CONVERSION P / T</h2>
+        
+        <div class="main-display">
+            <div class="display-box pressure">
+                <div class="label">Pression</div>
+                <div class="value" id="displayP">10.00</div>
+                <div class="unit" id="displayPUnit">bar rel</div>
+            </div>
+            <div class="display-box">
+                <div class="label">Temperature (<span id="refFluidName">R134a</span>)</div>
+                <div class="value" id="displayT">--</div>
+                <div class="unit">°C</div>
+            </div>
+        </div>
+        
+        <div class="reglette-container">
+            <div class="pressure-scale" id="pressureScale">
+                <div class="scale-marks" id="scaleMarks"></div>
+                <div class="cursor-line" id="cursor">
+                    <div class="cursor-handle"></div>
+                    <div class="cursor-value" id="cursorValue">10.00</div>
+                </div>
+            </div>
+            <div class="fluid-lines" id="fluidLines"></div>
+        </div>
+        
+        <h3 style="font-size:0.8rem;color:var(--muted);margin:0.6rem 0 0.4rem;">Resultats</h3>
+        <div class="results-grid" id="resultsGrid"></div>
+        
+        <div class="fluid-info-panel" id="fluidInfoPanel">
+            <h3 id="infoFluidName">--</h3>
+            <div class="fluid-info-grid" id="fluidInfoGrid"></div>
+        </div>
+    </div>
+
+</main>
+
+<footer>
+    <strong>Outil pedagogique d'aide a la lecture P/T</strong> | Verification instrumentale obligatoire<br>
+    F. Henninot - LPP Jacques Raynaud - Campus Equatio | © 2025 | <a href="#" onclick="showModal('rgpdModal');return false;">Aucune collecte de donnees</a>
+</footer>
+
+<!-- MODALES -->
+<div id="legalModal" class="modal">
+    <div class="modal-content">
+        <button class="modal-close" onclick="hideModal('legalModal')">×</button>
+        <h2>📋 Mentions Legales</h2>
+        <p><strong>Auteur :</strong> F. Henninot - Enseignant Froid & Climatisation</p>
+        <p><strong>Etablissement :</strong> Lycee Professionnel Prive Jacques Raynaud, Marseille</p>
+        <p><strong>Partenaire :</strong> Campus Equatio</p>
+        
+        <h3 style="margin-top:1rem;font-size:0.9rem;">Sources des donnees</h3>
+        <p><strong>Tables P/T :</strong> Generees par interpolation lineaire sur donnees publiques de saturation (equations d'Antoine/Wagner). Tables indicatives, verifier avec instruments de mesure.</p>
+        <p><strong>Classifications securite :</strong> Designations conformes a la norme internationale (A1, A2L, A3, B1, B2L). Consulter la documentation officielle pour details.</p>
+        <p><strong>GWP :</strong> Valeurs indicatives issues de sources publiques variees. Non contractuel.</p>
+        
+        <div class="warning-box">
+            <strong>⚠️ Avertissement :</strong> Cet outil est fourni a titre pedagogique. Les valeurs affichees sont indicatives. Toute intervention sur installation frigorifique doit etre validee par verification instrumentale.
+        </div>
+    </div>
+</div>
+
+<div id="classModal" class="modal">
+    <div class="modal-content">
+        <button class="modal-close" onclick="hideModal('classModal')">×</button>
+        <h2>🏷️ Classifications de Securite</h2>
+        
+        <p>Les fluides frigorigenes sont classes selon deux criteres : <strong>toxicite</strong> (lettre) et <strong>inflammabilite</strong> (chiffre).</p>
+        
+        <h3 style="margin-top:1rem;font-size:0.85rem;">Toxicite (Lettre)</h3>
+        <dl class="class-simple">
+            <dt style="color:#10b981">A</dt><dd>Faible toxicite - Limite d'exposition elevee</dd>
+            <dt style="color:#3b82f6">B</dt><dd>Toxicite plus elevee - Precautions specifiques requises</dd>
+        </dl>
+        
+        <h3 style="margin-top:1rem;font-size:0.85rem;">Inflammabilite (Chiffre)</h3>
+        <dl class="class-simple">
+            <dt style="background:#d1fae5;padding:2px 6px;border-radius:3px;">1</dt><dd>Non inflammable dans conditions normales</dd>
+            <dt style="background:#fef3c7;padding:2px 6px;border-radius:3px;">2L</dt><dd>Legerement inflammable, vitesse de propagation faible</dd>
+            <dt style="background:#fed7aa;padding:2px 6px;border-radius:3px;">2</dt><dd>Inflammable</dd>
+            <dt style="background:#fecaca;padding:2px 6px;border-radius:3px;">3</dt><dd>Fortement inflammable (hydrocarbures)</dd>
+        </dl>
+        
+        <div class="warning-box">
+            <strong>⚠️ Important :</strong> Les fluides classes 2L, 2, 3 ou B necessitent des precautions particulieres : ventilation, detection de fuites, formation specifique. Consulter la reglementation en vigueur.
+        </div>
+    </div>
+</div>
+
+<div id="rgpdModal" class="modal">
+    <div class="modal-content">
+        <button class="modal-close" onclick="hideModal('rgpdModal')">×</button>
+        <h2>🔒 Protection des Donnees (RGPD)</h2>
+        
+        <p><strong>Par defaut, cette application ne collecte aucune donnee personnelle.</strong></p>
+        
+        <h3 style="font-size:0.8rem;margin-top:0.8rem;color:var(--accent);">Ce qui est stocke</h3>
+        <ul style="font-size:0.7rem;margin:0.4rem 0;padding-left:1.2rem;">
+            <li>Fluides actifs selectionnes</li>
+            <li>Plage de pression (Pmin/Pmax)</li>
+            <li>Mode (relatif/absolu)</li>
+        </ul>
+        
+        <h3 style="font-size:0.8rem;margin-top:0.6rem;color:var(--accent);">Ou ?</h3>
+        <p style="font-size:0.7rem;">Dans votre navigateur uniquement (localStorage). Ces donnees ne quittent jamais votre appareil.</p>
+        
+        <h3 style="font-size:0.8rem;margin-top:0.6rem;color:var(--accent);">Duree</h3>
+        <p style="font-size:0.7rem;">Jusqu'a suppression manuelle par vous.</p>
+        
+        <h3 style="font-size:0.8rem;margin-top:0.6rem;color:var(--accent);">Comment effacer ?</h3>
+        <p style="font-size:0.7rem;">Cliquez sur le bouton ci-dessous ou utilisez le bouton 🗑️ Reset dans la barre d'action.</p>
+        
+        <button onclick="resetPreferences();hideModal('rgpdModal');" style="margin-top:0.8rem;padding:0.5rem 1rem;background:var(--bad);color:white;border:none;border-radius:6px;cursor:pointer;font-weight:700;">🗑️ Effacer toutes mes preferences</button>
+        
+        <div style="margin-top:0.8rem;padding:0.5rem;background:#fef3c7;border:1px solid #f59e0b;border-radius:6px;font-size:0.65rem;">
+            <strong>⚠️ Ordinateur partage :</strong> Utilisez 🗑️ Reset avant de quitter si vous ne souhaitez pas que vos preferences soient visibles par d'autres utilisateurs.
+        </div>
+        
+        <div style="margin-top:0.6rem;padding:0.5rem;background:#f1f5f9;border-radius:6px;font-size:0.65rem;">
+            <strong>Garanties techniques :</strong><br>
+            • Aucun appel reseau (CSP: connect-src 'none')<br>
+            • Aucun tracking / analytics<br>
+            • Aucune police externe (polices systeme)<br>
+            • Fonctionne 100% hors-ligne
+        </div>
+        
+        <p style="font-size:0.7rem;margin-top:0.8rem;"><strong>Contact :</strong> <a href="mailto:secretajr@formationmetier.fr">secretajr@formationmetier.fr</a></p>
+    </div>
+</div>
+
+<div id="taxeModal" class="modal">
+    <div class="modal-content">
+        <button class="modal-close" onclick="hideModal('taxeModal')">×</button>
+        <h2 style="color:#f59e0b;">💰 Taxe d'Apprentissage</h2>
+        <p style="text-align:center;font-size:1rem;font-weight:800;">LPP JACQUES RAYNAUD</p>
+        <p style="text-align:center;font-size:0.8rem;">59 Trav. Charles Susini - 13013 Marseille</p>
+        <p style="margin-top:0.8rem;"><strong>Contact :</strong> <a href="mailto:taxeapprentissage@formationmetier.fr">taxeapprentissage@formationmetier.fr</a></p>
+        <p style="font-size:0.75rem;margin-top:0.5rem;">Soutenez la formation des techniciens froid et climatisation de demain !</p>
+    </div>
+</div>
+
+<script>
+"use strict";
+// ================================================================
+// BASE DE DONNÉES 50 FLUIDES
+// Tables générées par interpolation - Sources publiques
+// GWP : Valeurs indicatives (sources variées)
+// ================================================================
+
+const FLUIDS = {
+    // === CFC (Interdits) ===
+    'R11':   { name:'R11',   color:'#6b7280', cat:'CFC', gwp:4660,  glide:0, safety:'A1', status:'banned', composition:'CCl3F', desc:'Centrifuge historique', table:[{t:-20,p:0.201},{t:0,p:0.399},{t:20,p:0.724},{t:40,p:1.223},{t:60,p:1.956}] },
+    'R12':   { name:'R12',   color:'#9ca3af', cat:'CFC', gwp:10200, glide:0, safety:'A1', status:'banned', composition:'CCl2F2', desc:'Frigo/auto historique', table:[{t:-40,p:0.642},{t:-20,p:1.509},{t:0,p:3.086},{t:20,p:5.673},{t:40,p:9.607}] },
+    'R13':   { name:'R13',   color:'#78716c', cat:'CFC', gwp:14000, glide:0, safety:'A1', status:'banned', composition:'CClF3', desc:'Tres basse temp', table:[{t:-80,p:1.51},{t:-60,p:3.59},{t:-40,p:7.44},{t:-20,p:14.0}] },
+    'R113':  { name:'R113',  color:'#a1a1aa', cat:'CFC', gwp:5820,  glide:0, safety:'A1', status:'banned', composition:'C2Cl3F3', desc:'Solvant', table:[{t:20,p:0.372},{t:40,p:0.628},{t:60,p:1.004},{t:80,p:1.530}] },
+    'R114':  { name:'R114',  color:'#a8a29e', cat:'CFC', gwp:9180,  glide:0, safety:'A1', status:'banned', composition:'C2Cl2F4', desc:'Cascade', table:[{t:-20,p:0.583},{t:0,p:1.130},{t:20,p:2.010},{t:40,p:3.330}] },
+    'R115':  { name:'R115',  color:'#d6d3d1', cat:'CFC', gwp:7670,  glide:0, safety:'A1', status:'banned', composition:'C2ClF5', desc:'Composant R502', table:[{t:-40,p:1.32},{t:-20,p:2.69},{t:0,p:4.94},{t:20,p:8.35}] },
+    'R500':  { name:'R500',  color:'#71717a', cat:'CFC', gwp:7870,  glide:0.2, safety:'A1', status:'banned', composition:'R12/R152a', desc:'Azeotrope', table:[{t:-40,p:0.76},{t:-20,p:1.72},{t:0,p:3.45},{t:20,p:6.27}] },
+    'R502':  { name:'R502',  color:'#52525b', cat:'CFC', gwp:4520,  glide:0.3, safety:'A1', status:'banned', composition:'R22/R115', desc:'Froid negatif', table:[{t:-40,p:1.080},{t:-20,p:2.367},{t:0,p:4.566},{t:20,p:7.999}] },
+
+    // === HCFC (Interdits) ===
+    'R22':   { name:'R22',   color:'#22c55e', cat:'HCFC', gwp:1760, glide:0, safety:'A1', status:'banned', composition:'CHClF2', desc:'Historique universel', table:[{t:-40,p:1.052},{t:-30,p:1.639},{t:-20,p:2.453},{t:-10,p:3.548},{t:0,p:4.980},{t:10,p:6.809},{t:20,p:9.100},{t:30,p:11.919},{t:40,p:15.336},{t:50,p:19.427}] },
+    'R123':  { name:'R123',  color:'#16a34a', cat:'HCFC', gwp:79,   glide:0, safety:'B1', status:'banned', composition:'CHCl2CF3', desc:'Centrifuge', table:[{t:0,p:0.327},{t:20,p:0.659},{t:40,p:1.219},{t:60,p:2.101}] },
+    'R124':  { name:'R124',  color:'#15803d', cat:'HCFC', gwp:527,  glide:0, safety:'A1', status:'banned', composition:'CHClFCF3', desc:'Chillers', table:[{t:-20,p:0.697},{t:0,p:1.426},{t:20,p:2.652},{t:40,p:4.555}] },
+    'R141b': { name:'R141b', color:'#166534', cat:'HCFC', gwp:782,  glide:0, safety:'A2', status:'banned', composition:'CH3CCl2F', desc:'Moussage', table:[{t:20,p:0.658},{t:40,p:1.160},{t:60,p:1.920}] },
+    'R142b': { name:'R142b', color:'#14532d', cat:'HCFC', gwp:1980, glide:0, safety:'A2', status:'banned', composition:'CH3CClF2', desc:'Mousses', table:[{t:-20,p:0.867},{t:0,p:1.699},{t:20,p:3.055},{t:40,p:5.129}] },
+
+    // === HFC Purs ===
+    'R23':   { name:'R23',   color:'#60a5fa', cat:'HFC', gwp:12400, glide:0, safety:'A1', status:'restrict', composition:'CHF3', desc:'Cascade', table:[{t:-80,p:1.75},{t:-60,p:5.26},{t:-40,p:12.80},{t:-20,p:27.00}] },
+    'R32':   { name:'R32',   color:'#dc2626', cat:'HFC', gwp:677,   glide:0, safety:'A2L', status:'future', composition:'CH2F2', desc:'PAC nouvelle gen', table:[{t:-40,p:1.774},{t:-30,p:2.734},{t:-20,p:4.058},{t:-10,p:5.826},{t:0,p:8.131},{t:10,p:11.069},{t:20,p:14.746},{t:30,p:19.275},{t:40,p:24.783},{t:50,p:31.412}] },
+    'R125':  { name:'R125',  color:'#2563eb', cat:'HFC', gwp:3170,  glide:0, safety:'A1', status:'restrict', composition:'CHF2CF3', desc:'Composant', table:[{t:-40,p:1.62},{t:-20,p:3.95},{t:0,p:8.05},{t:20,p:14.35}] },
+    'R134a': { name:'R134a', color:'#3b82f6', cat:'HFC', gwp:1300,  glide:0, safety:'A1', status:'future', composition:'CH2FCF3', desc:'Standard actuel', table:[{t:-40,p:0.512},{t:-30,p:0.844},{t:-20,p:1.327},{t:-10,p:2.006},{t:0,p:2.928},{t:10,p:4.146},{t:20,p:5.717},{t:30,p:7.702},{t:40,p:10.166},{t:50,p:13.179}] },
+    'R143a': { name:'R143a', color:'#1d4ed8', cat:'HFC', gwp:4800,  glide:0, safety:'A2L', status:'restrict', composition:'CH3CF3', desc:'Composant', table:[{t:-40,p:1.47},{t:-20,p:3.51},{t:0,p:7.08},{t:20,p:12.50}] },
+    'R152a': { name:'R152a', color:'#7c3aed', cat:'HFC', gwp:138,   glide:0, safety:'A2', status:'ok', composition:'CH3CHF2', desc:'Aerosols', table:[{t:-40,p:0.424},{t:-20,p:1.115},{t:0,p:2.492},{t:20,p:4.912},{t:40,p:8.700}] },
+    'R227ea':{ name:'R227ea',color:'#6366f1', cat:'HFC', gwp:3350,  glide:0, safety:'A1', status:'restrict', composition:'CF3CHFCF3', desc:'Protection incendie', table:[{t:-20,p:0.854},{t:0,p:1.796},{t:20,p:3.424},{t:40,p:5.976}] },
+    'R236fa':{ name:'R236fa',color:'#4f46e5', cat:'HFC', gwp:8060,  glide:0, safety:'A1', status:'restrict', composition:'CF3CH2CF3', desc:'ORC', table:[{t:0,p:1.00},{t:20,p:1.91},{t:40,p:3.39},{t:60,p:5.62}] },
+    'R245fa':{ name:'R245fa',color:'#4338ca', cat:'HFC', gwp:858,   glide:0, safety:'B1', status:'future', composition:'CHF2CH2CF3', desc:'ORC/PAC', table:[{t:0,p:0.490},{t:20,p:0.999},{t:40,p:1.853},{t:60,p:3.183}] },
+
+    // === Melanges HFC ===
+    'R404A': { name:'R404A', color:'#f97316', cat:'BLEND', gwp:3943, glide:0.5, safety:'A1', status:'restrict', composition:'R125/R143a/R134a', desc:'Froid negatif EN RESTRICTION', table:[{t:-40,p:1.353},{t:-30,p:2.078},{t:-20,p:3.071},{t:-10,p:4.391},{t:0,p:6.102},{t:10,p:8.271},{t:20,p:10.971},{t:30,p:14.284},{t:40,p:18.295},{t:50,p:23.109}] },
+    'R407A': { name:'R407A', color:'#ea580c', cat:'BLEND', gwp:1923, glide:5.8, safety:'A1', status:'future', composition:'R32/R125/R134a', desc:'Retrofit R22', table:[{t:-40,p:1.311},{t:-20,p:2.999},{t:0,p:5.974},{t:20,p:10.740},{t:40,p:17.870}] },
+    'R407C': { name:'R407C', color:'#a855f7', cat:'BLEND', gwp:1624, glide:6.1, safety:'A1', status:'future', composition:'R32/R125/R134a', desc:'Retrofit R22', table:[{t:-40,p:1.203},{t:-30,p:1.871},{t:-20,p:2.799},{t:-10,p:4.047},{t:0,p:5.679},{t:10,p:7.764},{t:20,p:10.376},{t:30,p:13.590},{t:40,p:17.489},{t:50,p:22.159}] },
+    'R407F': { name:'R407F', color:'#9333ea', cat:'BLEND', gwp:1674, glide:6.5, safety:'A1', status:'future', composition:'R32/R125/R134a', desc:'Retrofit R404A', table:[{t:-40,p:1.35},{t:-20,p:3.15},{t:0,p:6.35},{t:20,p:11.20},{t:40,p:18.00}] },
+    'R410A': { name:'R410A', color:'#ec4899', cat:'BLEND', gwp:1924, glide:0.1, safety:'A1', status:'future', composition:'R32/R125', desc:'PAC/Clim RESTRICTION FUTURE', table:[{t:-40,p:1.755},{t:-30,p:2.703},{t:-20,p:4.007},{t:-10,p:5.746},{t:0,p:8.007},{t:10,p:10.883},{t:20,p:14.475},{t:30,p:18.891},{t:40,p:24.256},{t:50,p:30.711}] },
+    'R417A': { name:'R417A', color:'#db2777', cat:'BLEND', gwp:2127, glide:4.3, safety:'A1', status:'future', composition:'R125/R134a/R600', desc:'Retrofit R22', table:[{t:-20,p:2.25},{t:0,p:4.55},{t:20,p:8.30},{t:40,p:13.80}] },
+    'R422D': { name:'R422D', color:'#be185d', cat:'BLEND', gwp:2473, glide:3.5, safety:'A1', status:'restrict', composition:'R125/R134a/R600a', desc:'Retrofit R22', table:[{t:-20,p:2.40},{t:0,p:4.80},{t:20,p:8.70},{t:40,p:14.40}] },
+    'R448A': { name:'R448A', color:'#0891b2', cat:'BLEND', gwp:1273, glide:5.5, safety:'A1', status:'future', composition:'R32/R125/R1234yf/R134a/R1234ze', desc:'Rempl. R404A', table:[{t:-40,p:1.240},{t:-30,p:1.910},{t:-20,p:2.830},{t:-10,p:4.050},{t:0,p:5.630},{t:10,p:7.620},{t:20,p:10.10},{t:30,p:13.12},{t:40,p:16.78}] },
+    'R449A': { name:'R449A', color:'#0d9488', cat:'BLEND', gwp:1282, glide:5.3, safety:'A1', status:'future', composition:'R32/R125/R1234yf/R134a', desc:'Rempl. R404A', table:[{t:-40,p:1.252},{t:-30,p:1.928},{t:-20,p:2.855},{t:-10,p:4.083},{t:0,p:5.674},{t:10,p:7.688},{t:20,p:10.19},{t:30,p:13.25},{t:40,p:16.94}] },
+    'R450A': { name:'R450A', color:'#14b8a6', cat:'BLEND', gwp:547,  glide:0.6, safety:'A1', status:'ok', composition:'R134a/R1234ze', desc:'Rempl. R134a', table:[{t:-20,p:1.08},{t:0,p:2.38},{t:20,p:4.68},{t:40,p:8.35}] },
+    'R452A': { name:'R452A', color:'#059669', cat:'BLEND', gwp:1945, glide:1.2, safety:'A1', status:'future', composition:'R32/R125/R1234yf', desc:'Rempl. R404A', table:[{t:-40,p:1.530},{t:-20,p:3.380},{t:0,p:6.540},{t:20,p:11.50},{t:40,p:18.80}] },
+    'R453A': { name:'R453A', color:'#047857', cat:'BLEND', gwp:1765, glide:5.0, safety:'A1', status:'future', composition:'R32/R125/R134a/R227ea/R600/R601a', desc:'Retrofit R22', table:[{t:-20,p:2.15},{t:0,p:4.35},{t:20,p:7.95},{t:40,p:13.20}] },
+    'R454B': { name:'R454B', color:'#f43f5e', cat:'BLEND', gwp:467,  glide:1.3, safety:'A2L', status:'ok', composition:'R32/R1234yf', desc:'Rempl. R410A', table:[{t:-40,p:1.50},{t:-20,p:3.60},{t:0,p:7.30},{t:20,p:13.20},{t:40,p:22.00}] },
+    'R454C': { name:'R454C', color:'#e11d48', cat:'BLEND', gwp:148,  glide:5.8, safety:'A2L', status:'ok', composition:'R32/R1234yf', desc:'Bas GWP', table:[{t:-40,p:1.05},{t:-20,p:2.55},{t:0,p:5.35},{t:20,p:9.85},{t:40,p:16.50}] },
+    'R507A': { name:'R507A', color:'#c2410c', cat:'BLEND', gwp:3985, glide:0,   safety:'A1', status:'restrict', composition:'R125/R143a', desc:'Azeotrope froid neg', table:[{t:-40,p:1.393},{t:-30,p:2.117},{t:-20,p:3.097},{t:-10,p:4.386},{t:0,p:6.041},{t:10,p:8.125},{t:20,p:10.700},{t:30,p:13.837},{t:40,p:17.611}] },
+    'R513A': { name:'R513A', color:'#06b6d4', cat:'BLEND', gwp:573,  glide:0,   safety:'A1', status:'ok', composition:'R1234yf/R134a', desc:'Rempl. R134a', table:[{t:-40,p:0.458},{t:-20,p:1.150},{t:0,p:2.475},{t:20,p:4.768},{t:40,p:8.430}] },
+
+    // === HFO ===
+    'R1234yf':{ name:'R1234yf',color:'#f43f5e', cat:'HFO', gwp:1, glide:0, safety:'A2L', status:'ok', composition:'CF3CF=CH2', desc:'Auto rempl. R134a', table:[{t:-40,p:0.565},{t:-30,p:0.900},{t:-20,p:1.377},{t:-10,p:2.034},{t:0,p:2.914},{t:10,p:4.062},{t:20,p:5.527},{t:30,p:7.362},{t:40,p:9.622},{t:50,p:12.367}] },
+    'R1234ze':{ name:'R1234ze',color:'#14b8a6', cat:'HFO', gwp:1, glide:0, safety:'A2L', status:'ok', composition:'CF3CH=CHF', desc:'Chillers', table:[{t:-40,p:0.367},{t:-30,p:0.611},{t:-20,p:0.969},{t:-10,p:1.474},{t:0,p:2.166},{t:10,p:3.084},{t:20,p:4.273},{t:30,p:5.783},{t:40,p:7.665},{t:50,p:9.972}] },
+    'R1233zd':{ name:'R1233zd',color:'#10b981', cat:'HFO', gwp:1, glide:0, safety:'A1', status:'ok', composition:'CF3CH=CHCl', desc:'Centrifuges', table:[{t:0,p:0.412},{t:20,p:0.843},{t:40,p:1.578},{t:60,p:2.738}] },
+    'R1336mzz':{ name:'R1336mzz',color:'#22c55e', cat:'HFO', gwp:2, glide:0, safety:'A1', status:'ok', composition:'CF3CH=CHCF3', desc:'ORC', table:[{t:20,p:0.418},{t:40,p:0.810},{t:60,p:1.460},{t:80,p:2.460}] },
+
+    // === Naturels ===
+    'R290':  { name:'R290',  color:'#ef4444', cat:'NAT', gwp:3, glide:0, safety:'A3', status:'ok', composition:'Propane', desc:'INFLAMMABLE', table:[{t:-40,p:1.111},{t:-30,p:1.678},{t:-20,p:2.445},{t:-10,p:3.453},{t:0,p:4.745},{t:10,p:6.366},{t:20,p:8.365},{t:30,p:10.790},{t:40,p:13.694},{t:50,p:17.133}] },
+    'R600':  { name:'R600',  color:'#dc2626', cat:'NAT', gwp:4, glide:0, safety:'A3', status:'ok', composition:'Butane', desc:'INFLAMMABLE', table:[{t:-20,p:0.437},{t:0,p:1.033},{t:20,p:2.078},{t:40,p:3.796},{t:60,p:6.423}] },
+    'R600a': { name:'R600a', color:'#b91c1c', cat:'NAT', gwp:3, glide:0, safety:'A3', status:'ok', composition:'Isobutane', desc:'INFLAMMABLE', table:[{t:-40,p:0.287},{t:-30,p:0.466},{t:-20,p:0.725},{t:-10,p:1.085},{t:0,p:1.570},{t:10,p:2.206},{t:20,p:3.022},{t:30,p:4.047},{t:40,p:5.312}] },
+    'R717':  { name:'R717',  color:'#16a34a', cat:'NAT', gwp:0, glide:0, safety:'B2L', status:'ok', composition:'NH3', desc:'TOXIQUE', table:[{t:-40,p:0.716},{t:-30,p:1.194},{t:-20,p:1.900},{t:-10,p:2.906},{t:0,p:4.292},{t:10,p:6.148},{t:20,p:8.570},{t:30,p:11.665},{t:40,p:15.545},{t:50,p:20.330}] },
+    'R744':  { name:'R744',  color:'#6b7280', cat:'NAT', gwp:1, glide:0, safety:'A1', status:'ok', composition:'CO2', desc:'Transcritique', isCO2:true, table:[{t:-56,p:5.306},{t:-46,p:8.002},{t:-36,p:11.607},{t:-26,p:16.293},{t:-16,p:22.237},{t:-6,p:29.632},{t:4,p:38.688},{t:14,p:49.658},{t:24,p:62.877}] },
+    'R718':  { name:'R718',  color:'#0ea5e9', cat:'NAT', gwp:0, glide:0, safety:'A1', status:'ok', composition:'H2O', desc:'Centrifuges', table:[{t:5,p:0.00872},{t:20,p:0.0234},{t:40,p:0.0738},{t:60,p:0.199},{t:80,p:0.474},{t:100,p:1.013}] }
+};
+
+// ================================================================
+// APPLICATION - OPTIMISÉE PERFORMANCE
+// ================================================================
+
+const APP = {
+    activeFluids: ['R134a', 'R410A', 'R404A', 'R32'],
+    currentP: 10.00,
+    pMin: -1,
+    pMax: 30,
+    patm: 1.013,
+    mode: 'gauge',
+    step: 0.5,
+    refFluid: 'R134a',
+    isDragging: false,
+    rafId: null
+};
+
+// Helpers
+const toAbs = (p) => APP.mode === 'gauge' ? p + APP.patm : p;
+const toDisplay = (pAbs) => APP.mode === 'gauge' ? pAbs - APP.patm : pAbs;
+const pToPercent = (p) => ((p - APP.pMin) / (APP.pMax - APP.pMin)) * 100;
+const percentToP = (pct) => APP.pMin + (pct / 100) * (APP.pMax - APP.pMin);
+
+function interpolate(table, inKey, outKey, val) {
+    for (let i = 0; i < table.length - 1; i++) {
+        if (val >= table[i][inKey] && val <= table[i+1][inKey]) {
+            const r = (val - table[i][inKey]) / (table[i+1][inKey] - table[i][inKey]);
+            return { ok: true, value: table[i][outKey] + r * (table[i+1][outKey] - table[i][outKey]) };
+        }
+    }
+    return { ok: false };
+}
+
+function T2P(key, t) {
+    const f = FLUIDS[key]; if (!f) return { ok: false };
+    const tbl = f.table;
+    if (t < tbl[0].t || t > tbl[tbl.length-1].t) return { ok: false };
+    const r = interpolate(tbl, 't', 'p', t);
+    return r.ok ? { ok: true, pAbs: r.value, pDisplay: toDisplay(r.value) } : r;
+}
+
+function P2T(key, pDisp) {
+    const f = FLUIDS[key]; if (!f) return { ok: false, error: 'Inconnu' };
+    const pAbs = toAbs(pDisp), tbl = f.table;
+    if (f.isCO2 && pAbs > 73.8) return { ok: false, error: 'Transcritique' };
+    if (pAbs < tbl[0].p) return { ok: false, error: 'P basse' };
+    if (pAbs > tbl[tbl.length-1].p) return { ok: false, error: 'P haute' };
+    const r = interpolate(tbl, 'p', 't', pAbs);
+    if (!r.ok) return { ok: false, error: 'Hors plage' };
+    const g = f.glide || 0;
+    return { ok: true, temp: r.value, tBubble: r.value - g/2, tDew: r.value + g/2, glide: g };
+}
+
+function snapToGrid(p) {
+    const range = APP.pMax - APP.pMin;
+    const snapStep = range > 40 ? 1 : range > 20 ? 0.5 : range > 10 ? 0.2 : range > 5 ? 0.1 : 0.05;
+    return Math.round(p / snapStep) * snapStep;
+}
+
+// ================================================================
+// INIT
+// ================================================================
+function init() {
+    renderFluidsGrids();
+    setupInputs();
+    setupCursor();
+    rebuildAll();
+    loadPreferences();
+}
+
+function renderFluidsGrids() {
+    const grids = { CFC:'gridCFC', HCFC:'gridHCFC', HFC:'gridHFC', BLEND:'gridBLEND', HFO:'gridHFO', NAT:'gridNAT' };
+    for (const cat in grids) { document.getElementById(grids[cat]).innerHTML = ''; }
+    
+    for (const k in FLUIDS) {
+        const f = FLUIDS[k];
+        const grid = document.getElementById(grids[f.cat]);
+        if (!grid) continue;
+        
+        const active = APP.activeFluids.includes(k);
+        const chip = document.createElement('div');
+        chip.className = 'fluid-chip' + (active ? ' active' : '');
+        chip.style.background = f.color;
+        chip.style.borderColor = f.color;
+        chip.style.color = 'white';
+        chip.innerHTML = `<span class="status-dot status-${f.status}"></span>${f.name}`;
+        chip.onclick = () => toggleFluid(k);
+        grid.appendChild(chip);
+    }
+}
+
+function toggleFluid(k) {
+    const i = APP.activeFluids.indexOf(k);
+    if (i === -1) APP.activeFluids.push(k);
+    else if (APP.activeFluids.length > 1) APP.activeFluids.splice(i, 1);
+    
+    if (!APP.activeFluids.includes(APP.refFluid)) APP.refFluid = APP.activeFluids[0];
+    
+    renderFluidsGrids();
+    rebuildAll();
+    savePreferences();
+}
+
+function setupInputs() {
+    document.getElementById('pressureInput').addEventListener('input', function() {
+        APP.currentP = parseFloat(this.value) || 0;
+        updateCursorAndResults();
+    });
+}
+
+function adjustP(direction) {
+    APP.currentP = Math.round((APP.currentP + direction * APP.step) * 100) / 100;
+    APP.currentP = Math.max(APP.pMin, Math.min(APP.pMax, APP.currentP));
+    document.getElementById('pressureInput').value = APP.currentP.toFixed(2);
+    updateCursorAndResults();
+}
+
+function setStep(step) {
+    APP.step = step;
+    document.querySelectorAll('.step-btn').forEach(btn => {
+        btn.classList.toggle('active', parseFloat(btn.dataset.step) === step);
+    });
+}
+
+// ================================================================
+// SEPARATION REBUILD / UPDATE (PERFORMANCE)
+// ================================================================
+
+// Rebuild complet (changement pMin/pMax/mode/patm/fluids)
+function rebuildAll() {
+    APP.mode = document.getElementById('pressureMode').value;
+    APP.patm = parseFloat(document.getElementById('patmInput').value) || 1.013;
+    APP.pMin = parseFloat(document.getElementById('pMinInput').value) || -1;
+    APP.pMax = parseFloat(document.getElementById('pMaxInput').value) || 30;
+    
+    renderScaleMarks();
+    renderFluidLines();
+    updateCursorAndResults();
+}
+
+// Update leger (drag curseur)
+function updateCursorAndResults() {
+    updateCursor();
+    updateDisplays();
+    updateResults();
+}
+
+function renderScaleMarks() {
+    const c = document.getElementById('scaleMarks');
+    c.innerHTML = '';
+    const range = APP.pMax - APP.pMin;
+    
+    let config;
+    if (range > 60) config = { major: 20, medium: 10, minor: 5 };
+    else if (range > 40) config = { major: 10, medium: 5, minor: 2 };
+    else if (range > 20) config = { major: 5, medium: 2, minor: 1 };
+    else if (range > 10) config = { major: 2, medium: 1, minor: 0.5 };
+    else if (range > 5) config = { major: 1, medium: 0.5, minor: 0.2 };
+    else config = { major: 0.5, medium: 0.2, minor: 0.1 };
+    
+    for (let p = Math.ceil(APP.pMin / config.minor) * config.minor; p <= APP.pMax; p = Math.round((p + config.minor) * 1000) / 1000) {
+        const pct = pToPercent(p);
+        if (pct < 0 || pct > 100) continue;
+        const pRound = Math.round(p * 1000) / 1000;
+        let type = 'minor';
+        if (Math.abs(pRound % config.major) < 0.001) type = 'major';
+        else if (Math.abs(pRound % config.medium) < 0.001) type = 'medium';
+        
+        const m = document.createElement('div');
+        m.className = 'scale-mark ' + type;
+        m.style.left = pct + '%';
+        if (type === 'major') {
+            const displayVal = (Math.abs(pRound % 1) < 0.001) ? Math.round(pRound) : pRound.toFixed(1);
+            m.innerHTML = `<div class="tick"></div><div class="val">${displayVal}</div>`;
+        } else {
+            m.innerHTML = '<div class="tick"></div>';
+        }
+        c.appendChild(m);
+    }
+}
+
+function renderFluidLines() {
+    const c = document.getElementById('fluidLines');
+    c.innerHTML = '';
+    const showMode = document.getElementById('showTempMarkers').value;
+    
+    APP.activeFluids.forEach(k => {
+        const f = FLUIDS[k];
+        const row = document.createElement('div');
+        row.className = 'fluid-line';
+        row.innerHTML = `<div class="fluid-line-label" style="background:${f.color}">${f.name}</div><div class="fluid-line-scale" id="fscale-${k}"></div>`;
+        c.appendChild(row);
+        
+        // Afficher graduations selon l'option
+        if (showMode === 'all' || (showMode === 'ref' && k === APP.refFluid)) {
+            renderTempMarkers(k, f);
+        }
+    });
+}
+
+function renderTempMarkers(k, f) {
+    const s = document.getElementById('fscale-' + k);
+    if (!s) return;
+    const tbl = f.table;
+    const pMinAbs = toAbs(APP.pMin), pMaxAbs = toAbs(APP.pMax);
+    let tVisibleMin = null, tVisibleMax = null;
+    for (let i = 0; i < tbl.length; i++) {
+        if (tbl[i].p >= pMinAbs && tVisibleMin === null) tVisibleMin = tbl[i].t;
+        if (tbl[i].p <= pMaxAbs) tVisibleMax = tbl[i].t;
+    }
+    const tRange = Math.abs((tVisibleMax||0) - (tVisibleMin||0));
+    let config;
+    if (tRange > 80) config = { major: 20, medium: 10 };
+    else if (tRange > 50) config = { major: 10, medium: 5 };
+    else if (tRange > 30) config = { major: 10, medium: 5 };
+    else if (tRange > 15) config = { major: 5, medium: 2 };
+    else config = { major: 2, medium: 1 };
+    
+    const minStep = config.medium;
+    for (let t = Math.ceil(tbl[0].t / minStep) * minStep; t <= tbl[tbl.length-1].t; t += minStep) {
+        const r = T2P(k, t);
+        if (!r.ok || r.pDisplay < APP.pMin || r.pDisplay > APP.pMax) continue;
+        const pct = pToPercent(r.pDisplay);
+        const type = (t % config.major === 0) ? 'major' : 'medium';
+        const m = document.createElement('div');
+        m.className = 'temp-marker ' + type;
+        m.style.left = pct + '%';
+        if (type === 'major') {
+            m.innerHTML = `<div class="temp-val" style="color:${f.color}">${t>=0?'+':''}${t}</div><div class="temp-tick" style="background:${f.color}"></div>`;
+        } else {
+            m.innerHTML = `<div class="temp-tick" style="background:${f.color};opacity:0.4"></div>`;
+        }
+        s.appendChild(m);
+    }
+}
+
+// ================================================================
+// CURSEUR avec requestAnimationFrame
+// ================================================================
+function setupCursor() {
+    const cursor = document.getElementById('cursor');
+    const scale = document.getElementById('pressureScale');
+    
+    const startDrag = (e) => { APP.isDragging = true; e.preventDefault(); };
+    const endDrag = () => { APP.isDragging = false; };
+    
+    const doDrag = (x) => {
+        if (!APP.isDragging) return;
+        if (APP.rafId) cancelAnimationFrame(APP.rafId);
+        APP.rafId = requestAnimationFrame(() => {
+            const rect = scale.getBoundingClientRect();
+            const pct = Math.max(0, Math.min(100, ((x - rect.left) / rect.width) * 100));
+            APP.currentP = snapToGrid(percentToP(pct));
+            APP.currentP = Math.max(APP.pMin, Math.min(APP.pMax, APP.currentP));
+            document.getElementById('pressureInput').value = APP.currentP.toFixed(2);
+            updateCursorAndResults();
+        });
+    };
+    
+    cursor.addEventListener('mousedown', startDrag);
+    cursor.addEventListener('touchstart', startDrag);
+    document.addEventListener('mousemove', (e) => doDrag(e.clientX));
+    document.addEventListener('touchmove', (e) => doDrag(e.touches[0].clientX));
+    document.addEventListener('mouseup', endDrag);
+    document.addEventListener('touchend', endDrag);
+    scale.addEventListener('click', (e) => { 
+        const rect = scale.getBoundingClientRect();
+        const pct = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
+        APP.currentP = snapToGrid(percentToP(pct));
+        APP.currentP = Math.max(APP.pMin, Math.min(APP.pMax, APP.currentP));
+        document.getElementById('pressureInput').value = APP.currentP.toFixed(2);
+        updateCursorAndResults();
+    });
+}
+
+function updateCursor() {
+    const pct = pToPercent(APP.currentP);
+    document.getElementById('cursor').style.left = `calc(${pct}% - 1.5px)`;
+    document.getElementById('cursorValue').textContent = APP.currentP.toFixed(2);
+}
+
+function updateDisplays() {
+    const unit = APP.mode === 'gauge' ? 'bar rel' : 'bar abs';
+    document.getElementById('displayP').textContent = APP.currentP.toFixed(2);
+    document.getElementById('displayPUnit').textContent = unit;
+    if (APP.activeFluids.length > 0) {
+        // Ne changer refFluid que s'il n'est plus actif
+        if (!APP.activeFluids.includes(APP.refFluid)) {
+            APP.refFluid = APP.activeFluids[0];
+        }
+        document.getElementById('refFluidName').textContent = FLUIDS[APP.refFluid].name;
+        const r = P2T(APP.refFluid, APP.currentP);
+        document.getElementById('displayT').textContent = r.ok ? r.temp.toFixed(1) : '--';
+    }
+}
+
+function updateResults() {
+    const g = document.getElementById('resultsGrid');
+    g.innerHTML = '';
+    
+    APP.activeFluids.forEach(k => {
+        const f = FLUIDS[k];
+        const r = P2T(k, APP.currentP);
+        const card = document.createElement('div');
+        card.className = 'result-card' + (r.ok ? '' : ' error');
+        card.style.borderColor = f.color;
+        card.onclick = () => showFluidInfo(k);
+        
+        if (r.ok) {
+            const ts = (r.temp >= 0 ? '+' : '') + r.temp.toFixed(1) + '°C';
+            const gwpClass = f.gwp < 150 ? 'low' : (f.gwp < 2000 ? 'medium' : '');
+            const statusLabel = {banned:'Interdit',restrict:'Restriction',future:'Restr. future',ok:'Perenne'}[f.status];
+            
+            card.innerHTML = `
+                <div class="fluid-header">
+                    <span class="fluid-name" style="color:${f.color}">${f.name}</span>
+                    <span class="safety-badge safety-${f.safety}">${f.safety}</span>
+                </div>
+                <div class="temp-main" style="color:${f.color}">${ts}</div>
+                <div class="temp-footer">
+                    <div class="val-box"><span class="val-label">Bulle</span><span class="val-num">${r.tBubble.toFixed(1)}°C</span></div>
+                    <div class="val-box"><span class="val-label">Rosee</span><span class="val-num">${r.tDew.toFixed(1)}°C</span></div>
+                </div>
+                <div class="info-row">
+                    <span class="info-tag tag-gwp ${gwpClass}">GWP ~${f.gwp}</span>
+                    <span class="info-tag tag-status">${statusLabel}</span>
+                </div>`;
+        } else {
+            card.innerHTML = `<div class="fluid-header"><span class="fluid-name" style="color:${f.color}">${f.name}</span></div><div class="temp-main">${r.error}</div>`;
+        }
+        g.appendChild(card);
+    });
+}
+
+function showFluidInfo(k) {
+    const f = FLUIDS[k];
+    const panel = document.getElementById('fluidInfoPanel');
+    document.getElementById('infoFluidName').innerHTML = `<span style="color:${f.color}">${f.name}</span> - ${f.desc}`;
+    const statusLabel = {banned:'🚫 Interdit',restrict:'⚠️ Restriction',future:'📅 Restr. future',ok:'✅ Perenne'}[f.status];
+    const gwpColor = f.gwp < 150 ? '#10b981' : (f.gwp < 2000 ? '#f59e0b' : '#ef4444');
+    
+    document.getElementById('fluidInfoGrid').innerHTML = `
+        <div class="info-cell"><div class="label">Composition</div><div class="value">${f.composition}</div></div>
+        <div class="info-cell"><div class="label">Categorie</div><div class="value">${f.cat}</div></div>
+        <div class="info-cell"><div class="label">Securite</div><div class="value" style="font-size:1rem;">${f.safety}</div></div>
+        <div class="info-cell"><div class="label">GWP (indicatif)</div><div class="value" style="color:${gwpColor}">~${f.gwp}</div></div>
+        <div class="info-cell"><div class="label">Glide (K)</div><div class="value">${f.glide}</div></div>
+        <div class="info-cell"><div class="label">Statut</div><div class="value">${statusLabel}</div></div>`;
+    
+    panel.classList.add('visible');
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// ================================================================
+// STOCKAGE LOCAL (RGPD OK - pas de données personnelles)
+// Version 1 : structure avec versionnement pour évolutions futures
+// ================================================================
+const PREFS_VERSION = 1;
+
+function savePreferences() {
+    try {
+        localStorage.setItem('reglette_prefs', JSON.stringify({
+            v: PREFS_VERSION,
+            activeFluids: APP.activeFluids,
+            pMin: APP.pMin,
+            pMax: APP.pMax,
+            mode: APP.mode,
+            showTempMarkers: document.getElementById('showTempMarkers').value
+        }));
+    } catch(e) {}
+}
+
+function loadPreferences() {
+    try {
+        const saved = localStorage.getItem('reglette_prefs');
+        if (saved) {
+            const prefs = JSON.parse(saved);
+            // Migration si version différente
+            if (!prefs.v || prefs.v < PREFS_VERSION) {
+                console.log('Migration préférences v' + (prefs.v || 0) + ' → v' + PREFS_VERSION);
+            }
+            if (prefs.activeFluids) APP.activeFluids = prefs.activeFluids.filter(k => FLUIDS[k]);
+            if (prefs.pMin !== undefined) document.getElementById('pMinInput').value = prefs.pMin;
+            if (prefs.pMax !== undefined) document.getElementById('pMaxInput').value = prefs.pMax;
+            if (prefs.mode) document.getElementById('pressureMode').value = prefs.mode;
+            if (prefs.showTempMarkers) document.getElementById('showTempMarkers').value = prefs.showTempMarkers;
+            renderFluidsGrids();
+            rebuildAll();
+        }
+    } catch(e) {}
+}
+
+function resetPreferences() {
+    if (confirm('Effacer toutes vos préférences locales ?\n\nLes fluides sélectionnés et la plage de pression seront réinitialisés.')) {
+        try {
+            localStorage.removeItem('reglette_prefs');
+            // Valeurs par défaut
+            APP.activeFluids = ['R134a', 'R410A', 'R404A', 'R32'];
+            APP.pMin = -1;
+            APP.pMax = 30;
+            APP.mode = 'gauge';
+            APP.refFluid = 'R134a';
+            document.getElementById('pMinInput').value = '-1';
+            document.getElementById('pMaxInput').value = '30';
+            document.getElementById('pressureMode').value = 'gauge';
+            document.getElementById('patmInput').value = '1.013';
+            document.getElementById('showTempMarkers').value = 'all';
+            renderFluidsGrids();
+            rebuildAll();
+            alert('✅ Préférences effacées avec succès.');
+        } catch(e) {
+            alert('Erreur lors de la suppression.');
+        }
+    }
+}
+
+// ================================================================
+// LIENS EXTERNES AVEC AVERTISSEMENT (sécurisé)
+// ================================================================
+function openExternal(url) {
+    if (!confirm('Vous allez quitter l\'application pour ouvrir :\n\n' + url + '\n\nContinuer ?')) return;
+    const w = window.open(url, '_blank');
+    if (w) w.opener = null; // Sécurité anti-tabnabbing
+}
+
+// Modales
+const showModal = (id) => document.getElementById(id).classList.add('active');
+const hideModal = (id) => document.getElementById(id).classList.remove('active');
+document.addEventListener('click', (e) => { if (e.target.classList.contains('modal')) e.target.classList.remove('active'); });
+
+// Init
+document.addEventListener('DOMContentLoaded', init);
+</script>
+
+</body>
+</html>

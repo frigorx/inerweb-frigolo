@@ -1,0 +1,1706 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TP5 - Intervention hors tension | ÉNERWEB</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=OpenDyslexic:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* ========== CHARTE GRAPHIQUE ÉLECTRICITÉ ÉNERWEB ========== */
+        :root {
+            /* Couleurs Sécurité Électrique */
+            --primary: #FF6B35;
+            --secondary: #FF8E53;
+            --accent: #FFC300;
+            --danger: #FF1744;
+            --warning: #FF9800;
+            --success: #4CAF50;
+            --info: #2196F3;
+            --dark: #2C3E50;
+            --light: #F8FAFC;
+            --border: #E2E8F0;
+            
+            /* Palette Pédagogique COMMUNE */
+            --non-acquis: #ef4444;
+            --en-cours: #f59e0b;
+            --acquis: #3b82f6;
+            --parfait: #10b981;
+            
+            --gradient: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, var(--accent) 100%);
+            --shadow: 0 4px 15px rgba(0,0,0,0.1);
+            --radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Lexend', 'Comic Sans MS', 'OpenDyslexic', 'Segoe UI', sans-serif;
+            font-size: 18px;
+            line-height: 1.8;
+            letter-spacing: 0.5px;
+            background: var(--light);
+            color: var(--dark);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animation de fond OBLIGATOIRE */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 107, 53, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 195, 0, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(255, 107, 53, 0.2) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+        }
+
+        /* ========== MODES ACCESSIBILITÉ ========== */
+        body.accessibility-mode {
+            font-size: 20px;
+            line-height: 2.2;
+            letter-spacing: 1px;
+        }
+
+        body.accessibility-mode .btn {
+            padding: 32px 65px;
+            font-size: 24px;
+        }
+
+        body.police-adaptee {
+            font-family: 'OpenDyslexic', 'Comic Sans MS', 'Lexend', sans-serif;
+            font-size: 22px;
+            line-height: 2.5;
+            letter-spacing: 2px;
+            word-spacing: 0.4em;
+        }
+
+        body.police-adaptee .btn {
+            padding: 32px 65px;
+            font-size: 24px;
+        }
+
+        body.police-adaptee p, body.police-adaptee div, body.police-adaptee span {
+            word-spacing: 0.4em;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* ========== CONTRÔLES ACCESSIBILITÉ ========== */
+        .accessibility-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+            flex-wrap: wrap;
+        }
+
+        .btn-accessibility {
+            background: var(--warning);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .btn-accessibility:hover {
+            background: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        .btn-accessibility.active {
+            background: var(--success);
+        }
+
+        /* ========== HEADER ANIMÉ ========== */
+        .header {
+            background: var(--gradient);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .header::before {
+            content: '⚡';
+            position: absolute;
+            top: 20px;
+            left: 30px;
+            font-size: 3em;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.2); opacity: 1; }
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.3);
+            height: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: white;
+            width: 83.33%; /* TP5 = 83.33% (5/6) */
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+
+        .btn-home {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-home:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* ========== COMPÉTENCE BADGE ========== */
+        .competence-info {
+            background: linear-gradient(135deg, var(--info), var(--accent));
+            color: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            font-size: 0.9em;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        /* ========== SECTIONS PRINCIPALES ========== */
+        .content-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            border-top: 4px solid var(--primary);
+        }
+
+        .content-section h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.8em;
+        }
+
+        /* ========== ACTIVITÉ 1 : DRAG & DROP ÉTAPES ========== */
+        .steps-activity {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin: 30px 0;
+        }
+
+        .steps-source, .steps-target {
+            padding: 20px;
+            border-radius: 15px;
+            min-height: 400px;
+        }
+
+        .steps-source {
+            background: linear-gradient(135deg, #FFF3E0, #FFCC80);
+            border: 2px dashed var(--warning);
+        }
+
+        .steps-target {
+            background: linear-gradient(135deg, #E8F5E8, #C8E6C9);
+            border: 2px dashed var(--success);
+        }
+
+        .step-item {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            cursor: grab;
+            transition: var(--transition);
+            border: 2px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-weight: 500;
+        }
+
+        .step-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .step-item.dragging {
+            opacity: 0.5;
+            transform: rotate(5deg);
+        }
+
+        .step-slot {
+            background: rgba(255, 255, 255, 0.7);
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 12px;
+            border: 2px dashed #ccc;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-style: italic;
+            transition: var(--transition);
+        }
+
+        .step-slot.drop-zone {
+            border-color: var(--primary);
+            background: #FFF3E0;
+        }
+
+        .step-slot.filled {
+            background: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+
+        .step-slot.incorrect {
+            background: var(--danger);
+            color: white;
+            border-color: var(--danger);
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .step-icon {
+            font-size: 1.5em;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        /* ========== ACTIVITÉ 2 & 4 : QCM ========== */
+        .qcm-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: var(--shadow);
+            border-left: 5px solid var(--info);
+        }
+
+        .qcm-question {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .qcm-question h3 {
+            color: var(--dark);
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .qcm-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .qcm-option {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            border: 2px solid var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .qcm-option:hover {
+            border-color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .qcm-option.selected {
+            border-color: var(--primary);
+            background: #FFF3E0;
+        }
+
+        .qcm-option.correct {
+            border-color: var(--success);
+            background: #E8F5E8;
+        }
+
+        .qcm-option.incorrect {
+            border-color: var(--danger);
+            background: #FFEBEE;
+        }
+
+        /* ========== ACTIVITÉ 3 : TRI D'ÉQUIPEMENTS ========== */
+        .equipment-sorting {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .equipment-category {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            border-top: 4px solid var(--primary);
+        }
+
+        .equipment-category h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .equipment-category.epi {
+            border-top-color: var(--success);
+        }
+
+        .equipment-category.epi h3 {
+            color: var(--success);
+        }
+
+        .equipment-category.mesure {
+            border-top-color: var(--info);
+        }
+
+        .equipment-category.mesure h3 {
+            color: var(--info);
+        }
+
+        .equipment-category.consignation {
+            border-top-color: var(--warning);
+        }
+
+        .equipment-category.consignation h3 {
+            color: var(--warning);
+        }
+
+        .equipment-items {
+            background: linear-gradient(135deg, #F3E5F5, #E1BEE7);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border: 2px dashed var(--accent);
+        }
+
+        .equipment-item {
+            background: white;
+            padding: 12px 15px;
+            margin: 8px 0;
+            border-radius: 8px;
+            cursor: grab;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 2px solid transparent;
+        }
+
+        .equipment-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .equipment-item.dragging {
+            opacity: 0.5;
+        }
+
+        .category-drop-zone {
+            min-height: 100px;
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            padding: 10px;
+        }
+
+        .category-drop-zone.drag-over {
+            border-color: var(--primary);
+            background: rgba(255, 107, 53, 0.1);
+        }
+
+        /* ========== TOOLTIPS ========== */
+        .tooltip {
+            position: relative;
+            cursor: help;
+            color: var(--primary);
+            font-weight: 600;
+            border-bottom: 2px dotted var(--primary);
+            transition: var(--transition);
+        }
+
+        .tooltip:hover {
+            color: var(--secondary);
+            border-bottom-color: var(--secondary);
+        }
+
+        .tooltip .tooltip-content {
+            visibility: hidden;
+            background: white;
+            color: var(--dark);
+            text-align: left;
+            border-radius: 8px;
+            padding: 15px;
+            position: absolute;
+            z-index: 1000;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -200px;
+            width: 400px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            border: 2px solid var(--primary);
+            box-shadow: var(--shadow);
+            font-size: 16px;
+            line-height: 1.6;
+            font-weight: 400;
+            word-spacing: normal;
+        }
+
+        .tooltip .tooltip-content::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: var(--primary) transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltip-content {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* ========== ALERTS & NOTIFICATIONS ========== */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #E8F5E8;
+            color: var(--success);
+            border-left: 4px solid var(--success);
+        }
+
+        .alert-danger {
+            background: #FFEBEE;
+            color: var(--danger);
+            border-left: 4px solid var(--danger);
+        }
+
+        .alert-warning {
+            background: #FFF8E1;
+            color: var(--warning);
+            border-left: 4px solid var(--warning);
+        }
+
+        .alert-info {
+            background: #E3F2FD;
+            color: var(--info);
+            border-left: 4px solid var(--info);
+        }
+
+        /* ========== SAFETY ALERT ========== */
+        .safety-alert {
+            background: linear-gradient(135deg, #FF1744, #FF5722);
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 4px 20px rgba(255, 23, 68, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .safety-alert .icon {
+            font-size: 2em;
+            animation: warning 2s infinite;
+        }
+
+        @keyframes warning {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* ========== BOUTONS ========== */
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--info);
+        }
+
+        .btn-secondary:hover {
+            background: #1976D2;
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        .btn-success:hover {
+            background: #388E3C;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+        }
+
+        .btn-warning:hover {
+            background: #F57C00;
+        }
+
+        /* ========== ÉVALUATION FINALE ========== */
+        .evaluation-section {
+            background: linear-gradient(135deg, #F3E5F5, #E1BEE7);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: var(--shadow);
+            border: 2px solid var(--accent);
+        }
+
+        .competence-evaluation {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 20px;
+            border-left: 5px solid var(--info);
+        }
+
+        .score-display {
+            text-align: center;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 15px;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        .score-non-acquis { background: #FFEBEE; color: var(--non-acquis); }
+        .score-en-cours { background: #FFF8E1; color: var(--en-cours); }
+        .score-acquis { background: #E3F2FD; color: var(--acquis); }
+        .score-parfait { background: #E8F5E8; color: var(--parfait); }
+
+        /* ========== TOAST NOTIFICATIONS ========== */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--dark);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        /* ========== HELP SYSTEM ========== */
+        .help-btn {
+            background: var(--info);
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .help-btn:hover {
+            background: #1976D2;
+            transform: scale(1.1);
+        }
+
+        .iris-link {
+            background: linear-gradient(135deg, var(--warning), var(--accent));
+            color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            margin: 15px 0;
+            transition: var(--transition);
+        }
+
+        .iris-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 152, 0, 0.3);
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            .container { padding: 15px; }
+            .header { padding: 25px; font-size: 0.9em; }
+            .header h1 { font-size: 2em; }
+            .steps-activity { grid-template-columns: 1fr; gap: 20px; }
+            .equipment-sorting { grid-template-columns: 1fr; gap: 20px; }
+            .accessibility-controls { position: relative; top: 0; right: 0; justify-content: center; margin-bottom: 20px; }
+            .btn-home { position: static; margin-bottom: 15px; }
+            .tooltip .tooltip-content { width: 300px; margin-left: -150px; }
+        }
+    </style>
+<script>/* (c) F. Henninot - inerWeb FRIGOLO - Tous droits reserves */
+document.addEventListener("contextmenu",function(e){e.preventDefault()});
+document.addEventListener("keydown",function(e){if((e.ctrlKey||e.metaKey)&&(e.key==="u"||e.key==="s"||e.key==="c")){e.preventDefault()}});
+document.addEventListener("selectstart",function(e){if(e.target.tagName\!=="INPUT"&&e.target.tagName\!=="TEXTAREA"){e.preventDefault()}});
+</script>
+</head>
+<body>
+    <!-- Contrôles d'accessibilité -->
+    <div class="accessibility-controls">
+        <button class="btn-accessibility" onclick="toggleAccessibility('police')" id="btn-police">
+            👁️ OpenDyslexic
+        </button>
+        <button class="btn-accessibility" onclick="toggleAccessibility('taille')" id="btn-taille">
+            🔍 Taille +
+        </button>
+        <button class="btn-accessibility" onclick="toggleAccessibility('espacement')" id="btn-espacement">
+            📏 Espacement
+        </button>
+        <button class="btn-accessibility" onclick="toggleAccessibility('lisibilite')" id="btn-lisibilite">
+            📖 Lisibilité
+        </button>
+    </div>
+
+    <div class="container">
+        <!-- Header animé -->
+        <div class="header">
+            <a href="index_securite_electrique.html" class="btn-home">🏠 Accueil</a>
+            <h1>TP5 – Intervention hors tension</h1>
+            <div class="competence-info" id="competence-display">
+                <strong>Compétence visée :</strong> Mettre en œuvre un mode opératoire sécurisé hors tension
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            <p style="margin-top: 10px; opacity: 0.9;">Chapitre 5/6 - Mode opératoire sécurisé</p>
+        </div>
+
+        <!-- Alerte sécurité -->
+        <div class="safety-alert">
+            <div class="icon">🔒</div>
+            <div>
+                <strong>RÈGLE FONDAMENTALE :</strong> Le travail hors tension est LA méthode de référence pour garantir votre sécurité. 
+                Une <span class="tooltip">consignation complète<span class="tooltip-content"><strong>Consignation :</strong> Ensemble d'opérations destinées à mettre et à maintenir hors tension tout ou partie d'un ouvrage électrique : séparation, condamnation, identification, vérification d'absence de tension.</span></span> 
+                est obligatoire avant toute intervention.
+            </div>
+        </div>
+
+        <!-- Introduction -->
+        <div class="content-section">
+            <h2>🔐 Mode opératoire sécurisé</h2>
+            <p>L'intervention hors tension suit un <strong>protocole strict en 4 étapes fondamentales</strong> définies par l'INRS. Cette procédure garantit votre sécurité en éliminant le risque d'électrisation.</p>
+            
+            <div style="text-align: center; margin: 25px 0;">
+                <div style="font-size: 3em; margin-bottom: 15px;">
+                    🔌 ➡️ 🔒 ➡️ 🔍 ➡️ ⚡
+                </div>
+                <p><em>Séparer • Condamner • Vérifier • Intervenir</em></p>
+            </div>
+
+            <a href="#" class="iris-link" onclick="showIRISInfo()">
+                📄 Guide INRS-ST • Pages 14-17 : Interventions hors tension
+            </a>
+        </div>
+
+        <!-- Activité 1 : Remettre les étapes dans l'ordre -->
+        <div class="content-section">
+            <h2>🎯 Activité 1 : Remettre le mode opératoire dans l'ordre</h2>
+            <p>Glissez-déposez les étapes dans le bon ordre pour reconstituer le protocole d'intervention hors tension :</p>
+            
+            <div class="steps-activity">
+                <div class="steps-source">
+                    <h3 style="text-align: center; margin-bottom: 20px; color: var(--warning);">
+                        📋 Étapes à ordonner
+                    </h3>
+                    
+                    <div class="step-item" draggable="true" data-step="4">
+                        <div class="step-icon">🔧</div>
+                        <div>
+                            <strong>Réaliser l'intervention</strong>
+                            <br><small>Une fois l'absence de tension vérifiée</small>
+                        </div>
+                    </div>
+                    
+                    <div class="step-item" draggable="true" data-step="2">
+                        <div class="step-icon">🔒</div>
+                        <div>
+                            <strong>Condamner en position d'ouverture</strong>
+                            <br><small>Cadenas de consignation</small>
+                        </div>
+                    </div>
+                    
+                    <div class="step-item" draggable="true" data-step="6">
+                        <div class="step-icon">🔄</div>
+                        <div>
+                            <strong>Remettre en service</strong>
+                            <br><small>Vérifier les connexions, informer</small>
+                        </div>
+                    </div>
+                    
+                    <div class="step-item" draggable="true" data-step="1">
+                        <div class="step-icon">🔌</div>
+                        <div>
+                            <strong>Séparer l'ouvrage de ses sources</strong>
+                            <br><small>Disjoncteur, sectionneur</small>
+                        </div>
+                    </div>
+                    
+                    <div class="step-item" draggable="true" data-step="3">
+                        <div class="step-icon">🔍</div>
+                        <div>
+                            <strong>Vérifier l'absence de tension (VAT)</strong>
+                            <br><small>Sur chaque conducteur</small>
+                        </div>
+                    </div>
+                    
+                    <div class="step-item" draggable="true" data-step="5">
+                        <div class="step-icon">🛡️</div>
+                        <div>
+                            <strong>Protéger contre la remise sous tension</strong>
+                            <br><small>Signalisation, balisage</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="steps-target">
+                    <h3 style="text-align: center; margin-bottom: 20px; color: var(--success);">
+                        📝 Mode opératoire correct
+                    </h3>
+                    
+                    <div class="step-slot" data-position="1">
+                        Étape 1 : Déposez ici la première étape
+                    </div>
+                    
+                    <div class="step-slot" data-position="2">
+                        Étape 2 : Déposez ici la deuxième étape
+                    </div>
+                    
+                    <div class="step-slot" data-position="3">
+                        Étape 3 : Déposez ici la troisième étape
+                    </div>
+                    
+                    <div class="step-slot" data-position="4">
+                        Étape 4 : Déposez ici la quatrième étape
+                    </div>
+                    
+                    <div class="step-slot" data-position="5">
+                        Étape 5 : Déposez ici la cinquième étape
+                    </div>
+                    
+                    <div class="step-slot" data-position="6">
+                        Étape 6 : Déposez ici la sixième étape
+                    </div>
+                </div>
+            </div>
+            
+            <div class="alert alert-info" id="steps-result" style="display: none;">
+                <span id="steps-icon"></span>
+                <div id="steps-text-result"></div>
+            </div>
+        </div>
+
+        <!-- Activité 2 : QCM Définitions -->
+        <div class="qcm-container">
+            <h2>📚 Activité 2 : QCM - Définitions</h2>
+            
+            <div class="qcm-question">
+                <h3>1. Que signifie l'acronyme VAT ?</h3>
+                <div class="qcm-options">
+                    <div class="qcm-option" data-question="def1" data-answer="a">
+                        <span>A)</span> Vérificateur d'Absence de Tension
+                    </div>
+                    <div class="qcm-option" data-question="def1" data-answer="b">
+                        <span>B)</span> Voltmètre d'Analyse Technique
+                    </div>
+                    <div class="qcm-option" data-question="def1" data-answer="c">
+                        <span>C)</span> Vérificateur d'Analyse de Tension
+                    </div>
+                </div>
+            </div>
+            
+            <div class="qcm-question">
+                <h3>2. La <span class="tooltip">consignation<span class="tooltip-content"><strong>Consignation :</strong> Procédure qui comprend la séparation de l'ouvrage de ses sources d'énergie, la condamnation en position d'ouverture des organes de séparation et la vérification de l'absence de tension.</span></span> électrique comprend obligatoirement :</h3>
+                <div class="qcm-options">
+                    <div class="qcm-option" data-question="def2" data-answer="a">
+                        <span>A)</span> Séparation + Condamnation + Vérification + Signalisation
+                    </div>
+                    <div class="qcm-option" data-question="def2" data-answer="b">
+                        <span>B)</span> Coupure + Protection + Vérification
+                    </div>
+                    <div class="qcm-option" data-question="def2" data-answer="c">
+                        <span>C)</span> Disjonction + Signalisation
+                    </div>
+                </div>
+            </div>
+            
+            <div class="qcm-question">
+                <h3>3. Quelle tension est considérée comme la limite de la <span class="tooltip">très basse tension<span class="tooltip-content"><strong>Très Basse Tension (TBT) :</strong> Tension ≤ 50V en courant alternatif et ≤ 120V en courant continu. Considérée comme non dangereuse dans des conditions normales.</span></span> (TBT) ?</h3>
+                <div class="qcm-options">
+                    <div class="qcm-option" data-question="def3" data-answer="a">
+                        <span>A)</span> ≤ 50V alternatif / ≤ 120V continu
+                    </div>
+                    <div class="qcm-option" data-question="def3" data-answer="b">
+                        <span>B)</span> ≤ 25V alternatif / ≤ 60V continu
+                    </div>
+                    <div class="qcm-option" data-question="def3" data-answer="c">
+                        <span>C)</span> ≤ 12V alternatif / ≤ 30V continu
+                    </div>
+                </div>
+            </div>
+            
+            <div class="alert alert-info" id="def-result" style="display: none;">
+                <span id="def-icon"></span>
+                <div id="def-text-result"></div>
+            </div>
+        </div>
+
+        <!-- Activité 3 : Tri d'équipements -->
+        <div class="content-section">
+            <h2>🔧 Activité 3 : Classer les équipements</h2>
+            <p>Glissez chaque équipement dans la bonne catégorie selon son usage :</p>
+            
+            <div class="equipment-items">
+                <h3 style="text-align: center; margin-bottom: 15px; color: var(--accent);">
+                    🧰 Équipements à classer
+                </h3>
+                
+                <div class="equipment-item" draggable="true" data-equipment="gants" data-category="epi">
+                    <span>🧤</span> Gants isolants classe 0
+                </div>
+                
+                <div class="equipment-item" draggable="true" data-equipment="vat" data-category="mesure">
+                    <span>🔍</span> VAT homologué
+                </div>
+                
+                <div class="equipment-item" draggable="true" data-equipment="cadenas" data-category="consignation">
+                    <span>🔒</span> Cadenas de consignation
+                </div>
+                
+                <div class="equipment-item" draggable="true" data-equipment="casque" data-category="epi">
+                    <span>⛑️</span> Casque isolant
+                </div>
+                
+                <div class="equipment-item" draggable="true" data-equipment="multimetre" data-category="mesure">
+                    <span>📟</span> Multimètre
+                </div>
+                
+                <div class="equipment-item" draggable="true" data-equipment="pancarte" data-category="consignation">
+                    <span>⚠️</span> Pancarte de signalisation
+                </div>
+                
+                <div class="equipment-item" draggable="true" data-equipment="chaussures" data-category="epi">
+                    <span>👢</span> Chaussures isolantes
+                </div>
+                
+                <div class="equipment-item" draggable="true" data-equipment="pince" data-category="mesure">
+                    <span>🔧</span> Pince ampèremétrique
+                </div>
+                
+                <div class="equipment-item" draggable="true" data-equipment="etiquette" data-category="consignation">
+                    <span>🏷️</span> Étiquette d'identification
+                </div>
+            </div>
+            
+            <div class="equipment-sorting">
+                <div class="equipment-category epi">
+                    <h3>🛡️ EPI électriques</h3>
+                    <div class="category-drop-zone" data-category="epi">
+                        <em>Déposez ici les équipements de protection individuelle</em>
+                    </div>
+                </div>
+                
+                <div class="equipment-category mesure">
+                    <h3>📊 Appareils de mesure</h3>
+                    <div class="category-drop-zone" data-category="mesure">
+                        <em>Déposez ici les appareils de mesure et de vérification</em>
+                    </div>
+                </div>
+                
+                <div class="equipment-category consignation">
+                    <h3>🔐 Matériel de consignation</h3>
+                    <div class="category-drop-zone" data-category="consignation">
+                        <em>Déposez ici le matériel de consignation et signalisation</em>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="alert alert-info" id="equipment-result" style="display: none;">
+                <span id="equipment-icon"></span>
+                <div id="equipment-text-result"></div>
+            </div>
+        </div>
+
+        <!-- Activité 4 : QCM Cas pratiques -->
+        <div class="qcm-container">
+            <h2>⚡ Activité 4 : QCM - Cas pratiques</h2>
+            
+            <div class="qcm-question">
+                <h3>1. Pour une intervention BT (400V), quels gants isolants choisir ?</h3>
+                <div class="qcm-options">
+                    <div class="qcm-option" data-question="prat1" data-answer="a">
+                        <span>A)</span> Classe 00 (500V)
+                    </div>
+                    <div class="qcm-option" data-question="prat1" data-answer="b">
+                        <span>B)</span> Classe 0 (1000V)
+                    </div>
+                    <div class="qcm-option" data-question="prat1" data-answer="c">
+                        <span>C)</span> Classe 1 (7500V)
+                    </div>
+                </div>
+            </div>
+            
+            <div class="qcm-question">
+                <h3>2. Après vérification VAT, vous constatez encore de la tension. Que faire ?</h3>
+                <div class="qcm-options">
+                    <div class="qcm-option" data-question="prat2" data-answer="a">
+                        <span>A)</span> Continuer avec des EPI renforcés
+                    </div>
+                    <div class="qcm-option" data-question="prat2" data-answer="b">
+                        <span>B)</span> Arrêter et rechercher la source de tension
+                    </div>
+                    <div class="qcm-option" data-question="prat2" data-answer="c">
+                        <span>C)</span> Vérifier avec un autre appareil
+                    </div>
+                </div>
+            </div>
+            
+            <div class="qcm-question">
+                <h3>3. Quelle est la procédure de vérification VAT ?</h3>
+                <div class="qcm-options">
+                    <div class="qcm-option" data-question="prat3" data-answer="a">
+                        <span>A)</span> Tester VAT → Vérifier absence tension → Tester VAT
+                    </div>
+                    <div class="qcm-option" data-question="prat3" data-answer="b">
+                        <span>B)</span> Vérifier absence tension uniquement
+                    </div>
+                    <div class="qcm-option" data-question="prat3" data-answer="c">
+                        <span>C)</span> Tester VAT → Vérifier absence tension
+                    </div>
+                </div>
+            </div>
+            
+            <div class="alert alert-info" id="prat-result" style="display: none;">
+                <span id="prat-icon"></span>
+                <div id="prat-text-result"></div>
+            </div>
+        </div>
+
+        <!-- Évaluation finale -->
+        <div class="evaluation-section">
+            <h2>📊 Évaluation par compétence</h2>
+            
+            <div class="competence-evaluation">
+                <h3>Compétence évaluée</h3>
+                <p id="competence-text"><strong>Mettre en œuvre un mode opératoire sécurisé hors tension</strong></p>
+                
+                <div class="score-display" id="final-score">
+                    <div id="score-text">Réalisez toutes les activités pour obtenir votre évaluation</div>
+                </div>
+                
+                <h4>Barème d'évaluation :</h4>
+                <ul>
+                    <li><span style="color: var(--non-acquis);">🔴 Non acquis (< 50%)</span> : Difficultés importantes dans la maîtrise du mode opératoire</li>
+                    <li><span style="color: var(--en-cours);">🟠 En cours (50-69%)</span> : Connaissances partielles, révisions nécessaires</li>
+                    <li><span style="color: var(--acquis);">🔵 Acquis (70-89%)</span> : Bonne maîtrise de la procédure d'intervention</li>
+                    <li><span style="color: var(--parfait);">🟢 Parfaitement acquis (≥ 90%)</span> : Maîtrise complète du mode opératoire sécurisé</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Navigation et actions -->
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="tp4_outillage_consigne.html" class="btn btn-secondary" style="margin-right: 15px;">
+                ⬅️ TP4 Précédent
+            </a>
+            <button class="btn btn-warning" onclick="saveProgress()" style="margin: 0 15px;">
+                💾 Sauvegarder
+            </button>
+            <button class="btn btn-warning" onclick="exportResults()" style="margin: 0 15px;">
+                📄 Export PDF
+            </button>
+            <a href="tp6_bilan_global.html" class="btn btn-success" style="margin-left: 15px;">
+                TP6 Suivant ➡️
+            </a>
+        </div>
+    </div>
+
+    <!-- Toast pour notifications -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Configuration
+        const CURRENT_CHAPTER_ID = 5;
+        const CHAPTER_TITLE = "Intervention hors tension";
+        
+        // Variables globales
+        let chapterProgress = {
+            stepsActivity: false,
+            definitionsQCM: false,
+            equipmentSorting: false,
+            practicalQCM: false,
+            stepsScore: 0,
+            definitionsScore: 0,
+            equipmentScore: 0,
+            practicalScore: 0,
+            globalScore: 0,
+            timeSpent: 0,
+            competenceLevel: '',
+            competenceClass: '',
+            helpUsed: {}
+        };
+        
+        let startTime = Date.now();
+        let studentData = null;
+        let stepsCompleted = 0;
+        let equipmentSorted = 0;
+
+        // Référentiels par filière
+        const REFERENTIELS = {
+            'CAP_IFCA': 'Mettre en œuvre les consignes de sécurité lors d\'une intervention simple',
+            'TNE_2': 'Appliquer un mode opératoire sécurisé hors tension',
+            'MFER_1': 'Identifier les étapes d\'une consignation conforme au risque électrique',
+            'MFER_T': 'Mettre en œuvre une procédure complète d\'intervention hors tension',
+            'TITRE_PRO_CVC': 'Maîtriser les opérations de consignation et de vérification d\'absence de tension'
+        };
+
+        // Réponses correctes
+        const CORRECT_STEPS_ORDER = [1, 2, 3, 5, 4, 6]; // Séparer, Condamner, Vérifier, Protéger, Intervenir, Remettre
+        const DEFINITIONS_ANSWERS = { def1: 'a', def2: 'a', def3: 'a' };
+        const PRACTICAL_ANSWERS = { prat1: 'b', prat2: 'b', prat3: 'a' };
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStudentData();
+            setupStepsDragAndDrop();
+            setupEquipmentDragAndDrop();
+            setupQCMListeners();
+            setupTimeCounter();
+            loadAccessibilityPreferences();
+            updateCompetenceDisplay();
+        });
+
+        // Fonctions utilitaires
+        function loadStudentData() {
+            const globalProgress = JSON.parse(localStorage.getItem('enerweb_securite_electrique_progress') || '{}');
+            if (globalProgress.student) {
+                studentData = globalProgress.student;
+                updateCompetenceDisplay();
+            }
+        }
+
+        function updateCompetenceDisplay() {
+            const competenceDisplay = document.getElementById('competence-display');
+            const competenceText = document.getElementById('competence-text');
+            
+            if (studentData && studentData.formation && REFERENTIELS[studentData.formation]) {
+                const competence = REFERENTIELS[studentData.formation];
+                competenceDisplay.innerHTML = `<strong>Compétence visée :</strong> ${competence}`;
+                if (competenceText) competenceText.innerHTML = `<strong>${competence}</strong>`;
+            }
+        }
+
+        // Activité 1 : Drag & Drop étapes
+        function setupStepsDragAndDrop() {
+            const stepItems = document.querySelectorAll('.step-item');
+            const stepSlots = document.querySelectorAll('.step-slot');
+
+            stepItems.forEach(item => {
+                item.addEventListener('dragstart', handleStepDragStart);
+                item.addEventListener('dragend', handleStepDragEnd);
+            });
+
+            stepSlots.forEach(slot => {
+                slot.addEventListener('dragover', handleStepDragOver);
+                slot.addEventListener('drop', handleStepDrop);
+                slot.addEventListener('dragenter', handleStepDragEnter);
+                slot.addEventListener('dragleave', handleStepDragLeave);
+            });
+        }
+
+        function handleStepDragStart(e) {
+            this.classList.add('dragging');
+            e.dataTransfer.setData('text/plain', this.dataset.step);
+        }
+
+        function handleStepDragEnd(e) {
+            this.classList.remove('dragging');
+        }
+
+        function handleStepDragOver(e) {
+            e.preventDefault();
+        }
+
+        function handleStepDragEnter(e) {
+            e.preventDefault();
+            if (!this.classList.contains('filled')) {
+                this.classList.add('drop-zone');
+            }
+        }
+
+        function handleStepDragLeave(e) {
+            this.classList.remove('drop-zone');
+        }
+
+        function handleStepDrop(e) {
+            e.preventDefault();
+            this.classList.remove('drop-zone');
+            
+            if (this.classList.contains('filled')) return;
+            
+            const droppedStep = parseInt(e.dataTransfer.getData('text/plain'));
+            const expectedStep = CORRECT_STEPS_ORDER[parseInt(this.dataset.position) - 1];
+            
+            if (droppedStep === expectedStep) {
+                this.classList.add('filled');
+                this.innerHTML = getStepContent(droppedStep);
+                stepsCompleted++;
+                showToast('✅ Étape correcte !', 'success');
+                
+                // Masquer l'item correctement placé
+                const draggedItem = document.querySelector(`[data-step="${droppedStep}"]`);
+                if (draggedItem) {
+                    draggedItem.style.opacity = '0.3';
+                    draggedItem.draggable = false;
+                }
+                
+                if (stepsCompleted === 6) {
+                    chapterProgress.stepsActivity = true;
+                    chapterProgress.stepsScore = 100;
+                    showStepsResult(true);
+                    updateGlobalScore();
+                }
+            } else {
+                this.classList.add('incorrect');
+                showToast('❌ Étape incorrecte', 'danger');
+                setTimeout(() => {
+                    this.classList.remove('incorrect');
+                }, 1000);
+            }
+        }
+
+        function getStepContent(stepNumber) {
+            const contents = {
+                1: '🔌 Séparer l\'ouvrage de ses sources',
+                2: '🔒 Condamner en position d\'ouverture',
+                3: '🔍 Vérifier l\'absence de tension (VAT)',
+                4: '🔧 Réaliser l\'intervention',
+                5: '🛡️ Protéger contre la remise sous tension',
+                6: '🔄 Remettre en service'
+            };
+            return contents[stepNumber];
+        }
+
+        function showStepsResult(success) {
+            const resultDiv = document.getElementById('steps-result');
+            const iconSpan = document.getElementById('steps-icon');
+            const textDiv = document.getElementById('steps-text-result');
+            
+            if (success) {
+                resultDiv.className = 'alert alert-success';
+                iconSpan.textContent = '🎉';
+                textDiv.innerHTML = '<strong>Parfait !</strong> Vous maîtrisez le mode opératoire d\'intervention hors tension.';
+            }
+            
+            resultDiv.style.display = 'flex';
+        }
+
+        // Activité 3 : Drag & Drop équipements
+        function setupEquipmentDragAndDrop() {
+            const equipmentItems = document.querySelectorAll('.equipment-item');
+            const dropZones = document.querySelectorAll('.category-drop-zone');
+
+            equipmentItems.forEach(item => {
+                item.addEventListener('dragstart', handleEquipmentDragStart);
+                item.addEventListener('dragend', handleEquipmentDragEnd);
+            });
+
+            dropZones.forEach(zone => {
+                zone.addEventListener('dragover', handleEquipmentDragOver);
+                zone.addEventListener('drop', handleEquipmentDrop);
+                zone.addEventListener('dragenter', handleEquipmentDragEnter);
+                zone.addEventListener('dragleave', handleEquipmentDragLeave);
+            });
+        }
+
+        function handleEquipmentDragStart(e) {
+            this.classList.add('dragging');
+            e.dataTransfer.setData('text/plain', JSON.stringify({
+                equipment: this.dataset.equipment,
+                category: this.dataset.category,
+                content: this.outerHTML
+            }));
+        }
+
+        function handleEquipmentDragEnd(e) {
+            this.classList.remove('dragging');
+        }
+
+        function handleEquipmentDragOver(e) {
+            e.preventDefault();
+        }
+
+        function handleEquipmentDragEnter(e) {
+            e.preventDefault();
+            this.classList.add('drag-over');
+        }
+
+        function handleEquipmentDragLeave(e) {
+            this.classList.remove('drag-over');
+        }
+
+        function handleEquipmentDrop(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+            
+            const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+            const targetCategory = this.dataset.category;
+            
+            if (data.category === targetCategory) {
+                // Créer un nouvel élément dans la zone de drop
+                const newItem = document.createElement('div');
+                newItem.innerHTML = data.content;
+                newItem.firstChild.draggable = false;
+                newItem.firstChild.style.opacity = '1';
+                this.appendChild(newItem.firstChild);
+                
+                // Masquer l'item original
+                const originalItem = document.querySelector(`[data-equipment="${data.equipment}"]`);
+                if (originalItem) {
+                    originalItem.style.display = 'none';
+                }
+                
+                equipmentSorted++;
+                showToast('✅ Bien classé !', 'success');
+                
+                if (equipmentSorted === 9) {
+                    chapterProgress.equipmentSorting = true;
+                    chapterProgress.equipmentScore = 100;
+                    showEquipmentResult(true);
+                    updateGlobalScore();
+                }
+            } else {
+                showToast('❌ Mauvaise catégorie', 'danger');
+            }
+        }
+
+        function showEquipmentResult(success) {
+            const resultDiv = document.getElementById('equipment-result');
+            const iconSpan = document.getElementById('equipment-icon');
+            const textDiv = document.getElementById('equipment-text-result');
+            
+            if (success) {
+                resultDiv.className = 'alert alert-success';
+                iconSpan.textContent = '🎉';
+                textDiv.innerHTML = '<strong>Excellent !</strong> Vous savez classifier les équipements selon leur fonction.';
+            }
+            
+            resultDiv.style.display = 'flex';
+        }
+
+        // QCM Management
+        function setupQCMListeners() {
+            const options = document.querySelectorAll('.qcm-option');
+            options.forEach(option => {
+                option.addEventListener('click', handleQCMAnswer);
+            });
+        }
+
+        function handleQCMAnswer(e) {
+            const questionId = e.target.closest('.qcm-option').dataset.question;
+            const selectedAnswer = e.target.closest('.qcm-option').dataset.answer;
+            
+            // Désélectionner les autres options de cette question
+            const questionOptions = document.querySelectorAll(`[data-question="${questionId}"]`);
+            questionOptions.forEach(opt => opt.classList.remove('selected'));
+            
+            // Sélectionner l'option cliquée
+            e.target.closest('.qcm-option').classList.add('selected');
+            
+            // Vérifier la réponse selon le type de QCM
+            let isCorrect = false;
+            if (questionId.startsWith('def')) {
+                isCorrect = selectedAnswer === DEFINITIONS_ANSWERS[questionId];
+            } else if (questionId.startsWith('prat')) {
+                isCorrect = selectedAnswer === PRACTICAL_ANSWERS[questionId];
+            }
+            
+            if (isCorrect) {
+                e.target.closest('.qcm-option').classList.add('correct');
+                showToast('✅ Bonne réponse !', 'success');
+            } else {
+                e.target.closest('.qcm-option').classList.add('incorrect');
+                showToast('❌ Réponse incorrecte', 'danger');
+            }
+            
+            // Vérifier si tous les QCM sont terminés
+            checkQCMCompletion();
+        }
+
+        function checkQCMCompletion() {
+            // Vérifier QCM définitions
+            const defAnswers = Object.keys(DEFINITIONS_ANSWERS);
+            const defCompleted = defAnswers.every(q => document.querySelector(`[data-question="${q}"].selected`));
+            
+            if (defCompleted && !chapterProgress.definitionsQCM) {
+                const defScore = calculateQCMScore(defAnswers, DEFINITIONS_ANSWERS);
+                chapterProgress.definitionsQCM = true;
+                chapterProgress.definitionsScore = defScore;
+                showDefinitionsResult(defScore);
+                updateGlobalScore();
+            }
+            
+            // Vérifier QCM pratique
+            const pratAnswers = Object.keys(PRACTICAL_ANSWERS);
+            const pratCompleted = pratAnswers.every(q => document.querySelector(`[data-question="${q}"].selected`));
+            
+            if (pratCompleted && !chapterProgress.practicalQCM) {
+                const pratScore = calculateQCMScore(pratAnswers, PRACTICAL_ANSWERS);
+                chapterProgress.practicalQCM = true;
+                chapterProgress.practicalScore = pratScore;
+                showPracticalResult(pratScore);
+                updateGlobalScore();
+            }
+        }
+
+        function calculateQCMScore(questions, answers) {
+            let correct = 0;
+            questions.forEach(q => {
+                const selected = document.querySelector(`[data-question="${q}"].selected`);
+                if (selected && selected.dataset.answer === answers[q]) {
+                    correct++;
+                }
+            });
+            return Math.round((correct / questions.length) * 100);
+        }
+
+        function showDefinitionsResult(score) {
+            const resultDiv = document.getElementById('def-result');
+            const iconSpan = document.getElementById('def-icon');
+            const textDiv = document.getElementById('def-text-result');
+            
+            if (score >= 67) {
+                resultDiv.className = 'alert alert-success';
+                iconSpan.textContent = '📚';
+                textDiv.innerHTML = `<strong>Bien !</strong> Définitions maîtrisées (${score}%)`;
+            } else {
+                resultDiv.className = 'alert alert-warning';
+                iconSpan.textContent = '📖';
+                textDiv.innerHTML = `<strong>À revoir</strong> Score : ${score}%. Consultez le guide INRS.`;
+            }
+            
+            resultDiv.style.display = 'flex';
+        }
+
+        function showPracticalResult(score) {
+            const resultDiv = document.getElementById('prat-result');
+            const iconSpan = document.getElementById('prat-icon');
+            const textDiv = document.getElementById('prat-text-result');
+            
+            if (score >= 67) {
+                resultDiv.className = 'alert alert-success';
+                iconSpan.textContent = '⚡';
+                textDiv.innerHTML = `<strong>Excellent !</strong> Cas pratiques maîtrisés (${score}%)`;
+            } else {
+                resultDiv.className = 'alert alert-warning';
+                iconSpan.textContent = '🔄';
+                textDiv.innerHTML = `<strong>À améliorer</strong> Score : ${score}%. Révisez les procédures.`;
+            }
+            
+            resultDiv.style.display = 'flex';
+        }
+
+        // Calcul du score global
+        function updateGlobalScore() {
+            let totalScore = 0;
+            let activitiesCompleted = 0;
+            
+            if (chapterProgress.stepsActivity) {
+                totalScore += chapterProgress.stepsScore;
+                activitiesCompleted++;
+            }
+            
+            if (chapterProgress.definitionsQCM) {
+                totalScore += chapterProgress.definitionsScore;
+                activitiesCompleted++;
+            }
+            
+            if (chapterProgress.equipmentSorting) {
+                totalScore += chapterProgress.equipmentScore;
+                activitiesCompleted++;
+            }
+            
+            if (chapterProgress.practicalQCM) {
+                totalScore += chapterProgress.practicalScore;
+                activitiesCompleted++;
+            }
+            
+            if (activitiesCompleted > 0) {
+                chapterProgress.globalScore = Math.round(totalScore / activitiesCompleted);
+                updateCompetenceLevel();
+                updateFinalScoreDisplay();
+            }
+        }
+
+        function updateCompetenceLevel() {
+            const score = chapterProgress.globalScore;
+            
+            if (score >= 90) {
+                chapterProgress.competenceLevel = 'Parfaitement acquis';
+                chapterProgress.competenceClass = 'score-parfait';
+            } else if (score >= 70) {
+                chapterProgress.competenceLevel = 'Acquis';
+                chapterProgress.competenceClass = 'score-acquis';
+            } else if (score >= 50) {
+                chapterProgress.competenceLevel = 'En cours';
+                chapterProgress.competenceClass = 'score-en-cours';
+            } else {
+                chapterProgress.competenceLevel = 'Non acquis';
+                chapterProgress.competenceClass = 'score-non-acquis';
+            }
+        }
+
+        function updateFinalScoreDisplay() {
+            const scoreDisplay = document.getElementById('final-score');
+            const scoreText = document.getElementById('score-text');
+            
+            scoreDisplay.className = `score-display ${chapterProgress.competenceClass}`;
+            scoreText.innerHTML = `
+                <strong>${chapterProgress.competenceLevel}</strong><br>
+                Score global : ${chapterProgress.globalScore}%<br>
+                <small>Étapes : ${chapterProgress.stepsScore || 0}% | Définitions : ${chapterProgress.definitionsScore || 0}% | Équipements : ${chapterProgress.equipmentScore || 0}% | Pratique : ${chapterProgress.practicalScore || 0}%</small>
+            `;
+        }
+
+        // Gestion du temps
+        function updateTimeSpent() {
+            chapterProgress.timeSpent = Math.floor((Date.now() - startTime) / 60000);
+        }
+
+        function setupTimeCounter() {
+            try {
+                setInterval(updateTimeSpent, 60000);
+            } catch(e) {
+                console.log('Erreur timer:', e);
+            }
+        }
+
+        // Sauvegarde et export
+        function saveProgress() {
+            let globalProgress = JSON.parse(localStorage.getItem('enerweb_securite_electrique_progress') || '{}');
+            
+            globalProgress.chapters = globalProgress.chapters || {};
+            globalProgress.chapters[`tp${CURRENT_CHAPTER_ID}`] = {
+                completed: chapterProgress.globalScore >= 70,
+                score: chapterProgress.globalScore,
+                timeSpent: chapterProgress.timeSpent,
+                lastAccess: new Date().toISOString(),
+                activities: chapterProgress
+            };
+            
+            globalProgress.lastAccess = new Date().toISOString();
+            localStorage.setItem('enerweb_securite_electrique_progress', JSON.stringify(globalProgress));
+            showToast('💾 Progression sauvegardée !', 'success');
+        }
+
+        function exportResults() {
+            const resultsData = {
+                eleve: studentData || { nom: "", prenom: "", formation: "", isAnonymous: true },
+                tp: { 
+                    id: `tp${CURRENT_CHAPTER_ID}`, 
+                    titre: `TP ${CURRENT_CHAPTER_ID} – ${CHAPTER_TITLE}`, 
+                    date_realisation: new Date().toISOString() 
+                },
+                evaluation: [{
+                    competence: REFERENTIELS[studentData?.formation] || "Mode opératoire sécurisé",
+                    niveau: chapterProgress.competenceLevel,
+                    score: chapterProgress.globalScore,
+                    classe_css: chapterProgress.competenceClass
+                }],
+                activites: {
+                    etapes: { completed: chapterProgress.stepsActivity, score: chapterProgress.stepsScore },
+                    definitions: { completed: chapterProgress.definitionsQCM, score: chapterProgress.definitionsScore },
+                    equipements: { completed: chapterProgress.equipmentSorting, score: chapterProgress.equipmentScore },
+                    pratique: { completed: chapterProgress.practicalQCM, score: chapterProgress.practicalScore }
+                },
+                note_globale: chapterProgress.globalScore,
+                temps_passe: chapterProgress.timeSpent
+            };
+            
+            const blob = new Blob([JSON.stringify(resultsData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `enerweb_tp5_intervention_hors_tension_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showToast('📄 Export JSON réalisé !', 'success');
+        }
+
+        // Accessibilité
+        function toggleAccessibility(type) {
+            const body = document.body;
+            const btn = document.getElementById(`btn-${type}`);
+            
+            switch(type) {
+                case 'police':
+                    body.classList.toggle('police-adaptee');
+                    btn.classList.toggle('active');
+                    break;
+                case 'taille':
+                    body.classList.toggle('accessibility-mode');
+                    btn.classList.toggle('active');
+                    break;
+                case 'espacement':
+                case 'lisibilite':
+                    body.classList.toggle('police-adaptee');
+                    btn.classList.toggle('active');
+                    break;
+            }
+            
+            // Sauvegarder les préférences
+            const preferences = {
+                police: body.classList.contains('police-adaptee'),
+                taille: body.classList.contains('accessibility-mode')
+            };
+            localStorage.setItem('accessibility_preferences', JSON.stringify(preferences));
+        }
+
+        function loadAccessibilityPreferences() {
+            const preferences = JSON.parse(localStorage.getItem('accessibility_preferences') || '{}');
+            
+            if (preferences.police) {
+                document.body.classList.add('police-adaptee');
+                document.getElementById('btn-police').classList.add('active');
+            }
+            
+            if (preferences.taille) {
+                document.body.classList.add('accessibility-mode');
+                document.getElementById('btn-taille').classList.add('active');
+            }
+        }
+
+        // Aide INRS
+        function showIRISInfo() {
+            showToast('📚 Guide INRS-ST pages 14-17 disponible sur inrs.fr', 'info');
+        }
+
+        // Toast notifications
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast show ${type}`;
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

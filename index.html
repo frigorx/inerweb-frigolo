@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>inerWeb FRIGOLO — Outils & Sécurité pour le Frigoriste</title>
+<meta name="author" content="F. Henninot">
+<meta name="description" content="Plateforme pédagogique : outils de calcul frigorifique et modules de prévention des risques professionnels.">
+<style>
+:root{--navy:#0f2d52;--navy2:#1a4a6e;--orange:#e8914a;--orange2:#d47a35;--turq:#2aafaf;--red:#c0392b;--red2:#e74c3c;--bg:#faf7f2;--card:#fff;--text:#2c3e50;--muted:#5a7080;--shadow:0 4px 16px rgba(15,45,82,.07)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:linear-gradient(180deg,var(--bg),#f0ebe3);font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:var(--text);min-height:100vh}
+.app{max-width:1000px;margin:0 auto;padding:20px 16px}
+.hdr{background:linear-gradient(135deg,#0f2d52,#1a4a6e,#2aafaf);padding:28px 32px;border-bottom:4px solid var(--orange);border-radius:0 0 0 40px;box-shadow:0 4px 20px rgba(15,45,82,.15);margin-bottom:32px;text-align:center}
+.hdr h1{font-size:1.8rem;font-weight:800;color:#fff;letter-spacing:2px}
+.hdr h1 span{color:var(--orange)}
+.hdr .sub{font-size:.9rem;color:rgba(255,255,255,.85);margin-top:6px}
+.section-title{font-size:1.15rem;font-weight:800;color:var(--navy);margin:28px 0 14px;padding-left:12px;border-left:4px solid var(--orange);display:flex;align-items:center;gap:10px}
+.section-title .icon{font-size:1.3rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:8px}
+.card{background:var(--card);border-radius:18px;box-shadow:var(--shadow);border:1px solid #ece4da;overflow:hidden;transition:transform .2s,box-shadow .2s;text-decoration:none;color:inherit;display:flex;flex-direction:column}
+.card:hover{transform:translateY(-4px);box-shadow:0 8px 28px rgba(15,45,82,.12)}
+.card-top{padding:5px 0;text-align:center;font-size:.65rem;font-weight:700;color:#fff;letter-spacing:1px;text-transform:uppercase}
+.cat-outils{background:linear-gradient(135deg,var(--orange),var(--orange2))}
+.cat-risques{background:linear-gradient(135deg,var(--red),var(--red2))}
+.card-body{padding:18px 20px;flex:1;display:flex;flex-direction:column;gap:6px}
+.card-body h2{font-size:1.05rem;font-weight:800;color:var(--navy)}
+.card-body p{font-size:.82rem;color:var(--muted);line-height:1.5}
+.tag{display:inline-block;font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:999px;margin-top:auto;align-self:flex-start}
+.tag-calc{background:#eef8f7;color:var(--turq)}
+.tag-diag{background:#fef3e8;color:var(--orange)}
+.tag-tp{background:#e8f0fe;color:#2a5db0}
+.tag-risk{background:#fde8e8;color:var(--red)}
+footer{text-align:center;margin-top:36px;padding:20px 16px;font-size:.72rem;color:var(--muted);border-top:1px solid #ece4da;line-height:1.7}
+footer a{color:var(--navy);text-decoration:none}
+footer a:hover{text-decoration:underline}
+.iris{font-style:italic;color:#888;font-size:.68rem;margin-top:4px}
+@media(max-width:600px){.hdr h1{font-size:1.3rem}.grid{grid-template-columns:1fr}}
+</style>
+<script>
+/* Protection anti-copie */
+document.addEventListener('contextmenu',function(e){e.preventDefault()});
+document.addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&(e.key==='u'||e.key==='s'||e.key==='c')){e.preventDefault()}});
+document.addEventListener('selectstart',function(e){if(e.target.tagName!=='INPUT'&&e.target.tagName!=='TEXTAREA'){e.preventDefault()}});
+</script>
+</head>
+<body>
+<div class="app">
+  <div class="hdr">
+    <h1>inerWeb <span>FRIGOLO</span></h1>
+    <div class="sub">Outils de calcul & Prévention des risques — Génie frigorifique</div>
+  </div>
+
+  <div class="section-title"><span class="icon">&#9881;</span> Outils FRIGOLO</div>
+  <div class="grid">
+    <a href="outils/frigolo-mollier.html" class="card">
+      <div class="card-top cat-outils">Outil</div>
+      <div class="card-body">
+        <h2>FRIGOLO Mollier v3 Pro</h2>
+        <p>Diagramme enthalpique log(p)-h interactif. Tracé de cycles frigorifiques avancé.</p>
+        <span class="tag tag-diag">Diagramme</span>
+      </div>
+    </a>
+    <a href="outils/frigolo-bilan-thermique.html" class="card">
+      <div class="card-top cat-outils">Outil</div>
+      <div class="card-body">
+        <h2>FRIGOLO Bilan Thermique</h2>
+        <p>Calcul de bilan thermique : apports, déperditions, dimensionnement chambre froide.</p>
+        <span class="tag tag-calc">Calcul</span>
+      </div>
+    </a>
+    <a href="outils/frigolo-psychro.html" class="card">
+      <div class="card-top cat-outils">Outil</div>
+      <div class="card-body">
+        <h2>FRIGOLO Psychro v2</h2>
+        <p>Diagramme psychrométrique interactif. Traitement d'air, humidité, température.</p>
+        <span class="tag tag-diag">Diagramme</span>
+      </div>
+    </a>
+    <a href="outils/tp-cop-pac.html" class="card">
+      <div class="card-top cat-outils">TP</div>
+      <div class="card-body">
+        <h2>TP COP — PAC Air/Air</h2>
+        <p>TP interactif de mesure et calcul du COP d'une pompe à chaleur air/air.</p>
+        <span class="tag tag-tp">Travaux Pratiques</span>
+      </div>
+    </a>
+    <a href="outils/reglette-fluides.html" class="card">
+      <div class="card-top cat-outils">Outil</div>
+      <div class="card-body">
+        <h2>Réglette Fluides</h2>
+        <p>Correspondance pression / température des fluides frigorigènes. Outil du quotidien.</p>
+        <span class="tag tag-calc">Référence</span>
+      </div>
+    </a>
+  </div>
+
+  <div class="section-title"><span class="icon">&#9888;</span> Risques Professionnels</div>
+  <div class="grid">
+    <a href="risques/securite-apprenants/index.html" class="card">
+      <div class="card-top cat-risques">Prévention</div>
+      <div class="card-body">
+        <h2>Accueil Sécurité Apprenants</h2>
+        <p>6 séances : risques professionnels, accueil entreprise, travaux réglementés, obligations, EPI, évaluation.</p>
+        <span class="tag tag-risk">6 séances</span>
+      </div>
+    </a>
+    <a href="risques/fluides-frigorigenes/index.html" class="card">
+      <div class="card-top cat-risques">Prévention</div>
+      <div class="card-body">
+        <h2>Sécurité Fluides Frigorigènes</h2>
+        <p>6 chapitres : identification des risques, santé, environnement, transport, fuites, évaluation.</p>
+        <span class="tag tag-risk">6 chapitres</span>
+      </div>
+    </a>
+    <a href="risques/securite-electrique/index.html" class="card">
+      <div class="card-top cat-risques">Prévention</div>
+      <div class="card-body">
+        <h2>Sécurité Électrique</h2>
+        <p>6 TP : dangers, sources de risque, EPI, analyse de risque, intervention hors tension, évaluation.</p>
+        <span class="tag tag-risk">6 TP</span>
+      </div>
+    </a>
+    <a href="risques/index.html" class="card">
+      <div class="card-top cat-risques">Ressources</div>
+      <div class="card-body">
+        <h2>Bibliothèque PDF — IRIS-ST</h2>
+        <p>Dépliants et mémos IRIS-ST : fluides frigorigènes, risque électrique, soudage, EPI, bruit, vibrations…</p>
+        <span class="tag tag-risk">Documentation</span>
+      </div>
+    </a>
+  </div>
+
+  <footer>
+    <p><strong>inerWeb FRIGOLO</strong> — par F. Henninot — Tous droits réservés &copy; 2024-2026</p>
+    <p class="iris">Les documents IRIS-ST sont utilisés exclusivement à des fins pédagogiques et éducatives.<br>
+    Ils restent la propriété de l'<a href="https://www.iris-st.org" target="_blank" rel="noopener">IRIS-ST</a> et de leurs auteurs respectifs.</p>
+    <p style="margin-top:6px"><a href="LICENSE">Licence</a></p>
+  </footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,1807 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Inerweb - Séance 5 : Protection individuelle et procédures d'alerte">
+    <meta name="author" content="F. Henninot">
+    
+    <title>Séance 5 - Te Protéger et Alerter</title>
+    
+    <!-- Police Lexend -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ========== VARIABLES CSS ========== */
+        :root {
+            --primary: #FF6B35;
+            --secondary: #FF8E53;
+            --accent: #FFC300;
+            --non-acquis: #ef4444;
+            --en-cours: #f59e0b;
+            --acquis: #3b82f6;
+            --parfait: #10b981;
+            --background: #f8f9fa;
+            --text: #333333;
+            --border: #e0e0e0;
+            --shadow: 0 4px 12px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Lexend', system-ui, -apple-system, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        /* Header avec navigation */
+        .header {
+            background: white;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .snowflake {
+            display: inline-block;
+            animation: snowflakeRotate 4s linear infinite;
+            font-size: 1.5em;
+        }
+        
+        @keyframes snowflakeRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-nav {
+            padding: 8px 16px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn-nav:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+        
+        /* Container principal */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px 40px;
+        }
+        
+        /* Barre de progression locale */
+        .local-progress {
+            background: #e0e0e0;
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .local-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            width: 0%;
+            transition: width 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .local-progress-fill::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        /* Section d'apprentissage */
+        .learning-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .section-icon {
+            font-size: 2.5em;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .section-title {
+            font-size: 1.8em;
+            color: var(--primary);
+        }
+        
+        /* Objectifs pédagogiques */
+        .objectives {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .objectives::before {
+            content: '🎯';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 4em;
+            opacity: 0.1;
+        }
+        
+        .objectives h3 {
+            color: var(--acquis);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .objectives ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .objectives li {
+            padding: 8px 0;
+            padding-left: 30px;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+        
+        .objectives li:hover {
+            transform: translateX(5px);
+        }
+        
+        .objectives li::before {
+            content: '🎯';
+            position: absolute;
+            left: 0;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        /* Tooltips améliorés */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 2px dotted var(--primary);
+            cursor: help;
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 250px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -125px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-weight: normal;
+            font-size: 0.9em;
+            line-height: 1.4;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* Activités interactives améliorées */
+        .activity {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border: 2px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .activity::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+            animation: colorWave 3s linear infinite;
+        }
+        
+        @keyframes colorWave {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .activity-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .activity-title {
+            font-size: 1.2em;
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        /* Mannequin virtuel pour EPI */
+        .mannequin-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+            align-items: start;
+        }
+        
+        .epi-list {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        
+        .epi-list h4 {
+            margin-bottom: 15px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .epi-item {
+            background: white;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border: 2px solid var(--border);
+            cursor: grab;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            user-select: none;
+        }
+        
+        .epi-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-color: var(--primary);
+        }
+        
+        .epi-item.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+            transform: rotate(5deg);
+        }
+        
+        .epi-item.placed {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #e8f5e9;
+            border-color: var(--parfait);
+        }
+        
+        .mannequin {
+            position: relative;
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+        
+        .mannequin-figure {
+            position: relative;
+            width: 200px;
+            height: 400px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+        }
+        
+        .drop-zone {
+            background: rgba(255, 107, 53, 0.1);
+            border: 3px dashed var(--primary);
+            border-radius: 10px;
+            margin: 5px;
+            padding: 15px;
+            text-align: center;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            position: relative;
+            width: 90%;
+        }
+        
+        .drop-zone.drag-over {
+            background: rgba(255, 107, 53, 0.2);
+            transform: scale(1.05);
+        }
+        
+        .drop-zone.filled {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: var(--parfait);
+            border-style: solid;
+        }
+        
+        .drop-zone-label {
+            font-size: 0.9em;
+            color: #666;
+            pointer-events: none;
+        }
+        
+        .placed-epi {
+            font-size: 2em;
+            animation: placedBounce 0.5s ease;
+        }
+        
+        @keyframes placedBounce {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        /* Zone d'information EPI */
+        .epi-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        
+        .epi-info h4 {
+            margin-bottom: 15px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .info-content {
+            font-size: 0.9em;
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        /* Numéros d'urgence */
+        .emergency-numbers {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .emergency-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .emergency-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, var(--non-acquis) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .emergency-card:hover::before {
+            opacity: 0.1;
+        }
+        
+        .emergency-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .emergency-number {
+            font-size: 3em;
+            font-weight: 700;
+            color: var(--non-acquis);
+            margin: 10px 0;
+            display: inline-block;
+            animation: emergencyPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes emergencyPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .emergency-label {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        
+        .emergency-desc {
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        /* Simulation d'alerte */
+        .alert-simulation {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .alert-steps {
+            display: grid;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .alert-step {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            transition: var(--transition);
+        }
+        
+        .alert-step:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        
+        .step-content h5 {
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        
+        .step-example {
+            font-style: italic;
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        
+        /* Quiz droit de retrait */
+        .quiz-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .quiz-question {
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .quiz-options {
+            display: grid;
+            gap: 10px;
+        }
+        
+        .quiz-option {
+            padding: 12px 15px;
+            background: #f5f5f5;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .quiz-option:hover {
+            background: #e8e8e8;
+            border-color: var(--primary);
+            transform: translateX(5px);
+        }
+        
+        .quiz-option.selected {
+            background: #e3f2fd;
+            border-color: var(--acquis);
+        }
+        
+        .quiz-option.correct {
+            background: #c8e6c9;
+            border-color: var(--parfait);
+        }
+        
+        .quiz-option.incorrect {
+            background: #ffcdd2;
+            border-color: var(--non-acquis);
+        }
+        
+        /* Boutons améliorés */
+        .btn {
+            padding: 12px 24px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .btn-validate {
+            background: var(--parfait);
+        }
+        
+        .btn-validate:hover {
+            background: #059862;
+        }
+        
+        .btn-emergency {
+            background: var(--non-acquis);
+            animation: emergencyBlink 2s ease-in-out infinite;
+        }
+        
+        @keyframes emergencyBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        
+        /* Score et feedback */
+        .score-display {
+            background: linear-gradient(135deg, #e1f5fe, #b3e5fc);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .score-number {
+            font-size: 3em;
+            font-weight: 700;
+            color: var(--acquis);
+            animation: countUp 1s ease-out;
+        }
+        
+        @keyframes countUp {
+            from { transform: scale(0); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        /* Contrôles d'accessibilité */
+        .accessibility-controls {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 99;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+        
+        .btn-accessibility {
+            padding: 8px 15px;
+            background: white;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn-accessibility:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-accessibility.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* Mode accessible */
+        body.accessible-mode {
+            font-family: 'OpenDyslexic', 'Comic Sans MS', sans-serif;
+            line-height: 2;
+            letter-spacing: 0.1em;
+        }
+        
+        body.high-contrast {
+            background: #000;
+            color: #fff;
+        }
+        
+        body.high-contrast .learning-section,
+        body.high-contrast .activity,
+        body.high-contrast .header {
+            background: #222;
+            color: #fff;
+            border: 2px solid #fff;
+        }
+        
+        /* Mascotte helper */
+        .helper-mascot {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 70px;
+            height: 70px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2em;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: var(--transition);
+            z-index: 100;
+        }
+        
+        .helper-mascot:hover {
+            transform: scale(1.1) rotate(10deg);
+        }
+        
+        .helper-bubble {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            width: 250px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .helper-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            right: 25px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 10px solid white;
+        }
+        
+        .helper-mascot:hover .helper-bubble {
+            display: block;
+        }
+        
+        /* Animations supplémentaires */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+            }
+            
+            .mannequin-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .emergency-numbers {
+                grid-template-columns: 1fr;
+            }
+            
+            .accessibility-controls {
+                top: auto;
+                bottom: 100px;
+                flex-direction: row;
+            }
+            
+            .helper-mascot {
+                bottom: 20px;
+                right: 10px;
+                width: 60px;
+                height: 60px;
+                font-size: 1.8em;
+            }
+        }
+    </style>
+<script>/* (c) F. Henninot - inerWeb FRIGOLO - Tous droits reserves */
+document.addEventListener("contextmenu",function(e){e.preventDefault()});
+document.addEventListener("keydown",function(e){if((e.ctrlKey||e.metaKey)&&(e.key==="u"||e.key==="s"||e.key==="c")){e.preventDefault()}});
+document.addEventListener("selectstart",function(e){if(e.target.tagName\!=="INPUT"&&e.target.tagName\!=="TEXTAREA"){e.preventDefault()}});
+</script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <span class="snowflake">❄️</span>
+                <h1>Séance 5 : Te Protéger et Alerter 🛡️</h1>
+            </div>
+            <div class="nav-buttons">
+                <button class="btn-nav" onclick="viewPDF()">
+                    <span>📄</span>
+                    <span>Voir PDF</span>
+                </button>
+                <a href="index_accueil_securite.html" class="btn-nav">
+                    <span>🏠</span>
+                    <span>Retour</span>
+                </a>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Contrôles d'accessibilité -->
+    <div class="accessibility-controls">
+        <button class="btn-accessibility" onclick="toggleAccessibleMode()" id="btnAccessible">
+            <span>📖</span>
+            <span>Police adaptée</span>
+        </button>
+        <button class="btn-accessibility" onclick="toggleHighContrast()" id="btnContrast">
+            <span>🌓</span>
+            <span>Contraste</span>
+        </button>
+        <button class="btn-accessibility" onclick="changeFontSize()" id="btnFontSize">
+            <span>🔍+</span>
+            <span>Taille</span>
+        </button>
+    </div>
+    
+    <!-- Mascotte helper -->
+    <div class="helper-mascot">
+        <span>🦺</span>
+        <div class="helper-bubble">
+            <strong>Astuce de Sécu ! 💡</strong><br>
+            Les EPI c'est comme une armure : chaque pièce te protège d'un danger différent !
+        </div>
+    </div>
+    
+    <!-- Container principal -->
+    <div class="container">
+        <!-- Barre de progression locale -->
+        <div class="local-progress">
+            <div class="local-progress-fill" id="localProgress"></div>
+        </div>
+        
+        <!-- Objectifs pédagogiques -->
+        <div class="objectives">
+            <h3>
+                <span style="font-size: 1.5em;">🎓</span>
+                Objectifs de cette séance
+            </h3>
+            <ul>
+                <li>Connaître les <span class="tooltip">EPI
+                    <span class="tooltiptext">Équipements de Protection Individuelle : casque, gants, chaussures de sécurité...</span>
+                </span> et leur utilisation</li>
+                <li>Savoir alerter en cas d'accident ou de danger 🚨</li>
+                <li>Mémoriser les numéros d'urgence essentiels 📞</li>
+                <li>Comprendre le <span class="tooltip">droit de retrait
+                    <span class="tooltiptext">Ton droit de refuser de travailler si tu es en danger grave et immédiat</span>
+                </span> et quand l'utiliser</li>
+            </ul>
+        </div>
+        
+        <!-- Section 1 : Les EPI -->
+        <div class="learning-section">
+            <div class="section-header">
+                <span class="section-icon">🦺</span>
+                <h2 class="section-title">Les EPI : Ton armure de protection</h2>
+            </div>
+            
+            <div class="content-box">
+                <p><strong>Les EPI (Équipements de Protection Individuelle) sont ta dernière ligne de défense contre les dangers.</strong></p>
+                <p>Ils sont :</p>
+                <ul style="margin-top: 10px; margin-left: 20px;">
+                    <li>✓ <strong>OBLIGATOIRES</strong> selon les zones et les travaux</li>
+                    <li>✓ <strong>GRATUITS</strong> (fournis par l'entreprise)</li>
+                    <li>✓ <strong>PERSONNELS</strong> (adaptés à ta taille)</li>
+                    <li>✓ <strong>À ENTRETENIR</strong> (tu dois en prendre soin)</li>
+                </ul>
+            </div>
+            
+            <div class="warning-box" style="background: #fff3cd; border: 2px solid #ffc107; padding: 20px; border-radius: 10px; margin-bottom: 25px; display: flex; align-items: flex-start; gap: 15px;">
+                <span style="font-size: 2em; flex-shrink: 0;">⚠️</span>
+                <div>
+                    <strong>RAPPEL IMPORTANT :</strong>
+                    <p>Ne pas porter ses EPI = FAUTE GRAVE pouvant entraîner le licenciement !</p>
+                    <p style="margin-top: 10px;">En cas d'accident sans EPI : pas d'indemnisation possible 💸❌</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Activité 1 : Habiller le mannequin -->
+        <div class="activity">
+            <div class="activity-header">
+                <span style="font-size: 1.5em;">👷</span>
+                <h3 class="activity-title">Activité 1 : Équipe le travailleur avec les bons EPI</h3>
+            </div>
+            
+            <p>🎯 <strong>Glisse chaque EPI sur la bonne partie du corps :</strong></p>
+            
+            <div class="mannequin-container">
+                <div class="epi-list">
+                    <h4>
+                        <span>📦</span>
+                        EPI disponibles :
+                    </h4>
+                    <div class="epi-item" draggable="true" data-zone="head" data-epi="casque">
+                        <span style="font-size: 1.5em;">⛑️</span>
+                        <span>Casque de sécurité</span>
+                    </div>
+                    <div class="epi-item" draggable="true" data-zone="eyes" data-epi="lunettes">
+                        <span style="font-size: 1.5em;">🥽</span>
+                        <span>Lunettes de protection</span>
+                    </div>
+                    <div class="epi-item" draggable="true" data-zone="ears" data-epi="bouchons">
+                        <span style="font-size: 1.5em;">🎧</span>
+                        <span>Protection auditive</span>
+                    </div>
+                    <div class="epi-item" draggable="true" data-zone="hands" data-epi="gants">
+                        <span style="font-size: 1.5em;">🧤</span>
+                        <span>Gants de protection</span>
+                    </div>
+                    <div class="epi-item" draggable="true" data-zone="body" data-epi="gilet">
+                        <span style="font-size: 1.5em;">🦺</span>
+                        <span>Gilet haute visibilité</span>
+                    </div>
+                    <div class="epi-item" draggable="true" data-zone="feet" data-epi="chaussures">
+                        <span style="font-size: 1.5em;">👟</span>
+                        <span>Chaussures de sécurité</span>
+                    </div>
+                </div>
+                
+                <div class="mannequin">
+                    <h4 style="text-align: center; margin-bottom: 20px; color: var(--primary);">
+                        Mannequin à équiper
+                    </h4>
+                    <div class="mannequin-figure">
+                        <div class="drop-zone" data-zone="head">
+                            <span class="drop-zone-label">Tête</span>
+                        </div>
+                        <div class="drop-zone" data-zone="eyes">
+                            <span class="drop-zone-label">Yeux</span>
+                        </div>
+                        <div class="drop-zone" data-zone="ears">
+                            <span class="drop-zone-label">Oreilles</span>
+                        </div>
+                        <div class="drop-zone" data-zone="body">
+                            <span class="drop-zone-label">Corps</span>
+                        </div>
+                        <div class="drop-zone" data-zone="hands">
+                            <span class="drop-zone-label">Mains</span>
+                        </div>
+                        <div class="drop-zone" data-zone="feet">
+                            <span class="drop-zone-label">Pieds</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="epi-info">
+                    <h4>
+                        <span>💡</span>
+                        Info EPI :
+                    </h4>
+                    <div class="info-content" id="epiInfo">
+                        <p>Glisse un EPI pour voir ses caractéristiques et quand l'utiliser !</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn btn-validate" onclick="validateEPI()">
+                    <span>✅</span>
+                    <span>Vérifier l'équipement</span>
+                </button>
+            </div>
+            
+            <div id="epi-feedback" style="margin-top: 15px; display: none;"></div>
+        </div>
+        
+        <!-- Section 2 : Les numéros d'urgence -->
+        <div class="learning-section">
+            <div class="section-header">
+                <span class="section-icon">📞</span>
+                <h2 class="section-title">Les numéros d'urgence à connaître PAR CŒUR</h2>
+            </div>
+            
+            <div class="emergency-numbers">
+                <div class="emergency-card" onclick="showEmergencyDetail(this, 'samu')">
+                    <div class="emergency-label">SAMU</div>
+                    <div class="emergency-number">15</div>
+                    <div class="emergency-desc">Urgences médicales</div>
+                </div>
+                
+                <div class="emergency-card" onclick="showEmergencyDetail(this, 'pompiers')">
+                    <div class="emergency-label">POMPIERS</div>
+                    <div class="emergency-number">18</div>
+                    <div class="emergency-desc">Incendie, accidents</div>
+                </div>
+                
+                <div class="emergency-card" onclick="showEmergencyDetail(this, 'urgences')">
+                    <div class="emergency-label">N° EUROPÉEN</div>
+                    <div class="emergency-number">112</div>
+                    <div class="emergency-desc">Toutes urgences</div>
+                </div>
+                
+                <div class="emergency-card" onclick="showEmergencyDetail(this, 'sst')">
+                    <div class="emergency-label">SST ENTREPRISE</div>
+                    <div class="emergency-number">📋</div>
+                    <div class="emergency-desc">À noter et retenir</div>
+                </div>
+            </div>
+            
+            <div class="content-box" style="margin-top: 30px; background: #e8f5e9; border-color: var(--parfait);">
+                <h4 style="display: flex; align-items: center; gap: 10px; color: var(--parfait);">
+                    <span style="font-size: 1.5em;">💡</span>
+                    Astuce pour retenir :
+                </h4>
+                <p><strong>15 - 18 - 112</strong> : "Un Cinq - Un Huit - Un Un Deux"</p>
+                <p style="margin-top: 10px;">Répète-le 10 fois et tu ne l'oublieras jamais ! 🧠</p>
+            </div>
+        </div>
+        
+        <!-- Section 3 : Comment alerter -->
+        <div class="learning-section">
+            <div class="section-header">
+                <span class="section-icon">🚨</span>
+                <h2 class="section-title">Comment bien alerter en cas d'accident</h2>
+            </div>
+            
+            <div class="alert-simulation">
+                <h4 style="color: var(--primary); margin-bottom: 5px;">La méthode P.A.S. pour alerter efficacement :</h4>
+                
+                <div class="alert-steps">
+                    <div class="alert-step">
+                        <div class="step-number">P</div>
+                        <div class="step-content">
+                            <h5>PROTÉGER</h5>
+                            <p>Sécurise la zone pour éviter un sur-accident</p>
+                            <p class="step-example">Ex: "J'ai coupé le courant" / "J'ai balisé la zone"</p>
+                        </div>
+                    </div>
+                    
+                    <div class="alert-step">
+                        <div class="step-number">A</div>
+                        <div class="step-content">
+                            <h5>ALERTER</h5>
+                            <p>Appelle les secours avec les bonnes infos</p>
+                            <p class="step-example">Ex: "J'appelle le 15 depuis le 12 rue de l'Industrie"</p>
+                        </div>
+                    </div>
+                    
+                    <div class="alert-step">
+                        <div class="step-number">S</div>
+                        <div class="step-content">
+                            <h5>SECOURIR</h5>
+                            <p>Aide la victime SANS te mettre en danger</p>
+                            <p class="step-example">Ex: "Je reste avec lui et je le rassure"</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="content-box" style="margin-top: 20px;">
+                <h4 style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 1.5em;">📱</span>
+                    Quoi dire au téléphone :
+                </h4>
+                <ol style="margin-top: 10px; margin-left: 20px;">
+                    <li><strong>QUI tu es :</strong> "Je suis [Nom], apprenti chez [Entreprise]"</li>
+                    <li><strong>OÙ tu es :</strong> Adresse précise + repères</li>
+                    <li><strong>QUOI :</strong> Ce qui s'est passé</li>
+                    <li><strong>COMBIEN :</strong> Nombre de victimes</li>
+                    <li><strong>ÉTAT :</strong> Conscient ? Respire ? Saigne ?</li>
+                </ol>
+                <p style="margin-top: 15px; font-weight: 600; color: var(--non-acquis);">
+                    ⚠️ NE RACCROCHE JAMAIS EN PREMIER !
+                </p>
+            </div>
+        </div>
+        
+        <!-- Activité 2 : Quiz droit de retrait -->
+        <div class="activity">
+            <div class="activity-header">
+                <span style="font-size: 1.5em;">⚖️</span>
+                <h3 class="activity-title">Activité 2 : Le droit de retrait - Vrai ou Faux ?</h3>
+            </div>
+            
+            <p>🤔 <strong>Teste tes connaissances sur le droit de retrait :</strong></p>
+            
+            <div style="margin-top: 20px;">
+                <div class="quiz-card">
+                    <div class="quiz-question">
+                        <span>1️⃣</span>
+                        <span>Tu peux utiliser ton droit de retrait si tu n'as pas envie de travailler</span>
+                    </div>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="selectQuizOption(this, 1, false)">
+                            <span>❌</span>
+                            <span>FAUX</span>
+                        </div>
+                        <div class="quiz-option" onclick="selectQuizOption(this, 1, true)">
+                            <span>✅</span>
+                            <span>VRAI</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="quiz-card">
+                    <div class="quiz-question">
+                        <span>2️⃣</span>
+                        <span>Le droit de retrait s'applique en cas de danger GRAVE et IMMÉDIAT</span>
+                    </div>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="selectQuizOption(this, 2, false)">
+                            <span>❌</span>
+                            <span>FAUX</span>
+                        </div>
+                        <div class="quiz-option" onclick="selectQuizOption(this, 2, true)">
+                            <span>✅</span>
+                            <span>VRAI</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="quiz-card">
+                    <div class="quiz-question">
+                        <span>3️⃣</span>
+                        <span>Tu peux être sanctionné si tu utilises ton droit de retrait correctement</span>
+                    </div>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="selectQuizOption(this, 3, false)">
+                            <span>❌</span>
+                            <span>FAUX</span>
+                        </div>
+                        <div class="quiz-option" onclick="selectQuizOption(this, 3, true)">
+                            <span>✅</span>
+                            <span>VRAI</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="quiz-card">
+                    <div class="quiz-question">
+                        <span>4️⃣</span>
+                        <span>Tu dois prévenir ton responsable avant d'exercer ton droit de retrait</span>
+                    </div>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="selectQuizOption(this, 4, false)">
+                            <span>❌</span>
+                            <span>FAUX</span>
+                        </div>
+                        <div class="quiz-option" onclick="selectQuizOption(this, 4, true)">
+                            <span>✅</span>
+                            <span>VRAI</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn btn-validate" onclick="validateQuiz()" style="margin-top: 20px;">
+                <span>🔍</span>
+                <span>Vérifier mes réponses</span>
+            </button>
+            
+            <div id="quiz-feedback" style="margin-top: 15px; display: none;"></div>
+        </div>
+        
+        <!-- Section 4 : Synthèse -->
+        <div class="learning-section">
+            <div class="section-header">
+                <span class="section-icon">🛡️</span>
+                <h2 class="section-title">Se protéger et protéger les autres</h2>
+            </div>
+            
+            <div class="content-box" style="background: #e8f5e9; border-color: var(--parfait);">
+                <h4 style="display: flex; align-items: center; gap: 10px; color: var(--parfait);">
+                    <span style="font-size: 1.5em;">🏆</span>
+                    Les réflexes du bon professionnel :
+                </h4>
+                <div style="display: grid; gap: 15px; margin-top: 20px;">
+                    <div style="display: flex; align-items: center; gap: 15px; padding: 15px; background: white; border-radius: 8px;">
+                        <span style="font-size: 1.5em;">🦺</span>
+                        <span><strong>JE PORTE</strong> mes EPI systématiquement</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px; padding: 15px; background: white; border-radius: 8px;">
+                        <span style="font-size: 1.5em;">👀</span>
+                        <span><strong>JE VÉRIFIE</strong> l'état de mes équipements</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px; padding: 15px; background: white; border-radius: 8px;">
+                        <span style="font-size: 1.5em;">🚨</span>
+                        <span><strong>J'ALERTE</strong> immédiatement en cas de danger</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px; padding: 15px; background: white; border-radius: 8px;">
+                        <span style="font-size: 1.5em;">📞</span>
+                        <span><strong>JE CONNAIS</strong> les numéros d'urgence par cœur</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px; padding: 15px; background: white; border-radius: 8px;">
+                        <span style="font-size: 1.5em;">🛑</span>
+                        <span><strong>J'UTILISE</strong> mon droit de retrait si nécessaire</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn btn-emergency" onclick="practiceEmergencyCall()">
+                    <span>📞</span>
+                    <span>S'entraîner à appeler les secours</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Synthèse et validation -->
+        <div class="learning-section">
+            <div class="section-header">
+                <span class="section-icon">✅</span>
+                <h2 class="section-title">À retenir de cette séance</h2>
+            </div>
+            
+            <div class="content-box">
+                <h4 style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 1.5em;">📌</span>
+                    Les points essentiels :
+                </h4>
+                <div style="margin-top: 20px; display: grid; gap: 15px;">
+                    <div style="display: flex; align-items: center; gap: 15px; padding: 15px; background: #e3f2fd; border-radius: 8px;">
+                        <span style="font-size: 1.5em;">🦺</span>
+                        <span>Les EPI sont <strong>OBLIGATOIRES</strong> et <strong>GRATUITS</strong></span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px; padding: 15px; background: #fff3e0; border-radius: 8px;">
+                        <span style="font-size: 1.5em;">📞</span>
+                        <span>15 (SAMU) - 18 (Pompiers) - 112 (Urgences)</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px; padding: 15px; background: #fce4ec; border-radius: 8px;">
+                        <span style="font-size: 1.5em;">🚨</span>
+                        <span>P.A.S. = Protéger, Alerter, Secourir</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px; padding: 15px; background: #e8f5e9; border-radius: 8px;">
+                        <span style="font-size: 1.5em;">⚖️</span>
+                        <span>Droit de retrait = danger <strong>GRAVE</strong> et <strong>IMMÉDIAT</strong></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="score-display" id="scoreDisplay" style="display: none;">
+                <p>Ton score pour cette séance :</p>
+                <div class="score-number" id="scoreNumber">0%</div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn" onclick="validateSession()" id="btnValidate">
+                    <span>🏁</span>
+                    <span>Terminer la séance</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Variables globales
+        let activities = {
+            epi: { completed: false, score: 0 },
+            quiz: { completed: false, score: 0 }
+        };
+        
+        // État du drag & drop EPI
+        let placedEPI = {};
+        let draggedElement = null;
+        
+        // Quiz answers
+        let quizAnswers = {};
+        const correctQuizAnswers = {
+            1: false, // Pas juste si pas envie
+            2: true,  // Oui, danger grave et immédiat
+            3: false, // Non, pas de sanction si légitime
+            4: true   // Oui, prévenir le responsable
+        };
+        
+        // Info des EPI
+        const epiInfo = {
+            casque: "⛑️ <strong>Casque :</strong> Protège des chutes d'objets et des chocs. Obligatoire sur chantier !",
+            lunettes: "🥽 <strong>Lunettes :</strong> Protègent des projections (copeaux, produits chimiques, poussières).",
+            bouchons: "🎧 <strong>Protection auditive :</strong> Obligatoire au-dessus de 80 dB. Protège ton audition !",
+            gants: "🧤 <strong>Gants :</strong> Différents types selon les risques (coupure, chimique, thermique...).",
+            gilet: "🦺 <strong>Gilet haute visibilité :</strong> Pour être vu, surtout près des engins et véhicules.",
+            chaussures: "👟 <strong>Chaussures de sécurité :</strong> Embout acier + semelle anti-perforation. TOUJOURS !"
+        };
+        
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeAccessibility();
+            updateLocalProgress();
+            initializeDragAndDrop();
+        });
+        
+        // Drag and Drop EPI
+        function initializeDragAndDrop() {
+            const draggables = document.querySelectorAll('.epi-item');
+            const dropZones = document.querySelectorAll('.drop-zone');
+            
+            // Pour chaque EPI draggable
+            draggables.forEach(draggable => {
+                draggable.addEventListener('dragstart', handleDragStart);
+                draggable.addEventListener('dragend', handleDragEnd);
+                
+                // Support tactile
+                draggable.addEventListener('touchstart', handleTouchStart, {passive: false});
+                draggable.addEventListener('touchmove', handleTouchMove, {passive: false});
+                draggable.addEventListener('touchend', handleTouchEnd);
+            });
+            
+            // Pour chaque zone de drop
+            dropZones.forEach(zone => {
+                zone.addEventListener('dragover', handleDragOver);
+                zone.addEventListener('drop', handleDrop);
+                zone.addEventListener('dragleave', handleDragLeave);
+            });
+        }
+        
+        function handleDragStart(e) {
+            draggedElement = e.target;
+            e.target.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            
+            // Afficher info EPI
+            const epiType = e.target.dataset.epi;
+            document.getElementById('epiInfo').innerHTML = epiInfo[epiType] || '';
+        }
+        
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+        }
+        
+        function handleDragOver(e) {
+            if (e.preventDefault) {
+                e.preventDefault();
+            }
+            e.dataTransfer.dropEffect = 'move';
+            e.currentTarget.classList.add('drag-over');
+            return false;
+        }
+        
+        function handleDragLeave(e) {
+            e.currentTarget.classList.remove('drag-over');
+        }
+        
+        function handleDrop(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            }
+            e.preventDefault();
+            
+            e.currentTarget.classList.remove('drag-over');
+            
+            if (draggedElement) {
+                const dropZone = e.currentTarget;
+                const zoneType = dropZone.dataset.zone;
+                const epiZone = draggedElement.dataset.zone;
+                
+                // Vérifier si c'est la bonne zone
+                if (zoneType === epiZone) {
+                    // Placer l'emoji
+                    dropZone.innerHTML = `<span class="placed-epi">${draggedElement.querySelector('span').textContent}</span>`;
+                    dropZone.classList.add('filled');
+                    
+                    // Marquer l'EPI comme placé
+                    draggedElement.classList.add('placed');
+                    draggedElement.draggable = false;
+                    
+                    // Enregistrer le placement
+                    placedEPI[zoneType] = draggedElement.dataset.epi;
+                    
+                    showNotification('✅ Bien placé !', 'success');
+                } else {
+                    showNotification('❌ Mauvais emplacement !', 'warning');
+                }
+                
+                draggedElement = null;
+            }
+            
+            return false;
+        }
+        
+        // Support tactile
+        let touchItem = null;
+        
+        function handleTouchStart(e) {
+            touchItem = e.target.closest('.epi-item');
+            if (!touchItem) return;
+            
+            touchItem.style.opacity = '0.5';
+            const epiType = touchItem.dataset.epi;
+            document.getElementById('epiInfo').innerHTML = epiInfo[epiType] || '';
+        }
+        
+        function handleTouchMove(e) {
+            e.preventDefault();
+            if (!touchItem) return;
+            
+            const touch = e.touches[0];
+            const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+            
+            if (elementBelow && elementBelow.classList.contains('drop-zone')) {
+                elementBelow.classList.add('drag-over');
+            }
+        }
+        
+        function handleTouchEnd(e) {
+            if (!touchItem) return;
+            
+            touchItem.style.opacity = '1';
+            const touch = e.changedTouches[0];
+            const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+            
+            if (elementBelow && elementBelow.classList.contains('drop-zone')) {
+                elementBelow.classList.remove('drag-over');
+                
+                const zoneType = elementBelow.dataset.zone;
+                const epiZone = touchItem.dataset.zone;
+                
+                if (zoneType === epiZone) {
+                    elementBelow.innerHTML = `<span class="placed-epi">${touchItem.querySelector('span').textContent}</span>`;
+                    elementBelow.classList.add('filled');
+                    touchItem.classList.add('placed');
+                    placedEPI[zoneType] = touchItem.dataset.epi;
+                    showNotification('✅ Bien placé !', 'success');
+                } else {
+                    showNotification('❌ Mauvais emplacement !', 'warning');
+                }
+            }
+            
+            touchItem = null;
+        }
+        
+        // Validation EPI
+        function validateEPI() {
+            const totalZones = 6;
+            const placedCount = Object.keys(placedEPI).length;
+            const score = Math.round((placedCount / totalZones) * 100);
+            
+            activities.epi.score = score;
+            activities.epi.completed = true;
+            
+            const feedback = document.getElementById('epi-feedback');
+            feedback.innerHTML = `
+                <div style="color: ${score === 100 ? 'var(--parfait)' : 'var(--en-cours)'}; font-weight: 600; padding: 15px; background: ${score === 100 ? '#e8f5e9' : '#fff3e0'}; border-radius: 8px; display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 2em;">${score === 100 ? '🎉' : '💪'}</span>
+                    <div>
+                        Score : <strong>${placedCount}/${totalZones} EPI placés (${score}%)</strong><br>
+                        ${score === 100 ? 'Parfait ! Le travailleur est complètement protégé !' : 'Continue ! Il manque encore des protections importantes.'}
+                    </div>
+                </div>
+            `;
+            feedback.style.display = 'block';
+            
+            updateLocalProgress();
+        }
+        
+        // Quiz droit de retrait
+        function selectQuizOption(element, questionId, answer) {
+            // Désélectionner les autres
+            const card = element.closest('.quiz-card');
+            card.querySelectorAll('.quiz-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // Sélectionner cette option
+            element.classList.add('selected');
+            quizAnswers[questionId] = answer;
+        }
+        
+        function validateQuiz() {
+            let correct = 0;
+            const total = 4;
+            
+            Object.keys(correctQuizAnswers).forEach(questionId => {
+                const userAnswer = quizAnswers[questionId];
+                const correctAnswer = correctQuizAnswers[questionId];
+                
+                const card = document.querySelectorAll('.quiz-card')[questionId - 1];
+                const options = card.querySelectorAll('.quiz-option');
+                
+                options.forEach(opt => {
+                    const isTrue = opt.textContent.includes('VRAI');
+                    if ((isTrue && correctAnswer) || (!isTrue && !correctAnswer)) {
+                        opt.classList.add('correct');
+                    } else if ((isTrue && userAnswer === true) || (!isTrue && userAnswer === false)) {
+                        opt.classList.add('incorrect');
+                    }
+                });
+                
+                if (userAnswer === correctAnswer) {
+                    correct++;
+                }
+            });
+            
+            const score = Math.round((correct / total) * 100);
+            activities.quiz.score = score;
+            activities.quiz.completed = true;
+            
+            const feedback = document.getElementById('quiz-feedback');
+            const explanations = [
+                "Le droit de retrait n'est PAS pour les caprices, mais pour les dangers réels !",
+                "OUI, il faut un danger GRAVE (qui peut blesser) et IMMÉDIAT (tout de suite) !",
+                "NON, tu ne peux PAS être sanctionné si tu l'utilises légitimement !",
+                "OUI, tu dois prévenir ton chef immédiatement (sauf urgence absolue) !"
+            ];
+            
+            let explanationHTML = '<div style="margin-top: 10px; font-size: 0.9em;">';
+            explanations.forEach((exp, index) => {
+                explanationHTML += `<p><strong>Q${index + 1} :</strong> ${exp}</p>`;
+            });
+            explanationHTML += '</div>';
+            
+            feedback.innerHTML = `
+                <div style="color: ${score >= 75 ? 'var(--parfait)' : 'var(--non-acquis)'}; font-weight: 600; padding: 15px; background: ${score >= 75 ? '#e8f5e9' : '#ffebee'}; border-radius: 8px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 2em;">${score >= 75 ? '🏆' : '📚'}</span>
+                        <div>
+                            Score : <strong>${correct}/${total} corrects (${score}%)</strong><br>
+                            ${score >= 75 ? 'Excellent ! Tu connais bien tes droits !' : 'Relis bien les conditions du droit de retrait !'}
+                        </div>
+                    </div>
+                    ${explanationHTML}
+                </div>
+            `;
+            feedback.style.display = 'block';
+            
+            updateLocalProgress();
+        }
+        
+        // Afficher détails numéros urgence
+        function showEmergencyDetail(card, type) {
+            const details = {
+                samu: "SAMU (15) : Pour toute urgence médicale. Malaise, blessure grave, intoxication...",
+                pompiers: "POMPIERS (18) : Incendie, accident, personne coincée, fuite de gaz...",
+                urgences: "112 : Numéro unique européen. Fonctionne partout en Europe, même sans crédit !",
+                sst: "Note ici le numéro des secouristes de ton entreprise. Demande-le dès ton arrivée !"
+            };
+            
+            showNotification(details[type], 'info');
+        }
+        
+        // Entraînement appel urgence
+        function practiceEmergencyCall() {
+            const scenario = prompt(
+                "🎯 SIMULATION D'APPEL D'URGENCE\n\n" +
+                "Scénario : Un collègue vient de tomber de l'échelle (2m). Il est conscient mais se plaint du dos.\n\n" +
+                "Quel numéro appelles-tu ?\n" +
+                "15 - SAMU\n" +
+                "18 - Pompiers\n" +
+                "112 - N° Européen"
+            );
+            
+            if (scenario === '15' || scenario === '112') {
+                showNotification('✅ Bon choix ! C\'est une urgence médicale, le SAMU est adapté.', 'success');
+            } else if (scenario === '18') {
+                showNotification('🤔 Les pompiers peuvent aider, mais le 15 (SAMU) est plus adapté pour une urgence médicale.', 'warning');
+            }
+        }
+        
+        // Progression locale
+        function updateLocalProgress() {
+            let completedCount = 0;
+            let totalScore = 0;
+            
+            Object.values(activities).forEach(activity => {
+                if (activity.completed) {
+                    completedCount++;
+                    totalScore += activity.score;
+                }
+            });
+            
+            const progress = (completedCount / Object.keys(activities).length) * 100;
+            const avgScore = completedCount > 0 ? totalScore / completedCount : 0;
+            
+            document.getElementById('localProgress').style.width = progress + '%';
+            
+            return avgScore;
+        }
+        
+        // Validation de la séance
+        function validateSession() {
+            const avgScore = updateLocalProgress();
+            
+            if (Object.values(activities).some(a => !a.completed)) {
+                showNotification('📝 Tu dois compléter toutes les activités avant de terminer !', 'warning');
+                return;
+            }
+            
+            // Afficher le score
+            document.getElementById('scoreNumber').textContent = Math.round(avgScore) + '%';
+            document.getElementById('scoreDisplay').style.display = 'block';
+            
+            // Sauvegarder la progression
+            saveProgress(avgScore);
+            
+            // Message de validation
+            if (avgScore >= 70) {
+                showNotification('🎉 Séance validée ! Tu sais maintenant te protéger et alerter.', 'success');
+                document.getElementById('btnValidate').innerHTML = '<span>🏆</span><span>Passer à l\'évaluation finale</span>';
+                document.getElementById('btnValidate').onclick = () => {
+                    window.location.href = 'seance6_evaluation_finale.html';
+                };
+            } else {
+                showNotification('💪 Score insuffisant. Revois les EPI et les procédures d\'alerte !', 'warning');
+            }
+        }
+        
+        // Sauvegarde progression
+        function saveProgress(score) {
+            const moduleData = JSON.parse(localStorage.getItem('inerweb_accueil_securite_data') || '{}');
+            
+            moduleData.progress = moduleData.progress || {};
+            moduleData.progress.seance5 = {
+                completed: true,
+                score: Math.round(score),
+                attempts: (moduleData.progress.seance5?.attempts || 0) + 1,
+                date: new Date().toISOString()
+            };
+            
+            localStorage.setItem('inerweb_accueil_securite_data', JSON.stringify(moduleData));
+        }
+        
+        // Gestion du PDF
+        function viewPDF() {
+            showNotification('📄 Le document PDF s\'ouvrirait ici', 'info');
+        }
+        
+        // Accessibilité
+        function toggleAccessibleMode() {
+            document.body.classList.toggle('accessible-mode');
+            document.getElementById('btnAccessible').classList.toggle('active');
+            if (document.body.classList.contains('accessible-mode')) {
+                loadOpenDyslexicFont();
+            }
+        }
+        
+        function toggleHighContrast() {
+            document.body.classList.toggle('high-contrast');
+            document.getElementById('btnContrast').classList.toggle('active');
+        }
+        
+        function changeFontSize() {
+            const currentSize = parseInt(getComputedStyle(document.body).fontSize);
+            const newSize = currentSize >= 20 ? 16 : currentSize + 2;
+            document.body.style.fontSize = newSize + 'px';
+            showNotification(`📏 Taille de police : ${newSize}px`, 'info');
+        }
+        
+        function loadOpenDyslexicFont() {
+            if (!document.getElementById('openDyslexicFont')) {
+                const link = document.createElement('link');
+                link.id = 'openDyslexicFont';
+                link.rel = 'stylesheet';
+                link.href = 'https://fonts.cdnfonts.com/css/open-dyslexic';
+                document.head.appendChild(link);
+            }
+        }
+        
+        function initializeAccessibility() {
+            const savedSettings = JSON.parse(localStorage.getItem('inerweb_accessibility') || '{}');
+            
+            if (savedSettings.accessibleMode) toggleAccessibleMode();
+            if (savedSettings.highContrast) toggleHighContrast();
+            if (savedSettings.fontSize) document.body.style.fontSize = savedSettings.fontSize;
+        }
+        
+        // Notifications améliorées
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                padding: 15px 25px;
+                background: ${type === 'success' ? 'var(--parfait)' : type === 'warning' ? 'var(--en-cours)' : 'var(--acquis)'};
+                color: white;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                z-index: 9999;
+                animation: slideDown 0.3s ease;
+                font-weight: 600;
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideUp 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+        
+        // Animations CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideDown {
+                from { transform: translateX(-50%) translateY(-100px); opacity: 0; }
+                to { transform: translateX(-50%) translateY(0); opacity: 1; }
+            }
+            
+            @keyframes slideUp {
+                from { transform: translateX(-50%) translateY(0); opacity: 1; }
+                to { transform: translateX(-50%) translateY(-100px); opacity: 0; }
+            }
+            
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
