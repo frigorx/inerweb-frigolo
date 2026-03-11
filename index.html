@@ -21,6 +21,7 @@ body{background:linear-gradient(180deg,var(--bg),#f0ebe3);font-family:system-ui,
 .card{background:var(--card);border-radius:18px;box-shadow:var(--shadow);border:1px solid #ece4da;overflow:hidden;transition:transform .2s,box-shadow .2s;text-decoration:none;color:inherit;display:flex;flex-direction:column}
 .card:hover{transform:translateY(-4px);box-shadow:0 8px 28px rgba(15,45,82,.12)}
 .card-top{padding:5px 0;text-align:center;font-size:.65rem;font-weight:700;color:#fff;letter-spacing:1px;text-transform:uppercase}
+.cat-froid{background:linear-gradient(135deg,#1a4a6e,#2aafaf)}
 .cat-outils{background:linear-gradient(135deg,var(--orange),var(--orange2))}
 .cat-risques{background:linear-gradient(135deg,var(--red),var(--red2))}
 .card-body{padding:18px 20px;flex:1;display:flex;flex-direction:column;gap:6px}
@@ -30,6 +31,7 @@ body{background:linear-gradient(180deg,var(--bg),#f0ebe3);font-family:system-ui,
 .tag-calc{background:#eef8f7;color:var(--turq)}
 .tag-diag{background:#fef3e8;color:var(--orange)}
 .tag-tp{background:#e8f0fe;color:#2a5db0}
+.tag-froid{background:#e8f4f8;color:#1a4a6e}
 .tag-risk{background:#fde8e8;color:var(--red)}
 footer{text-align:center;margin-top:36px;padding:20px 16px;font-size:.72rem;color:var(--muted);border-top:1px solid #ece4da;line-height:1.7}
 footer a{color:var(--navy);text-decoration:none}
@@ -49,6 +51,50 @@ document.addEventListener('selectstart',function(e){if(e.target.tagName!=='INPUT
   <div class="hdr">
     <h1>inerWeb <span>FRIGOLO</span></h1>
     <div class="sub">Outils de calcul & Prévention des risques — Génie frigorifique</div>
+  </div>
+
+  <div class="section-title"><span class="icon">&#10052;</span> Modules Froid</div>
+  <div class="grid">
+    <a href="outils/kp1-pressostat-bp.html" class="card">
+      <div class="card-top cat-froid">Froid</div>
+      <div class="card-body">
+        <h2>Pressostat BP — KP1</h2>
+        <p>Réglage du pressostat basse pression Danfoss KP1. Différentiel, cut-in, cut-out.</p>
+        <span class="tag tag-froid">Régulation</span>
+      </div>
+    </a>
+    <a href="outils/kp5-pressostat-hp.html" class="card">
+      <div class="card-top cat-froid">Froid</div>
+      <div class="card-body">
+        <h2>Pressostat HP — KP5</h2>
+        <p>Pressostat haute pression sécurité Danfoss KP5. Méthode de calcul et DESP.</p>
+        <span class="tag tag-froid">Sécurité</span>
+      </div>
+    </a>
+    <a href="outils/echangeurs.html" class="card">
+      <div class="card-top cat-froid">Froid</div>
+      <div class="card-body">
+        <h2>Échangeurs</h2>
+        <p>Évaporateur et condenseur : principes, fonctionnement et dimensionnement.</p>
+        <span class="tag tag-froid">Thermodynamique</span>
+      </div>
+    </a>
+    <a href="outils/lecon-scroll.html" class="card">
+      <div class="card-top cat-froid">Froid</div>
+      <div class="card-body">
+        <h2>Compresseur Scroll</h2>
+        <p>Leçon interactive sur le compresseur scroll : principe, fonctionnement, avantages.</p>
+        <span class="tag tag-froid">Compresseurs</span>
+      </div>
+    </a>
+    <a href="outils/symboles-frigorifiques.html" class="card">
+      <div class="card-top cat-froid">Froid</div>
+      <div class="card-body">
+        <h2>Symboles Frigorifiques</h2>
+        <p>Exercices interactifs sur les symboles normalisés des composants frigorifiques.</p>
+        <span class="tag tag-froid">Schématique</span>
+      </div>
+    </a>
   </div>
 
   <div class="section-title"><span class="icon">&#9881;</span> Outils FRIGOLO</div>
