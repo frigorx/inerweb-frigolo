@@ -3020,16 +3020,16 @@ Comparez les performances entre mode chaud et mode froid."></textarea>
             // Réponses correctes selon le mode
             const correctAnswers = {
                 hot: {
-                    'ext-entry': 'froid',    // Air froid entre dans l'unité extérieure
-                    'ext-exit': 'chaud',     // Air (légèrement) réchauffé sort de l'unité extérieure
-                    'int-entry': 'froid',    // Air froid de la pièce entre dans l'unité intérieure
-                    'int-exit': 'chaud'      // Air chaud sort de l'unité intérieure
+                    'ext-entry': 'froid',    // Air froid extérieur entre dans l'évaporateur
+                    'ext-exit': 'froid',     // Air sort encore plus froid (la PAC prélève sa chaleur)
+                    'int-entry': 'froid',    // Air froid de la pièce entre dans le condenseur
+                    'int-exit': 'chaud'      // Air chaud sort du condenseur vers la pièce
                 },
                 cold: {
-                    'ext-entry': 'chaud',    // Air chaud entre dans l'unité extérieure
-                    'ext-exit': 'froid',     // Air refroidi sort de l'unité extérieure
-                    'int-entry': 'chaud',    // Air chaud de la pièce entre dans l'unité intérieure  
-                    'int-exit': 'froid'      // Air froid sort de l'unité intérieure
+                    'ext-entry': 'chaud',    // Air chaud extérieur entre dans le condenseur
+                    'ext-exit': 'chaud',     // Air sort encore plus chaud (la PAC rejette la chaleur)
+                    'int-entry': 'chaud',    // Air chaud de la pièce entre dans l'évaporateur
+                    'int-exit': 'froid'      // Air froid sort de l'évaporateur vers la pièce
                 }
             };
 
@@ -3102,6 +3102,37 @@ Comparez les performances entre mode chaud et mode froid."></textarea>
                 });
             }
         });
+
+        // Validation du COP saisi
+        function validateCOP() {
+            const input = document.getElementById('copResult');
+            const validation = document.getElementById('copValidation');
+            const value = parseFloat(input.value);
+
+            if (isNaN(value)) {
+                validation.style.display = 'none';
+                return;
+            }
+
+            validation.style.display = 'block';
+
+            if (value >= 1.5 && value <= 6) {
+                validation.className = 'calc-validation show';
+                validation.innerHTML = '✅ COP cohérent pour une PAC air/air';
+                if (value >= 4) {
+                    validation.innerHTML += ' - Excellente performance !';
+                }
+            } else if (value > 0 && value < 1.5) {
+                validation.className = 'calc-validation show error';
+                validation.innerHTML = '⚠️ COP très faible (en dessous de 1.5) - Vérifiez vos calculs';
+            } else if (value > 6) {
+                validation.className = 'calc-validation show error';
+                validation.innerHTML = '⚠️ COP anormalement élevé (au-dessus de 6) - Vérifiez vos calculs';
+            } else {
+                validation.className = 'calc-validation show error';
+                validation.innerHTML = '❌ COP invalide - La valeur doit être positive';
+            }
+        }
 
         // NOUVEAU : Validations EER (dans le même esprit que le COP)
         function validateEER() {
