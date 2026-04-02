@@ -400,18 +400,33 @@ body {
             </div>
 
             <div class="phase-corrige" onclick="this.classList.toggle('open')">
-                <h3>Phase 7 — Évaluation (barème) <span class="toggle"></span></h3>
+                <h3>Phase 7 — Évaluation (barème + compétences) <span class="toggle"></span></h3>
                 <div class="phase-corrige-content">
+                    <p style="font-size:0.88rem; font-weight:700; color:var(--primary); margin-bottom:8px;">Note sur 20</p>
                     <table class="corrige-table">
-                        <thead><tr><th>Score</th><th>Appréciation</th><th>Couleur Sheet</th></tr></thead>
+                        <thead><tr><th>Note /20</th><th>Score %</th><th>Appréciation</th></tr></thead>
                         <tbody>
-                            <tr><td>≥ 85%</td><td><strong>Maîtrisé</strong></td><td style="background:#d5f5e3;">Vert</td></tr>
-                            <tr><td>70 — 84%</td><td><strong>Acquis</strong></td><td style="background:#d4efdf;">Vert clair</td></tr>
-                            <tr><td>50 — 69%</td><td><strong>En cours d'acquisition</strong></td><td style="background:#fef9e7;">Jaune</td></tr>
-                            <tr><td>< 50%</td><td><strong>Non acquis</strong></td><td style="background:#fdedec;">Rouge</td></tr>
+                            <tr><td style="background:#d5f5e3;"><strong>17 — 20</strong></td><td>≥ 85%</td><td><strong>Maîtrisé</strong></td></tr>
+                            <tr><td style="background:#d4efdf;"><strong>14 — 16,5</strong></td><td>70 — 84%</td><td><strong>Acquis</strong></td></tr>
+                            <tr><td style="background:#fef9e7;"><strong>10 — 13,5</strong></td><td>50 — 69%</td><td><strong>En cours d'acquisition</strong></td></tr>
+                            <tr><td style="background:#fdedec;"><strong>0 — 9,5</strong></td><td>< 50%</td><td><strong>Non acquis</strong></td></tr>
                         </tbody>
                     </table>
-                    <p style="font-size:0.82rem; color:var(--muted); margin-top:8px;">15 questions mixtes : 4 conversions pouce→mm, 2 mm→pouce, 3 rayons, 4 développés, 2 synthèses. Chronomètre 15 minutes.</p>
+
+                    <p style="font-size:0.88rem; font-weight:700; color:var(--primary); margin:14px 0 8px;">4 compétences évaluées (TNE)</p>
+                    <table class="corrige-table">
+                        <thead><tr><th>Code</th><th>Compétence</th><th>Questions éval</th><th>Seuils</th></tr></thead>
+                        <tbody>
+                            <tr><td><strong>C1</strong></td><td>Convertir pouce ↔ mm</td><td>6 questions (4 pouce→mm + 2 mm→pouce)</td><td>M ≥85% / A ≥70% / ECA ≥50% / NI &lt;50%</td></tr>
+                            <tr><td><strong>C2</strong></td><td>Identifier un rayon de cintrage</td><td>3 questions</td><td>idem</td></tr>
+                            <tr><td><strong>C3</strong></td><td>Calculer un développé</td><td>4 questions</td><td>idem</td></tr>
+                            <tr><td><strong>C4</strong></td><td>Résoudre un problème de tuyauterie</td><td>2 questions (synthèse)</td><td>idem</td></tr>
+                        </tbody>
+                    </table>
+
+                    <p style="font-size:0.82rem; color:var(--muted); margin-top:10px;">
+                        <strong>Dans le Google Sheet</strong>, chaque élève aura : Note /20, Score %, Détail, Temps, C1, C2, C3, C4, Appréciation — le tout coloré automatiquement.
+                    </p>
                 </div>
             </div>
         </div>

@@ -656,6 +656,51 @@ body {
 .grade-c { background: var(--warning-light); color: var(--warning); }
 .grade-d { background: var(--error-light); color: var(--error); }
 
+/* ═══ COMPÉTENCES ═══ */
+.comp-card {
+    background: #f8fafe;
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    margin: 8px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.comp-card .comp-label {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text);
+    flex: 1;
+    min-width: 150px;
+}
+
+.comp-card .comp-label small {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--muted);
+    margin-top: 2px;
+}
+
+.comp-badge {
+    display: inline-block;
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.comp-badge.maitrise { background: #d5f5e3; color: #1e8449; }
+.comp-badge.acquis { background: #d4efdf; color: #27ae60; }
+.comp-badge.encours { background: #fef9e7; color: #d4ac0d; }
+.comp-badge.nonacquis { background: #fdedec; color: #e74c3c; }
+
 /* ═══ FOOTER ═══ */
 .app-footer {
     text-align: center;
@@ -1166,12 +1211,20 @@ body {
     <!-- Résultat final (masqué au début) -->
     <div id="eval-result" style="display:none;">
         <div class="final-result">
-            <div style="font-size:0.9rem; color:var(--muted); margin-bottom:4px;">Ton score</div>
-            <div class="final-score" id="final-score-value">—</div>
+            <div style="font-size:0.9rem; color:var(--muted); margin-bottom:4px;">Ta note</div>
+            <div class="final-score" id="final-note-20">—</div>
+            <div style="font-size:0.85rem; color:var(--muted);" id="final-score-value"></div>
             <div class="final-grade" id="final-grade">—</div>
             <div class="score-bar" style="margin-top:14px;"><div class="score-fill" id="final-bar"></div></div>
             <div id="final-details" style="font-size:0.85rem; color:var(--muted); margin-top:10px;"></div>
         </div>
+
+        <!-- Évaluation par compétences -->
+        <div class="section" style="margin-top:12px;">
+            <div class="section-title"><span class="emoji">🎯</span> Évaluation par compétences</div>
+            <div id="competences-grid"></div>
+        </div>
+
         <div class="section" id="eval-corrections" style="margin-top:12px;"></div>
         <div class="btn-row">
             <button class="btn btn-primary" onclick="location.reload()">Recommencer</button>
@@ -1741,6 +1794,47 @@ function updateTimerDisplay() {
 // ═══════════════════════════════════════════════
 // SOUMISSION ÉVALUATION
 // ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+// COMPÉTENCES TNE
+// ═══════════════════════════════════════════════
+const COMPETENCES = [
+    { id: 'C1', label: 'Convertir pouce ↔ mm',               desc: 'Conversion de fractions de pouces en mm et inversement', cats: ['Conversion'] },
+    { id: 'C2', label: 'Identifier un rayon de cintrage',     desc: 'Connaître le rayon de cintrage selon le diamètre du tube', cats: ['Rayon'] },
+    { id: 'C3', label: 'Calculer un développé de cintrage',   desc: 'Appliquer la formule D = π × R × α / 180', cats: ['Développé'] },
+    { id: 'C4', label: 'Résoudre un problème de tuyauterie',  desc: 'Combiner conversion, rayon et développé en situation', cats: ['Synthèse'] }
+];
+
+function pctToGrade(pct) {
+    if (pct >= 85) return { text: 'Maîtrisé', cls: 'maitrise', code: 'M' };
+    if (pct >= 70) return { text: 'Acquis', cls: 'acquis', code: 'A' };
+    if (pct >= 50) return { text: 'En cours', cls: 'encours', code: 'ECA' };
+    return { text: 'Non acquis', cls: 'nonacquis', code: 'NI' };
+}
+
+function computeCompetences(exos) {
+    // Calculer le score par catégorie
+    const catStats = {};
+    exos.forEach((ex, i) => {
+        const cat = ex.cat || 'Autre';
+        if (!catStats[cat]) catStats[cat] = { ok: 0, total: 0 };
+        catStats[cat].total++;
+        const inp = document.getElementById('eval-' + i);
+        const v = parseVal(inp ? inp.value : '');
+        if (Number.isFinite(v) && Math.abs(v - ex.answer) <= ex.tol) catStats[cat].ok++;
+    });
+
+    // Mapper sur les compétences
+    return COMPETENCES.map(comp => {
+        let ok = 0, total = 0;
+        comp.cats.forEach(c => {
+            if (catStats[c]) { ok += catStats[c].ok; total += catStats[c].total; }
+        });
+        const pct = total > 0 ? Math.round(ok / total * 100) : 0;
+        const grade = pctToGrade(pct);
+        return { ...comp, ok, total, pct, grade };
+    });
+}
+
 window.submitEval = function() {
     if (evalSubmitted) return;
     evalSubmitted = true;
@@ -1748,19 +1842,24 @@ window.submitEval = function() {
 
     const result = checkPhase(6);
     phaseScores[6] = result.pct;
+    const exos = phaseExos[6];
 
     // Masquer zone exo, afficher résultat
     document.getElementById('eval-zone').style.display = 'none';
     document.getElementById('eval-result').style.display = 'block';
 
+    // Note sur 20 (arrondi au demi-point)
+    const noteBrute = result.pct * 20;
+    const note20 = Math.round(noteBrute * 2) / 2;
     const pctRound = Math.round(result.pct * 100);
-    document.getElementById('final-score-value').textContent = result.ok + ' / ' + result.total;
 
+    document.getElementById('final-note-20').textContent = fmt(note20, note20 % 1 === 0 ? 0 : 1) + ' / 20';
+    document.getElementById('final-score-value').textContent = result.ok + ' / ' + result.total + ' (' + pctRound + '%)';
+
+    const globalGrade = pctToGrade(pctRound);
     const gradeEl = document.getElementById('final-grade');
-    if (pctRound >= 85) { gradeEl.textContent = 'Maîtrisé'; gradeEl.className = 'final-grade grade-a'; }
-    else if (pctRound >= 70) { gradeEl.textContent = 'Acquis'; gradeEl.className = 'final-grade grade-b'; }
-    else if (pctRound >= 50) { gradeEl.textContent = 'En cours d\'acquisition'; gradeEl.className = 'final-grade grade-c'; }
-    else { gradeEl.textContent = 'Non acquis'; gradeEl.className = 'final-grade grade-d'; }
+    gradeEl.textContent = globalGrade.text;
+    gradeEl.className = 'final-grade grade-' + (globalGrade.code === 'M' ? 'a' : globalGrade.code === 'A' ? 'b' : globalGrade.code === 'ECA' ? 'c' : 'd');
 
     const bar = document.getElementById('final-bar');
     bar.style.width = pctRound + '%';
@@ -1770,19 +1869,28 @@ window.submitEval = function() {
     const elapsed = EVAL_DURATION - evalTimeLeft;
     const em = Math.floor(elapsed / 60), es = elapsed % 60;
     document.getElementById('final-details').textContent =
-        'Temps : ' + em + ' min ' + String(es).padStart(2, '0') + ' s — ' +
-        'Correct : ' + result.ok + '/' + result.total + ' (' + pctRound + '%)';
+        'Temps : ' + em + ' min ' + String(es).padStart(2, '0') + ' s';
+
+    // Compétences
+    const comps = computeCompetences(exos);
+    const compGrid = document.getElementById('competences-grid');
+    compGrid.innerHTML = comps.map(c =>
+        `<div class="comp-card">
+            <div class="comp-label"><strong>${c.id}</strong> — ${c.label}<small>${c.desc} (${c.ok}/${c.total})</small></div>
+            <span class="comp-badge ${c.grade.cls}">${c.grade.text}</span>
+        </div>`
+    ).join('');
 
     // Corrections
     const corrections = document.getElementById('eval-corrections');
-    const exos = phaseExos[6];
-    let corrHtml = '<h3 style="color:var(--primary); margin-bottom:10px;">Corrections</h3>';
+    let corrHtml = '<h3 style="color:var(--primary); margin-bottom:10px;">Corrections détaillées</h3>';
     exos.forEach((ex, i) => {
         const inp = document.getElementById('eval-' + i);
         const v = parseVal(inp ? inp.value : '');
         const isOk = Number.isFinite(v) && Math.abs(v - ex.answer) <= ex.tol;
         corrHtml += `<div style="padding:6px 0; border-bottom:1px solid var(--border); font-size:0.85rem;">
             <span style="color:${isOk ? 'var(--success)' : 'var(--error)'}; font-weight:700;">${isOk ? '✓' : '✗'}</span>
+            <span style="color:var(--muted); font-size:0.75rem;">[${ex.cat}]</span>
             Q${i+1}. ${ex.q} → <strong>${fmt(ex.answer, ex.tol < 0.01 ? 4 : 2)} ${ex.unit}</strong>
             ${!isOk && inp ? ' (ta réponse : ' + (inp.value || '—') + ')' : ''}</div>`;
     });
@@ -1791,8 +1899,8 @@ window.submitEval = function() {
     // Confetti si >= 70%
     if (pctRound >= 70) launchConfetti();
 
-    // Envoi Google Sheets
-    sendToSheets(result);
+    // Envoi Google Sheets avec note /20 + compétences
+    sendToSheets(result, note20, comps);
 
     updateNav();
     saveProgress();
@@ -1801,7 +1909,7 @@ window.submitEval = function() {
 // ═══════════════════════════════════════════════
 // ENVOI GOOGLE SHEETS
 // ═══════════════════════════════════════════════
-function sendToSheets(result) {
+function sendToSheets(result, note20, comps) {
     if (!APPS_SCRIPT_URL) return;
 
     const data = {
@@ -1809,15 +1917,15 @@ function sendToSheets(result) {
         nom: document.getElementById('stu-nom').value.trim(),
         prenom: document.getElementById('stu-prenom').value.trim(),
         classe: document.getElementById('stu-classe').value,
-        scorePhase1: phaseScores[0] !== null ? Math.round(phaseScores[0]*100) : '',
-        scorePhase2: phaseScores[1] !== null ? Math.round(phaseScores[1]*100) : '',
-        scorePhase3: phaseScores[2] !== null ? Math.round(phaseScores[2]*100) : '',
-        scorePhase4: phaseScores[3] !== null ? Math.round(phaseScores[3]*100) : '',
-        scorePhase5: phaseScores[4] !== null ? Math.round(phaseScores[4]*100) : '',
-        scorePhase6: phaseScores[5] !== null ? Math.round(phaseScores[5]*100) : '',
+        note20: note20,
         scoreEval: Math.round(result.pct * 100),
         detail: result.ok + '/' + result.total,
-        tempsSecondes: EVAL_DURATION - evalTimeLeft
+        tempsSecondes: EVAL_DURATION - evalTimeLeft,
+        // Compétences TNE
+        C1_conversion: comps[0].grade.code,
+        C2_rayon: comps[1].grade.code,
+        C3_developpé: comps[2].grade.code,
+        C4_synthese: comps[3].grade.code
     };
 
     fetch(APPS_SCRIPT_URL, {
