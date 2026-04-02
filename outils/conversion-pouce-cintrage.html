@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversion Pouce ↔ mm & Cintrage — inerWeb FRIGOLO</title>
+    <style>
+        :root {
+            --primary: #008cdf;
+            --secondary: #4ecdc4;
+            --accent: #96c93f;
+            --coral: #ff8b7d;
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+            --light: #f8fafe;
+            --dark: #2c3e50;
+            --warning: #ff6f00;
+            --success: #4caf50;
+            --error: #f44336;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--gradient);
+            min-height: 100vh;
+            padding: 12px;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: rgba(255,255,255,0.95);
+            border-radius: 16px;
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+
+        .snowflake { font-size: 2.2rem; animation: spin 4s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .header h1 { color: var(--primary); font-size: 1.4rem; }
+        .header p { color: var(--dark); font-size: 0.9rem; }
+
+        .tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            flex: 1;
+            min-width: 100px;
+            background: rgba(255,255,255,0.6);
+            border: none;
+            border-radius: 12px;
+            padding: 0.7rem 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--dark);
+        }
+
+        .tab.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 4px 12px rgba(0,140,223,0.3);
+            transform: translateY(-2px);
+        }
+
+        .panel {
+            display: none;
+            background: rgba(255,255,255,0.95);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .panel.active { display: block; }
+
+        .panel h2 {
+            color: var(--primary);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .card-blue { border-left: 4px solid var(--primary); }
+        .card-green { border-left: 4px solid var(--accent); }
+        .card-orange { border-left: 4px solid var(--coral); }
+        .card-warning { border-left: 4px solid var(--warning); }
+
+        .formula-box {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            padding: 1.2rem;
+            margin: 1rem 0;
+            text-align: center;
+        }
+
+        .formula-box .formula {
+            font-size: 1.15rem;
+            font-weight: bold;
+            color: var(--dark);
+            margin: 0.4rem 0;
+        }
+
+        label { font-weight: 600; color: var(--dark); display: block; margin-bottom: 0.3rem; }
+
+        input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border 0.2s;
+        }
+
+        input:focus, select:focus { border-color: var(--primary); outline: none; }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .result-box {
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--dark);
+            margin: 0.8rem 0;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
+        }
+
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .btn:active { transform: scale(0.97); }
+        .btn-success { background: var(--success); }
+        .btn-warning { background: var(--warning); }
+        .btn-coral { background: var(--coral); }
+
+        .btn-row {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 0.8rem;
+        }
+
+        /* Tableau conversions */
+        .conv-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0.8rem 0;
+            font-size: 0.88rem;
+        }
+
+        .conv-table th, .conv-table td {
+            padding: 0.6rem 0.4rem;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        .conv-table th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        .conv-table tr:nth-child(even) { background: #f5f9ff; }
+        .conv-table tr:hover { background: #e3f2fd; }
+
+        .highlight { background: #fff9c4 !important; }
+
+        /* Pastilles */
+        .pill {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            border-radius: 20px;
+            padding: 0.3rem 0.8rem;
+            font-size: 0.82rem;
+            font-weight: 600;
+            margin: 2px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .pill:hover { transform: scale(1.08); }
+        .pill.green { background: var(--accent); }
+        .pill.coral { background: var(--coral); }
+
+        /* Exercices */
+        .exercise {
+            background: linear-gradient(135deg, #fff3e0, #ffe8cc);
+            border-radius: 12px;
+            padding: 1.2rem;
+            margin: 1rem 0;
+            border-left: 4px solid var(--warning);
+        }
+
+        .exercise h3 {
+            color: var(--warning);
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+            text-align: center;
+        }
+
+        .question {
+            background: white;
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 0.6rem 0;
+            border-left: 3px solid var(--primary);
+        }
+
+        .question p { margin-bottom: 0.5rem; }
+
+        .answer-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .answer-input {
+            width: 120px;
+            padding: 0.6rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            text-align: center;
+        }
+
+        .answer-input.correct { border-color: var(--success); background: #e8f5e9; }
+        .answer-input.incorrect { border-color: var(--error); background: #ffebee; }
+
+        .feedback {
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+        }
+
+        .feedback.ok { color: var(--success); }
+        .feedback.ko { color: var(--error); }
+
+        /* Score */
+        .score-bar {
+            background: #e0e0e0;
+            border-radius: 20px;
+            height: 30px;
+            margin: 0.8rem 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .score-fill {
+            height: 100%;
+            border-radius: 20px;
+            background: var(--gradient);
+            transition: width 0.6s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.85rem;
+            min-width: 40px;
+        }
+
+        /* Visuel cintrage */
+        .tube-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            margin: 1rem 0;
+            flex-wrap: wrap;
+        }
+
+        .tube-svg { max-width: 200px; width: 100%; }
+
+        /* Responsive */
+        @media (max-width: 500px) {
+            body { padding: 8px; }
+            .header h1 { font-size: 1.15rem; }
+            .input-row { grid-template-columns: 1fr; }
+            .conv-table { font-size: 0.78rem; }
+            .conv-table th, .conv-table td { padding: 0.4rem 0.2rem; }
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.78rem;
+            padding: 1rem;
+        }
+
+        .footer a { color: white; }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+    <div class="snowflake">❄️</div>
+    <div>
+        <h1>inerWeb FRIGOLO</h1>
+        <p>Conversion Pouce ↔ mm & Cintrage tubes cuivre</p>
+    </div>
+</div>
+
+<!-- ONGLETS -->
+<div class="tabs">
+    <button class="tab active" onclick="showTab(0)">📏 Pouce ↔ mm</button>
+    <button class="tab" onclick="showTab(1)">📐 Cintrage</button>
+    <button class="tab" onclick="showTab(2)">🧮 Exercices</button>
+    <button class="tab" onclick="showTab(3)">📊 Tableau</button>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- PANEL 1 : CONVERSION POUCE ↔ MM           -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="panel active" id="panel-0">
+    <h2>📏 Conversion Pouce ↔ Millimètre</h2>
+
+    <div class="formula-box">
+        <div class="formula">1 pouce = 25,4 mm</div>
+        <div style="font-size:0.9rem; margin-top:0.3rem;">Saisir une fraction (3/8) ou un décimal (0,375)</div>
+    </div>
+
+    <div class="input-row">
+        <div>
+            <label>Pouces (in)</label>
+            <input type="text" id="inp-inch" inputmode="text" placeholder="ex : 3/8">
+        </div>
+        <div>
+            <label>Millimètres (mm)</label>
+            <input type="text" id="inp-mm" inputmode="decimal" placeholder="ex : 9,52">
+        </div>
+    </div>
+
+    <div class="result-box" id="conv-result">—</div>
+
+    <div style="margin-top:0.6rem;">
+        <label style="font-size:0.9rem;">Diamètres cuivre courants — cliquer pour convertir :</label>
+        <div style="display:flex; flex-wrap:wrap; gap:4px; margin-top:0.4rem;" id="quick-pills"></div>
+    </div>
+
+    <div class="btn-row">
+        <button class="btn btn-coral" onclick="clearConv()">Effacer</button>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- PANEL 2 : CINTRAGE                         -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="panel" id="panel-1">
+    <h2>📐 Rayon de cintrage & Développé</h2>
+
+    <div class="card card-blue">
+        <h4>Principe</h4>
+        <p>Quand on cintre un tube, on <strong>ajoute de la longueur</strong> par rapport au trajet droit. Cette longueur supplémentaire dépend du <strong>rayon de cintrage</strong> et de l'<strong>angle</strong>.</p>
+    </div>
+
+    <!-- Visuel SVG -->
+    <div class="tube-visual">
+        <svg class="tube-svg" viewBox="0 0 200 180" xmlns="http://www.w3.org/2000/svg">
+            <!-- Tube cintré -->
+            <path d="M 30 160 L 30 100 A 50 50 0 0 1 80 50 L 170 50" fill="none" stroke="#cd7f32" stroke-width="12" stroke-linecap="round"/>
+            <!-- Fibre neutre -->
+            <path d="M 36 160 L 36 100 A 44 44 0 0 1 80 56 L 170 56" fill="none" stroke="#f44336" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <!-- Rayon -->
+            <line x1="30" y1="100" x2="80" y2="100" stroke="#008cdf" stroke-width="2" stroke-dasharray="5,3"/>
+            <circle cx="30" cy="100" r="3" fill="#008cdf"/>
+            <text x="45" y="95" fill="#008cdf" font-size="11" font-weight="bold">R</text>
+            <!-- Angle -->
+            <path d="M 30 120 A 20 20 0 0 1 50 100" fill="none" stroke="#96c93f" stroke-width="1.5"/>
+            <text x="40" y="118" fill="#96c93f" font-size="10" font-weight="bold">90°</text>
+            <!-- Labels -->
+            <text x="5" y="145" fill="#2c3e50" font-size="9">Tube</text>
+            <text x="110" y="45" fill="#f44336" font-size="9">Fibre neutre</text>
+        </svg>
+    </div>
+
+    <div class="formula-box">
+        <h3 style="color:var(--primary); font-size:1.1rem; margin-bottom:0.5rem;">Formules de cintrage</h3>
+        <div class="formula">Développé 90° = (π / 2) × R = 1,5708 × R</div>
+        <div class="formula" style="font-size:1rem; margin-top:0.4rem;">Développé α° = (π × R × α) / 180</div>
+        <div style="font-size:0.85rem; margin-top:0.5rem; color:#666;">R = rayon de cintrage (mm) — α = angle en degrés</div>
+    </div>
+
+    <div class="card card-green">
+        <h4>Calculateur de développé</h4>
+        <div class="input-row">
+            <div>
+                <label>Diamètre tube</label>
+                <select id="calc-tube" onchange="calcDev()">
+                    <option value="">Choisir...</option>
+                </select>
+            </div>
+            <div>
+                <label>Angle (°)</label>
+                <input type="number" id="calc-angle" value="90" min="1" max="360" onchange="calcDev()" oninput="calcDev()">
+            </div>
+        </div>
+        <div class="input-row">
+            <div>
+                <label>Rayon cintrage (mm)</label>
+                <input type="number" id="calc-rayon" step="0.01" onchange="calcDev()" oninput="calcDev()">
+            </div>
+            <div>
+                <label>Développé (mm)</label>
+                <div class="result-box" id="calc-dev" style="margin:0;">—</div>
+            </div>
+        </div>
+        <div style="font-size:0.85rem; color:#666; margin-top:0.3rem;">Le rayon se remplit automatiquement selon le tube sélectionné (cintreuse standard).</div>
+    </div>
+
+    <div class="card card-orange">
+        <h4>Cintreuses frigorifiques courantes</h4>
+        <table class="conv-table">
+            <thead>
+                <tr><th>Cintreuse</th><th>Tubes compatibles</th><th>Rayon (mm)</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>1/4"</td><td>1/4"</td><td>6,35</td></tr>
+                <tr><td>3/8"</td><td>3/8"</td><td>9,52</td></tr>
+                <tr><td>1/2"</td><td>1/2"</td><td>12,70</td></tr>
+                <tr><td>5/8"</td><td>5/8"</td><td>15,88</td></tr>
+                <tr><td>3/4"</td><td>3/4"</td><td>19,05</td></tr>
+                <tr><td>7/8"</td><td>7/8"</td><td>22,22</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- PANEL 3 : EXERCICES                        -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="panel" id="panel-2">
+    <h2>🧮 Exercices interactifs</h2>
+
+    <div class="exercise" id="exo-zone">
+        <h3>Conversions & Cintrage — Teste-toi !</h3>
+        <div id="exo-list"></div>
+
+        <div class="btn-row" style="justify-content:center; margin-top:1rem;">
+            <button class="btn btn-success" onclick="checkAll()">Vérifier</button>
+            <button class="btn btn-warning" onclick="generateExos()">Nouveaux exercices</button>
+        </div>
+
+        <div class="score-bar" id="score-bar" style="display:none;">
+            <div class="score-fill" id="score-fill">0%</div>
+        </div>
+        <div id="score-text" style="text-align:center; font-weight:600; margin-top:0.3rem;"></div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- PANEL 4 : TABLEAU RÉCAP                    -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="panel" id="panel-3">
+    <h2>📊 Tableau récapitulatif complet</h2>
+
+    <table class="conv-table" id="full-table">
+        <thead>
+            <tr>
+                <th>Pouce</th>
+                <th>mm</th>
+                <th>Rayon cintrage (mm)</th>
+                <th>Développé 90° (mm)</th>
+            </tr>
+        </thead>
+        <tbody id="full-table-body"></tbody>
+    </table>
+
+    <div class="card card-blue" style="margin-top:1rem;">
+        <h4>Rappels utiles</h4>
+        <ul style="margin-left:1.2rem;">
+            <li><strong>1 pouce</strong> = 25,4 mm exactement</li>
+            <li><strong>Rayon de cintrage</strong> = rayon de la cintreuse (souvent = diamètre nominal du tube en pouces)</li>
+            <li><strong>Développé 90°</strong> = π/2 × R ≈ 1,5708 × R</li>
+            <li>Pour un autre angle : Développé = π × R × angle / 180</li>
+        </ul>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+    inerWeb FRIGOLO — Conversion Pouce & Cintrage<br>
+    <a href="https://frigorx.github.io/inerweb-frigolo/">← Retour portail FRIGOLO</a>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// DONNÉES TUBES CUIVRE FRIGORIFIQUE
+// ══════════════════════════════════════════════
+const TUBES = [
+    { pouce: '1/8',   frac: [1,8],   mm: 3.18,  rayon: 3.18  },
+    { pouce: '3/16',  frac: [3,16],  mm: 4.76,  rayon: 4.76  },
+    { pouce: '1/4',   frac: [1,4],   mm: 6.35,  rayon: 6.35  },
+    { pouce: '5/16',  frac: [5,16],  mm: 7.94,  rayon: 7.94  },
+    { pouce: '3/8',   frac: [3,8],   mm: 9.52,  rayon: 9.52  },
+    { pouce: '1/2',   frac: [1,2],   mm: 12.70, rayon: 12.70 },
+    { pouce: '5/8',   frac: [5,8],   mm: 15.88, rayon: 15.88 },
+    { pouce: '3/4',   frac: [3,4],   mm: 19.05, rayon: 19.05 },
+    { pouce: '7/8',   frac: [7,8],   mm: 22.22, rayon: 22.22 },
+    { pouce: '1 1/8', frac: [9,8],   mm: 28.58, rayon: 28.58 },
+    { pouce: '1 3/8', frac: [11,8],  mm: 34.93, rayon: 34.93 }
+];
+
+const MM_PER_IN = 25.4;
+
+// ══════════════════════════════════════════════
+// ONGLETS
+// ══════════════════════════════════════════════
+function showTab(i) {
+    document.querySelectorAll('.tab').forEach((t,idx) => t.classList.toggle('active', idx===i));
+    document.querySelectorAll('.panel').forEach((p,idx) => p.classList.toggle('active', idx===i));
+}
+
+// ══════════════════════════════════════════════
+// PARSEUR FRACTION / DÉCIMAL
+// ══════════════════════════════════════════════
+function parseVal(s) {
+    if (!s) return NaN;
+    s = String(s).trim().replace(',', '.');
+    // "1 3/8" → 1 + 3/8
+    const mixed = s.match(/^(\d+)\s+(\d+)\/(\d+)$/);
+    if (mixed) return parseInt(mixed[1]) + parseInt(mixed[2]) / parseInt(mixed[3]);
+    // "3/8"
+    if (s.includes('/')) {
+        const p = s.split('/');
+        if (p.length === 2) { const a = parseFloat(p[0]), b = parseFloat(p[1]); if (b !== 0) return a / b; }
+    }
+    return parseFloat(s);
+}
+
+function fmt(n, d) { return Number.isFinite(n) ? n.toFixed(d).replace('.', ',') : '—'; }
+
+// ══════════════════════════════════════════════
+// PANEL 1 : CONVERSION
+// ══════════════════════════════════════════════
+const inpInch = document.getElementById('inp-inch');
+const inpMm = document.getElementById('inp-mm');
+let lock = false;
+
+function fromInch() {
+    if (lock) return;
+    lock = true;
+    const v = parseVal(inpInch.value);
+    if (Number.isFinite(v)) {
+        const mm = v * MM_PER_IN;
+        inpMm.value = fmt(mm, 2);
+        document.getElementById('conv-result').textContent = inpInch.value.trim() + '" = ' + fmt(mm, 2) + ' mm';
+    } else {
+        document.getElementById('conv-result').textContent = '—';
+    }
+    lock = false;
+}
+
+function fromMm() {
+    if (lock) return;
+    lock = true;
+    const v = parseVal(inpMm.value);
+    if (Number.isFinite(v)) {
+        const inch = v / MM_PER_IN;
+        inpInch.value = fmt(inch, 4);
+        document.getElementById('conv-result').textContent = fmt(v, 2) + ' mm = ' + fmt(inch, 4) + '"';
+    } else {
+        document.getElementById('conv-result').textContent = '—';
+    }
+    lock = false;
+}
+
+inpInch.addEventListener('input', fromInch);
+inpMm.addEventListener('input', fromMm);
+
+function clearConv() {
+    inpInch.value = ''; inpMm.value = '';
+    document.getElementById('conv-result').textContent = '—';
+}
+
+// Pastilles rapides
+(function buildPills() {
+    const c = document.getElementById('quick-pills');
+    TUBES.forEach(t => {
+        const p = document.createElement('span');
+        p.className = 'pill';
+        p.textContent = t.pouce + '"';
+        p.onclick = () => { inpInch.value = t.pouce; fromInch(); };
+        c.appendChild(p);
+    });
+})();
+
+// ══════════════════════════════════════════════
+// PANEL 2 : CINTRAGE
+// ══════════════════════════════════════════════
+(function buildSelect() {
+    const sel = document.getElementById('calc-tube');
+    TUBES.forEach(t => {
+        const o = document.createElement('option');
+        o.value = t.mm;
+        o.dataset.rayon = t.rayon;
+        o.textContent = t.pouce + '" (' + fmt(t.mm, 2) + ' mm)';
+        sel.appendChild(o);
+    });
+})();
+
+function calcDev() {
+    const sel = document.getElementById('calc-tube');
+    const opt = sel.options[sel.selectedIndex];
+    if (opt && opt.dataset.rayon) {
+        document.getElementById('calc-rayon').value = parseFloat(opt.dataset.rayon).toFixed(2);
+    }
+    const R = parseVal(document.getElementById('calc-rayon').value);
+    const angle = parseVal(document.getElementById('calc-angle').value);
+    if (Number.isFinite(R) && Number.isFinite(angle) && R > 0 && angle > 0) {
+        const dev = Math.PI * R * angle / 180;
+        document.getElementById('calc-dev').textContent = fmt(dev, 2) + ' mm';
+    } else {
+        document.getElementById('calc-dev').textContent = '—';
+    }
+}
+
+// ══════════════════════════════════════════════
+// PANEL 3 : EXERCICES
+// ══════════════════════════════════════════════
+let currentExos = [];
+
+function rand(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+function generateExos() {
+    currentExos = [];
+    const usable = TUBES.filter(t => t.mm >= 6.35); // 1/4" et plus
+    document.getElementById('score-bar').style.display = 'none';
+    document.getElementById('score-text').textContent = '';
+
+    // 3 conversions pouce→mm
+    for (let i = 0; i < 3; i++) {
+        const t = rand(usable);
+        currentExos.push({
+            type: 'pouce2mm',
+            q: 'Convertir <strong>' + t.pouce + '"</strong> en millimètres.',
+            answer: t.mm,
+            unit: 'mm',
+            tol: 0.05
+        });
+    }
+
+    // 2 conversions mm→pouce (fraction)
+    for (let i = 0; i < 2; i++) {
+        const t = rand(usable);
+        currentExos.push({
+            type: 'mm2pouce',
+            q: '<strong>' + fmt(t.mm, 2) + ' mm</strong> correspond à combien de pouces ? (décimal)',
+            answer: t.frac[0] / t.frac[1],
+            unit: '"',
+            tol: 0.005
+        });
+    }
+
+    // 3 développés
+    const angles = [45, 60, 90, 120, 180];
+    for (let i = 0; i < 3; i++) {
+        const t = rand(usable);
+        const a = rand(angles);
+        const dev = Math.PI * t.rayon * a / 180;
+        currentExos.push({
+            type: 'dev',
+            q: 'Développé d\'un cintrage à <strong>' + a + '°</strong> pour un tube <strong>' + t.pouce + '"</strong> (R = ' + fmt(t.rayon, 2) + ' mm).',
+            answer: dev,
+            unit: 'mm',
+            tol: 0.5
+        });
+    }
+
+    // 2 questions rayon
+    for (let i = 0; i < 2; i++) {
+        const t = rand(usable);
+        currentExos.push({
+            type: 'rayon',
+            q: 'Quel est le rayon de cintrage (mm) pour un tube de <strong>' + t.pouce + '"</strong> ?',
+            answer: t.rayon,
+            unit: 'mm',
+            tol: 0.05
+        });
+    }
+
+    shuffle(currentExos);
+    renderExos();
+}
+
+function renderExos() {
+    const zone = document.getElementById('exo-list');
+    zone.innerHTML = '';
+    currentExos.forEach((ex, i) => {
+        const div = document.createElement('div');
+        div.className = 'question';
+        div.innerHTML = '<p><strong>Q' + (i+1) + '.</strong> ' + ex.q + '</p>' +
+            '<div class="answer-row">' +
+            '<input type="text" class="answer-input" id="ans-' + i + '" inputmode="decimal" placeholder="?">' +
+            '<span>' + ex.unit + '</span>' +
+            '<span class="feedback" id="fb-' + i + '"></span>' +
+            '</div>';
+        zone.appendChild(div);
+    });
+}
+
+function checkAll() {
+    let ok = 0;
+    currentExos.forEach((ex, i) => {
+        const inp = document.getElementById('ans-' + i);
+        const fb = document.getElementById('fb-' + i);
+        const v = parseVal(inp.value);
+        if (Number.isFinite(v) && Math.abs(v - ex.answer) <= ex.tol) {
+            inp.classList.remove('incorrect');
+            inp.classList.add('correct');
+            fb.className = 'feedback ok';
+            fb.textContent = '✓ Correct';
+            ok++;
+        } else {
+            inp.classList.remove('correct');
+            inp.classList.add('incorrect');
+            fb.className = 'feedback ko';
+            fb.textContent = '✗ ' + fmt(ex.answer, 2);
+        }
+    });
+
+    const total = currentExos.length;
+    const pct = Math.round(ok / total * 100);
+    const bar = document.getElementById('score-bar');
+    const fill = document.getElementById('score-fill');
+    bar.style.display = 'block';
+    fill.style.width = pct + '%';
+    fill.textContent = ok + '/' + total;
+
+    const txt = document.getElementById('score-text');
+    if (pct === 100) txt.textContent = '🏆 Parfait ! Tu maîtrises les conversions et le cintrage.';
+    else if (pct >= 70) txt.textContent = '👍 Bien ! Quelques révisions et c\'est bon.';
+    else if (pct >= 40) txt.textContent = '📖 Pas mal, relis le tableau et les formules.';
+    else txt.textContent = '💪 Courage ! Revois l\'onglet Tableau et Cintrage.';
+}
+
+// ══════════════════════════════════════════════
+// PANEL 4 : TABLEAU COMPLET
+// ══════════════════════════════════════════════
+(function buildTable() {
+    const body = document.getElementById('full-table-body');
+    TUBES.forEach(t => {
+        const dev90 = Math.PI / 2 * t.rayon;
+        const tr = document.createElement('tr');
+        tr.innerHTML = '<td><strong>' + t.pouce + '"</strong></td>' +
+            '<td>' + fmt(t.mm, 2) + '</td>' +
+            '<td>' + fmt(t.rayon, 2) + '</td>' +
+            '<td>' + fmt(dev90, 2) + '</td>';
+        body.appendChild(tr);
+    });
+})();
+
+// Init exercices au chargement
+generateExos();
+</script>
+
+</body>
+</html>
