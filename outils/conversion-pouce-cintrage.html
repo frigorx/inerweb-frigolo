@@ -1257,7 +1257,7 @@ body {
 // ═══════════════════════════════════════════════
 // CONFIGURATION
 // ═══════════════════════════════════════════════
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyrZ4aMoy_W68tKahrx-FfGhK_smX0ID8txW75QRSJOpOYJQrMbk8_brLDpYF8OxHU/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxaiwORhdONZXxFRNqXCThd5RAjcfcH9plwbfNBl0nRh9gsoEcN1tR3DSQwIZ7FX_K3/exec';
 
 const TUBES = [
     { pouce:'1/4',   num:1, den:4,  mm:6.35,  rayon:6.35  },
@@ -1928,19 +1928,21 @@ function sendToSheets(result, note20, comps) {
         C4_synthese: comps[3].grade.code
     };
 
+    // Toujours sauvegarder en local (filet de sécurité)
+    const allResults = JSON.parse(localStorage.getItem('frigolo-results') || '[]');
+    allResults.push(data);
+    localStorage.setItem('frigolo-results', JSON.stringify(allResults));
+
+    // Tenter l'envoi vers Google Sheets
     fetch(APPS_SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
     }).then(() => {
-        toast('Résultats envoyés !', 'success');
+        toast('Résultats envoyés + sauvegardés', 'success');
     }).catch(() => {
-        // Stocker en local si échec
-        const pending = JSON.parse(localStorage.getItem('frigolo-pending') || '[]');
-        pending.push(data);
-        localStorage.setItem('frigolo-pending', JSON.stringify(pending));
-        toast('Sauvegardé localement', 'error');
+        toast('Sauvegardé localement (envoi Sheet échoué)', 'error');
     });
 }
 

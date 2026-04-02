@@ -431,6 +431,25 @@ body {
             </div>
         </div>
 
+        <!-- Récupération résultats locaux -->
+        <div class="dash-card" style="border-left: 4px solid #e74c3c;">
+            <h2>🛟 Récupération des résultats (filet de sécurité)</h2>
+            <p style="font-size:0.85rem; color:#555; margin-bottom:10px;">
+                Les résultats sont <strong>toujours sauvegardés localement</strong> sur chaque téléphone en plus de l'envoi au Google Sheet.
+                Si le Sheet est vide, tu peux récupérer les notes depuis le téléphone de chaque élève.
+            </p>
+            <p style="font-size:0.85rem; color:#555; margin-bottom:10px;">
+                <strong>Méthode :</strong> Ouvre cette page prof <strong>sur le téléphone de l'élève</strong> (cadenas en bas de sa page),
+                entre le code LPPJR, et clique sur "Voir les résultats de cet appareil" ci-dessous.
+            </p>
+            <div style="margin:12px 0;">
+                <button class="link-btn orange" onclick="showLocalResults()" style="border:none; cursor:pointer;">📱 Voir les résultats de cet appareil</button>
+                <button class="link-btn green" onclick="exportCSV()" style="border:none; cursor:pointer;">📥 Exporter en CSV</button>
+                <button class="link-btn teal" onclick="retryAllToSheets()" style="border:none; cursor:pointer;">🔄 Renvoyer vers Google Sheet</button>
+            </div>
+            <div id="localResults" style="display:none; margin-top:12px;"></div>
+        </div>
+
         <!-- Notes pédagogiques -->
         <div class="dash-card">
             <h2>💡 Notes pédagogiques</h2>
@@ -439,8 +458,8 @@ body {
                 <li><strong>Progression :</strong> chaque phase doit être validée à 60% pour débloquer la suivante</li>
                 <li><strong>Aléatoire :</strong> les exercices changent à chaque chargement — pas de copie possible entre élèves</li>
                 <li><strong>Reprise :</strong> la progression est sauvegardée dans le navigateur (même téléphone = reprise automatique)</li>
-                <li><strong>Résultats :</strong> envoyés au Google Sheet uniquement à la Phase 7 (évaluation finale)</li>
-                <li><strong>Hors ligne :</strong> le module fonctionne sans connexion (sauf l'envoi des résultats, qui sera mis en file d'attente)</li>
+                <li><strong>Résultats :</strong> envoyés au Google Sheet + sauvegardés localement (double sécurité)</li>
+                <li><strong>Hors ligne :</strong> le module fonctionne sans connexion — les résultats sont toujours sauvegardés</li>
                 <li><strong>Tolérance :</strong> conversions ±0,05 mm / développés ±0,5 mm / pouces décimaux ±0,005</li>
             </ul>
         </div>
@@ -552,6 +571,96 @@ function buildTables() {
         devBody.appendChild(tr);
     });
 }
+
+// ═══ RÉCUPÉRATION RÉSULTATS LOCAUX ═══
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxaiwORhdONZXxFRNqXCThd5RAjcfcH9plwbfNBl0nRh9gsoEcN1tR3DSQwIZ7FX_K3/exec';
+
+window.showLocalResults = function() {
+    const zone = document.getElementById('localResults');
+    const results = JSON.parse(localStorage.getItem('frigolo-results') || '[]');
+
+    if (results.length === 0) {
+        zone.innerHTML = '<p style="color:var(--error); font-weight:700;">Aucun résultat sur cet appareil.</p>';
+        zone.style.display = 'block';
+        return;
+    }
+
+    let html = '<table class="recap-table"><thead><tr><th>Date</th><th>Nom</th><th>Prénom</th><th>Classe</th><th>Note /20</th><th>Score</th><th>C1</th><th>C2</th><th>C3</th><th>C4</th></tr></thead><tbody>';
+    results.forEach(r => {
+        const d = new Date(r.timestamp);
+        const dateStr = d.toLocaleDateString('fr-FR') + ' ' + d.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+        html += '<tr>';
+        html += '<td>' + dateStr + '</td>';
+        html += '<td><strong>' + (r.nom || '—') + '</strong></td>';
+        html += '<td>' + (r.prenom || '—') + '</td>';
+        html += '<td>' + (r.classe || '—') + '</td>';
+        html += '<td><strong>' + (r.note20 || '—') + '</strong></td>';
+        html += '<td>' + (r.detail || r.scoreEval + '%') + '</td>';
+        html += '<td>' + (r.C1_conversion || '—') + '</td>';
+        html += '<td>' + (r.C2_rayon || '—') + '</td>';
+        html += '<td>' + (r['C3_développé'] || '—') + '</td>';
+        html += '<td>' + (r.C4_synthese || '—') + '</td>';
+        html += '</tr>';
+    });
+    html += '</tbody></table>';
+    html += '<p style="font-size:0.78rem; color:var(--muted); margin-top:6px;">' + results.length + ' résultat(s) trouvé(s) sur cet appareil.</p>';
+
+    zone.innerHTML = html;
+    zone.style.display = 'block';
+};
+
+window.exportCSV = function() {
+    const results = JSON.parse(localStorage.getItem('frigolo-results') || '[]');
+    if (results.length === 0) { alert('Aucun résultat sur cet appareil.'); return; }
+
+    const headers = ['Date', 'Nom', 'Prénom', 'Classe', 'Note /20', 'Score %', 'Détail', 'Temps (s)', 'C1 Conversion', 'C2 Rayon', 'C3 Développé', 'C4 Synthèse'];
+    const rows = results.map(r => {
+        const d = new Date(r.timestamp);
+        return [
+            d.toLocaleDateString('fr-FR') + ' ' + d.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'}),
+            r.nom || '',
+            r.prenom || '',
+            r.classe || '',
+            r.note20 || '',
+            r.scoreEval || '',
+            r.detail || '',
+            r.tempsSecondes || '',
+            r.C1_conversion || '',
+            r.C2_rayon || '',
+            r['C3_développé'] || '',
+            r.C4_synthese || ''
+        ].map(v => '"' + String(v).replace(/"/g, '""') + '"').join(';');
+    });
+
+    const csv = '\uFEFF' + headers.join(';') + '\n' + rows.join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'resultats-conversion-pouce-' + new Date().toISOString().slice(0, 10) + '.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+};
+
+window.retryAllToSheets = function() {
+    const results = JSON.parse(localStorage.getItem('frigolo-results') || '[]');
+    if (results.length === 0) { alert('Aucun résultat à envoyer.'); return; }
+
+    let sent = 0;
+    results.forEach((data, i) => {
+        setTimeout(() => {
+            fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).then(() => {
+                sent++;
+                if (sent === results.length) alert(sent + ' résultat(s) renvoyé(s) vers Google Sheet.');
+            }).catch(() => {});
+        }, i * 500); // espacer les envois de 500ms
+    });
+};
 
 })();
 </script>
