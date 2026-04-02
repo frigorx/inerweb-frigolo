@@ -577,44 +577,93 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxaiwORhdONZXxF
 
 window.showLocalResults = function() {
     const zone = document.getElementById('localResults');
+
+    // Source 1 : frigolo-results (nouveau format complet - après le fix)
     const results = JSON.parse(localStorage.getItem('frigolo-results') || '[]');
 
-    if (results.length === 0) {
-        zone.innerHTML = '<p style="color:var(--error); font-weight:700;">Aucun résultat sur cet appareil.</p>';
+    // Source 2 : frigolo-conv-progress (l'ancien format - contient nom/prénom/classe/scores par phase)
+    const progress = JSON.parse(localStorage.getItem('frigolo-conv-progress') || 'null');
+
+    // Source 3 : frigolo-pending (ancienne file d'attente - jamais exécutée)
+    const pending = JSON.parse(localStorage.getItem('frigolo-pending') || '[]');
+
+    // Fusionner tout
+    const all = [...results, ...pending];
+
+    // Ajouter le progress s'il a un score d'éval et qu'on ne l'a pas déjà
+    if (progress && progress.scores && progress.scores[6] !== null) {
+        const evalPct = Math.round(progress.scores[6] * 100);
+        const note20 = Math.round(progress.scores[6] * 20 * 2) / 2;
+        const alreadyHas = all.some(r => r.nom === progress.nom && r.prenom === progress.prenom);
+        if (!alreadyHas) {
+            all.push({
+                timestamp: new Date().toISOString(),
+                nom: progress.nom || '',
+                prenom: progress.prenom || '',
+                classe: progress.classe || '',
+                note20: note20,
+                scoreEval: evalPct,
+                detail: evalPct + '%',
+                source: 'progression',
+                // Scores par phase
+                scorePhase1: progress.scores[0] !== null ? Math.round(progress.scores[0]*100) : '',
+                scorePhase2: progress.scores[1] !== null ? Math.round(progress.scores[1]*100) : '',
+                scorePhase3: progress.scores[2] !== null ? Math.round(progress.scores[2]*100) : '',
+                scorePhase4: progress.scores[3] !== null ? Math.round(progress.scores[3]*100) : '',
+                scorePhase5: progress.scores[4] !== null ? Math.round(progress.scores[4]*100) : '',
+                scorePhase6: progress.scores[5] !== null ? Math.round(progress.scores[5]*100) : '',
+            });
+        }
+    }
+
+    if (all.length === 0) {
+        zone.innerHTML = '<p style="color:var(--error); font-weight:700;">Aucun résultat trouvé sur cet appareil.</p>';
         zone.style.display = 'block';
         return;
     }
 
-    let html = '<table class="recap-table"><thead><tr><th>Date</th><th>Nom</th><th>Prénom</th><th>Classe</th><th>Note /20</th><th>Score</th><th>C1</th><th>C2</th><th>C3</th><th>C4</th></tr></thead><tbody>';
-    results.forEach(r => {
-        const d = new Date(r.timestamp);
-        const dateStr = d.toLocaleDateString('fr-FR') + ' ' + d.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+    let html = '<table class="recap-table"><thead><tr><th>Nom</th><th>Prénom</th><th>Classe</th><th>Note /20</th><th>Score</th><th>C1</th><th>C2</th><th>C3</th><th>C4</th><th>Source</th></tr></thead><tbody>';
+    all.forEach(r => {
+        const note = r.note20 != null ? r.note20 : (r.scoreEval ? (Math.round(r.scoreEval / 100 * 20 * 2) / 2) : '—');
+        const src = r.source === 'progression' ? '📱 progression' : (r.C1_conversion ? '✅ complet' : '📦 en attente');
         html += '<tr>';
-        html += '<td>' + dateStr + '</td>';
         html += '<td><strong>' + (r.nom || '—') + '</strong></td>';
         html += '<td>' + (r.prenom || '—') + '</td>';
         html += '<td>' + (r.classe || '—') + '</td>';
-        html += '<td><strong>' + (r.note20 || '—') + '</strong></td>';
-        html += '<td>' + (r.detail || r.scoreEval + '%') + '</td>';
+        html += '<td><strong>' + note + '</strong></td>';
+        html += '<td>' + (r.detail || (r.scoreEval ? r.scoreEval + '%' : '—')) + '</td>';
         html += '<td>' + (r.C1_conversion || '—') + '</td>';
         html += '<td>' + (r.C2_rayon || '—') + '</td>';
         html += '<td>' + (r['C3_développé'] || '—') + '</td>';
         html += '<td>' + (r.C4_synthese || '—') + '</td>';
+        html += '<td style="font-size:0.75rem;">' + src + '</td>';
         html += '</tr>';
     });
     html += '</tbody></table>';
-    html += '<p style="font-size:0.78rem; color:var(--muted); margin-top:6px;">' + results.length + ' résultat(s) trouvé(s) sur cet appareil.</p>';
+    html += '<p style="font-size:0.78rem; color:var(--muted); margin-top:6px;">' + all.length + ' résultat(s) trouvé(s) sur cet appareil.</p>';
 
     zone.innerHTML = html;
     zone.style.display = 'block';
 };
 
 window.exportCSV = function() {
+    // Même logique de fusion que showLocalResults
     const results = JSON.parse(localStorage.getItem('frigolo-results') || '[]');
-    if (results.length === 0) { alert('Aucun résultat sur cet appareil.'); return; }
+    const pending = JSON.parse(localStorage.getItem('frigolo-pending') || '[]');
+    const progress = JSON.parse(localStorage.getItem('frigolo-conv-progress') || 'null');
+    const all = [...results, ...pending];
+    if (progress && progress.scores && progress.scores[6] !== null) {
+        const evalPct = Math.round(progress.scores[6] * 100);
+        const note20 = Math.round(progress.scores[6] * 20 * 2) / 2;
+        const alreadyHas = all.some(r => r.nom === progress.nom && r.prenom === progress.prenom);
+        if (!alreadyHas) {
+            all.push({ timestamp: new Date().toISOString(), nom: progress.nom || '', prenom: progress.prenom || '', classe: progress.classe || '', note20: note20, scoreEval: evalPct, detail: evalPct + '%', C1_conversion:'', C2_rayon:'', 'C3_développé':'', C4_synthese:'', tempsSecondes:'' });
+        }
+    }
+    if (all.length === 0) { alert('Aucun résultat sur cet appareil.'); return; }
 
     const headers = ['Date', 'Nom', 'Prénom', 'Classe', 'Note /20', 'Score %', 'Détail', 'Temps (s)', 'C1 Conversion', 'C2 Rayon', 'C3 Développé', 'C4 Synthèse'];
-    const rows = results.map(r => {
+    const rows = all.map(r => {
         const d = new Date(r.timestamp);
         return [
             d.toLocaleDateString('fr-FR') + ' ' + d.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'}),
@@ -643,11 +692,23 @@ window.exportCSV = function() {
 };
 
 window.retryAllToSheets = function() {
+    // Fusionner toutes les sources
     const results = JSON.parse(localStorage.getItem('frigolo-results') || '[]');
-    if (results.length === 0) { alert('Aucun résultat à envoyer.'); return; }
+    const pending = JSON.parse(localStorage.getItem('frigolo-pending') || '[]');
+    const progress = JSON.parse(localStorage.getItem('frigolo-conv-progress') || 'null');
+    const all = [...results, ...pending];
+    if (progress && progress.scores && progress.scores[6] !== null) {
+        const evalPct = Math.round(progress.scores[6] * 100);
+        const note20 = Math.round(progress.scores[6] * 20 * 2) / 2;
+        const alreadyHas = all.some(r => r.nom === progress.nom && r.prenom === progress.prenom);
+        if (!alreadyHas) {
+            all.push({ timestamp: new Date().toISOString(), nom: progress.nom || '', prenom: progress.prenom || '', classe: progress.classe || '', note20: note20, scoreEval: evalPct, detail: evalPct + '%', C1_conversion:'', C2_rayon:'', 'C3_développé':'', C4_synthese:'', tempsSecondes:'' });
+        }
+    }
+    if (all.length === 0) { alert('Aucun résultat à envoyer.'); return; }
 
     let sent = 0;
-    results.forEach((data, i) => {
+    all.forEach((data, i) => {
         setTimeout(() => {
             fetch(APPS_SCRIPT_URL, {
                 method: 'POST',
@@ -656,9 +717,9 @@ window.retryAllToSheets = function() {
                 body: JSON.stringify(data)
             }).then(() => {
                 sent++;
-                if (sent === results.length) alert(sent + ' résultat(s) renvoyé(s) vers Google Sheet.');
+                if (sent === all.length) alert(sent + ' résultat(s) renvoyé(s) vers Google Sheet.');
             }).catch(() => {});
-        }, i * 500); // espacer les envois de 500ms
+        }, i * 500);
     });
 };
 
