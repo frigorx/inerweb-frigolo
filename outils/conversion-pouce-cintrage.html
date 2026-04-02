@@ -1,803 +1,1943 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conversion Pouce ↔ mm & Cintrage — inerWeb FRIGOLO</title>
-    <style>
-        :root {
-            --primary: #008cdf;
-            --secondary: #4ecdc4;
-            --accent: #96c93f;
-            --coral: #ff8b7d;
-            --gradient: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
-            --light: #f8fafe;
-            --dark: #2c3e50;
-            --warning: #ff6f00;
-            --success: #4caf50;
-            --error: #f44336;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Conversion Pouce ↔ mm & Cintrage — inerWeb FRIGOLO</title>
+<style>
+/* ═══════════════════════════════════════════════
+   CONFIGURATION GOOGLE SHEETS
+   Remplacer l'URL ci-dessous par votre déploiement Apps Script
+   ═══════════════════════════════════════════════ */
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+    --primary: #0f2d52;
+    --primary-light: #1a5276;
+    --secondary: #2aafaf;
+    --accent: #e8914a;
+    --accent2: #d47a35;
+    --success: #27ae60;
+    --success-light: #d5f5e3;
+    --error: #e74c3c;
+    --error-light: #fdedec;
+    --warning: #f39c12;
+    --warning-light: #fef9e7;
+    --bg: #f0f4f8;
+    --card: #ffffff;
+    --text: #2c3e50;
+    --muted: #7f8c8d;
+    --border: #dfe6e9;
+    --gradient-cold: linear-gradient(135deg, #0f2d52, #1a5276, #2aafaf);
+    --gradient-warm: linear-gradient(135deg, #e8914a, #f39c12);
+    --shadow: 0 4px 20px rgba(15,45,82,0.08);
+    --shadow-hover: 0 8px 30px rgba(15,45,82,0.15);
+    --radius: 16px;
+    --radius-sm: 10px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--gradient);
-            min-height: 100vh;
-            padding: 12px;
-            line-height: 1.6;
-        }
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-        .header {
-            background: rgba(255,255,255,0.95);
-            border-radius: 16px;
-            padding: 1.2rem;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-        }
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+    -webkit-tap-highlight-color: transparent;
+}
 
-        .snowflake { font-size: 2.2rem; animation: spin 4s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+/* ═══ HEADER ═══ */
+.app-header {
+    background: var(--gradient-cold);
+    padding: 20px 16px;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(15,45,82,0.2);
+}
 
-        .header h1 { color: var(--primary); font-size: 1.4rem; }
-        .header p { color: var(--dark); font-size: 0.9rem; }
+.app-header h1 {
+    color: #fff;
+    font-size: 1.3rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
 
-        .tabs {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
-        }
+.app-header h1 span { color: var(--accent); }
 
-        .tab {
-            flex: 1;
-            min-width: 100px;
-            background: rgba(255,255,255,0.6);
-            border: none;
-            border-radius: 12px;
-            padding: 0.7rem 0.5rem;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            color: var(--dark);
-        }
+.app-header .subtitle {
+    color: rgba(255,255,255,0.8);
+    font-size: 0.82rem;
+    margin-top: 2px;
+}
 
-        .tab.active {
-            background: white;
-            color: var(--primary);
-            box-shadow: 0 4px 12px rgba(0,140,223,0.3);
-            transform: translateY(-2px);
-        }
+/* ═══ BARRE DE PROGRESSION GLOBALE ═══ */
+.global-progress {
+    background: rgba(255,255,255,0.15);
+    height: 6px;
+    border-radius: 3px;
+    margin-top: 12px;
+    overflow: hidden;
+}
 
-        .panel {
-            display: none;
-            background: rgba(255,255,255,0.95);
-            border-radius: 16px;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        }
+.global-progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 3px;
+    transition: width 0.6s ease;
+    width: 0%;
+}
 
-        .panel.active { display: block; }
+/* ═══ IDENTIFICATION ÉLÈVE ═══ */
+.student-bar {
+    background: var(--card);
+    margin: 12px;
+    border-radius: var(--radius);
+    padding: 16px;
+    box-shadow: var(--shadow);
+    border-left: 4px solid var(--accent);
+}
 
-        .panel h2 {
-            color: var(--primary);
-            font-size: 1.3rem;
-            margin-bottom: 1rem;
-            text-align: center;
-        }
+.student-bar h3 {
+    font-size: 0.95rem;
+    color: var(--primary);
+    margin-bottom: 10px;
+}
 
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.2rem;
-            margin-bottom: 1rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
+.student-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
 
-        .card-blue { border-left: 4px solid var(--primary); }
-        .card-green { border-left: 4px solid var(--accent); }
-        .card-orange { border-left: 4px solid var(--coral); }
-        .card-warning { border-left: 4px solid var(--warning); }
+.student-fields input, .student-fields select {
+    padding: 10px 12px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: var(--transition);
+}
 
-        .formula-box {
-            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
-            border: 2px solid var(--primary);
-            border-radius: 12px;
-            padding: 1.2rem;
-            margin: 1rem 0;
-            text-align: center;
-        }
+.student-fields input:focus, .student-fields select:focus {
+    border-color: var(--secondary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(42,175,175,0.15);
+}
 
-        .formula-box .formula {
-            font-size: 1.15rem;
-            font-weight: bold;
-            color: var(--dark);
-            margin: 0.4rem 0;
-        }
+/* ═══ NAVIGATION PHASES ═══ */
+.phase-nav {
+    display: flex;
+    gap: 4px;
+    padding: 0 12px;
+    margin: 12px 0 4px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
 
-        label { font-weight: 600; color: var(--dark); display: block; margin-bottom: 0.3rem; }
+.phase-nav::-webkit-scrollbar { display: none; }
 
-        input[type="text"], input[type="number"], select {
-            width: 100%;
-            padding: 0.8rem;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            font-size: 1rem;
-            transition: border 0.2s;
-        }
+.phase-btn {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: var(--card);
+    color: var(--muted);
+    font-weight: 800;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
 
-        input:focus, select:focus { border-color: var(--primary); outline: none; }
+.phase-btn.unlocked { border-color: var(--secondary); color: var(--primary); }
+.phase-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); transform: scale(1.1); }
+.phase-btn.completed { background: var(--success); color: #fff; border-color: var(--success); }
+.phase-btn.locked { opacity: 0.4; cursor: not-allowed; }
 
-        .input-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.8rem;
-            margin-bottom: 0.8rem;
-        }
+.phase-label {
+    text-align: center;
+    font-size: 0.72rem;
+    color: var(--muted);
+    padding: 4px 12px 0;
+    font-weight: 600;
+}
 
-        .result-box {
-            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
-            border-radius: 12px;
-            padding: 1rem;
-            text-align: center;
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--dark);
-            margin: 0.8rem 0;
-            min-height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+/* ═══ CONTENEUR PRINCIPAL ═══ */
+.main { padding: 0 12px 80px; }
 
-        .btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 0.8rem 1.5rem;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-weight: 600;
-        }
+.phase {
+    display: none;
+    animation: fadeIn 0.4s ease;
+}
 
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
-        .btn:active { transform: scale(0.97); }
-        .btn-success { background: var(--success); }
-        .btn-warning { background: var(--warning); }
-        .btn-coral { background: var(--coral); }
+.phase.active { display: block; }
 
-        .btn-row {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            margin-top: 0.8rem;
-        }
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
-        /* Tableau conversions */
-        .conv-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 0.8rem 0;
-            font-size: 0.88rem;
-        }
+/* ═══ CARTES / SECTIONS ═══ */
+.section {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 20px 16px;
+    margin: 12px 0;
+    box-shadow: var(--shadow);
+}
 
-        .conv-table th, .conv-table td {
-            padding: 0.6rem 0.4rem;
-            border: 1px solid #ddd;
-            text-align: center;
-        }
+.section-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
 
-        .conv-table th {
-            background: var(--primary);
-            color: white;
-            font-weight: 600;
-        }
+.section-title .emoji { font-size: 1.3rem; }
 
-        .conv-table tr:nth-child(even) { background: #f5f9ff; }
-        .conv-table tr:hover { background: #e3f2fd; }
+.card {
+    background: #f8fafe;
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    margin: 10px 0;
+}
 
-        .highlight { background: #fff9c4 !important; }
+.card-blue { border-left: 4px solid var(--primary-light); }
+.card-green { border-left: 4px solid var(--success); }
+.card-orange { border-left: 4px solid var(--accent); }
+.card-teal { border-left: 4px solid var(--secondary); }
 
-        /* Pastilles */
-        .pill {
-            display: inline-block;
-            background: var(--primary);
-            color: white;
-            border-radius: 20px;
-            padding: 0.3rem 0.8rem;
-            font-size: 0.82rem;
-            font-weight: 600;
-            margin: 2px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
+.card h4 { color: var(--primary); font-size: 0.95rem; margin-bottom: 6px; }
+.card p { font-size: 0.88rem; color: #555; }
+.card ul { margin-left: 1.2rem; font-size: 0.88rem; color: #555; }
+.card li { margin: 3px 0; }
 
-        .pill:hover { transform: scale(1.08); }
-        .pill.green { background: var(--accent); }
-        .pill.coral { background: var(--coral); }
+/* ═══ FORMULES ═══ */
+.formula-box {
+    background: linear-gradient(135deg, #e8f4f8, #d1ecf1);
+    border: 2px solid var(--secondary);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin: 14px 0;
+    text-align: center;
+}
 
-        /* Exercices */
-        .exercise {
-            background: linear-gradient(135deg, #fff3e0, #ffe8cc);
-            border-radius: 12px;
-            padding: 1.2rem;
-            margin: 1rem 0;
-            border-left: 4px solid var(--warning);
-        }
+.formula-box h4 { color: var(--primary); margin-bottom: 8px; }
 
-        .exercise h3 {
-            color: var(--warning);
-            font-size: 1.1rem;
-            margin-bottom: 0.8rem;
-            text-align: center;
-        }
+.formula {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--primary);
+    margin: 6px 0;
+    letter-spacing: 0.5px;
+}
 
-        .question {
-            background: white;
-            border-radius: 10px;
-            padding: 1rem;
-            margin: 0.6rem 0;
-            border-left: 3px solid var(--primary);
-        }
+.formula-small { font-size: 0.85rem; color: var(--muted); margin-top: 6px; }
 
-        .question p { margin-bottom: 0.5rem; }
+/* ═══ TABLEAU ═══ */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    margin: 10px 0;
+}
 
-        .answer-row {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
+.data-table th {
+    background: var(--primary);
+    color: #fff;
+    padding: 10px 6px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-align: center;
+}
 
-        .answer-input {
-            width: 120px;
-            padding: 0.6rem;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-            text-align: center;
-        }
+.data-table td {
+    padding: 8px 6px;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+}
 
-        .answer-input.correct { border-color: var(--success); background: #e8f5e9; }
-        .answer-input.incorrect { border-color: var(--error); background: #ffebee; }
+.data-table tr:nth-child(even) { background: #f8fafe; }
+.data-table tr:hover { background: #e8f4f8; }
+.data-table .highlight { background: #fef9e7 !important; font-weight: 700; }
 
-        .feedback {
-            font-size: 0.85rem;
-            font-weight: 600;
-            padding: 0.2rem 0.5rem;
-            border-radius: 6px;
-        }
+/* ═══ FLASHCARDS ═══ */
+.flashcard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 10px;
+    margin: 12px 0;
+}
 
-        .feedback.ok { color: var(--success); }
-        .feedback.ko { color: var(--error); }
+.flashcard {
+    perspective: 600px;
+    height: 100px;
+    cursor: pointer;
+}
 
-        /* Score */
-        .score-bar {
-            background: #e0e0e0;
-            border-radius: 20px;
-            height: 30px;
-            margin: 0.8rem 0;
-            overflow: hidden;
-            position: relative;
-        }
+.flashcard-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.5s;
+    transform-style: preserve-3d;
+}
 
-        .score-fill {
-            height: 100%;
-            border-radius: 20px;
-            background: var(--gradient);
-            transition: width 0.6s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 0.85rem;
-            min-width: 40px;
-        }
+.flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
 
-        /* Visuel cintrage */
-        .tube-visual {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 2rem;
-            margin: 1rem 0;
-            flex-wrap: wrap;
-        }
+.flashcard-front, .flashcard-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: var(--radius-sm);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    padding: 8px;
+    text-align: center;
+}
 
-        .tube-svg { max-width: 200px; width: 100%; }
+.flashcard-front {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: #fff;
+    font-size: 1.2rem;
+}
 
-        /* Responsive */
-        @media (max-width: 500px) {
-            body { padding: 8px; }
-            .header h1 { font-size: 1.15rem; }
-            .input-row { grid-template-columns: 1fr; }
-            .conv-table { font-size: 0.78rem; }
-            .conv-table th, .conv-table td { padding: 0.4rem 0.2rem; }
-        }
+.flashcard-back {
+    background: linear-gradient(135deg, var(--secondary), #48c9b0);
+    color: #fff;
+    transform: rotateY(180deg);
+    font-size: 1rem;
+}
 
-        /* Footer */
-        .footer {
-            text-align: center;
-            color: rgba(255,255,255,0.8);
-            font-size: 0.78rem;
-            padding: 1rem;
-        }
+.flashcard-hint { font-size: 0.7rem; opacity: 0.7; margin-top: 4px; }
 
-        .footer a { color: white; }
-    </style>
+/* ═══ EXERCICES ═══ */
+.exercise-block {
+    background: linear-gradient(135deg, #fef9e7, #fdebd0);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin: 14px 0;
+    border-left: 4px solid var(--warning);
+}
+
+.exercise-block h3 {
+    color: var(--accent2);
+    font-size: 1rem;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.question {
+    background: #fff;
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    margin: 8px 0;
+    border-left: 3px solid var(--primary-light);
+}
+
+.question p { font-size: 0.9rem; margin-bottom: 8px; }
+
+.q-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.q-input {
+    width: 110px;
+    padding: 8px 10px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-size: 1rem;
+    text-align: center;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.q-input:focus { border-color: var(--secondary); outline: none; }
+.q-input.correct { border-color: var(--success); background: var(--success-light); }
+.q-input.wrong { border-color: var(--error); background: var(--error-light); }
+
+.q-unit { font-weight: 600; color: var(--muted); font-size: 0.9rem; }
+.q-feedback { font-size: 0.82rem; font-weight: 700; }
+.q-feedback.ok { color: var(--success); }
+.q-feedback.ko { color: var(--error); }
+
+/* ═══ BOUTONS ═══ */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 0.95rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: var(--transition);
+    min-height: 44px;
+    color: #fff;
+}
+
+.btn:active { transform: scale(0.96); }
+.btn-primary { background: var(--primary); }
+.btn-primary:hover { background: var(--primary-light); }
+.btn-success { background: var(--success); }
+.btn-warning { background: var(--warning); }
+.btn-accent { background: var(--accent); }
+.btn-accent:hover { background: var(--accent2); }
+.btn-secondary { background: var(--secondary); }
+.btn-error { background: var(--error); }
+
+.btn-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+    justify-content: center;
+}
+
+.btn-block {
+    width: 100%;
+    justify-content: center;
+    padding: 14px;
+    font-size: 1.05rem;
+}
+
+/* ═══ SCORE ═══ */
+.score-bar {
+    background: #e0e0e0;
+    border-radius: 20px;
+    height: 32px;
+    margin: 12px 0;
+    overflow: hidden;
+    position: relative;
+}
+
+.score-fill {
+    height: 100%;
+    border-radius: 20px;
+    transition: width 0.8s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 800;
+    font-size: 0.85rem;
+    min-width: 50px;
+}
+
+.score-fill.good { background: var(--success); }
+.score-fill.mid { background: var(--warning); }
+.score-fill.bad { background: var(--error); }
+
+.score-msg {
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin: 8px 0;
+}
+
+/* ═══ SVG VISUEL CINTRAGE ═══ */
+.svg-container {
+    display: flex;
+    justify-content: center;
+    margin: 14px 0;
+}
+
+.svg-container svg { max-width: 300px; width: 100%; }
+
+/* ═══ CONVERTISSEUR INTERACTIF ═══ */
+.converter {
+    background: var(--primary);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin: 14px 0;
+    color: #fff;
+}
+
+.converter h4 { color: var(--accent); margin-bottom: 10px; }
+
+.converter .input-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.converter label { color: rgba(255,255,255,0.8); font-size: 0.82rem; font-weight: 600; display: block; margin-bottom: 4px; }
+
+.converter input, .converter select {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid rgba(255,255,255,0.2);
+    border-radius: 8px;
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: inherit;
+}
+
+.converter input:focus, .converter select:focus {
+    border-color: var(--accent);
+    outline: none;
+    background: rgba(255,255,255,0.15);
+}
+
+.converter input::placeholder { color: rgba(255,255,255,0.4); }
+
+.converter .result {
+    background: rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 800;
+    margin-top: 10px;
+    color: var(--accent);
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ═══ PASTILLES ═══ */
+.pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 8px 0;
+}
+
+.pill {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    border: 2px solid transparent;
+}
+
+.pill:active { transform: scale(0.95); }
+.pill-blue { background: #e8f4f8; color: var(--primary); }
+.pill-blue:hover, .pill-blue.active { background: var(--primary); color: #fff; }
+.pill-orange { background: #fef3e8; color: var(--accent2); }
+.pill-green { background: #e8f8f5; color: var(--secondary); }
+
+/* ═══ GUIDE PAS-À-PAS ═══ */
+.step-guide {
+    counter-reset: step;
+    margin: 12px 0;
+}
+
+.step {
+    background: #fff;
+    border-radius: var(--radius-sm);
+    padding: 12px 12px 12px 52px;
+    margin: 8px 0;
+    position: relative;
+    border: 1px solid var(--border);
+    font-size: 0.9rem;
+}
+
+.step::before {
+    counter-increment: step;
+    content: counter(step);
+    position: absolute;
+    left: 12px;
+    top: 12px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.85rem;
+}
+
+.step strong { color: var(--primary); }
+.step .step-result { color: var(--success); font-weight: 700; }
+
+/* ═══ BADGE DE PHASE ═══ */
+.phase-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--gradient-cold);
+    color: #fff;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+/* ═══ ÉVALUATION FINALE ═══ */
+.eval-header {
+    background: var(--gradient-cold);
+    border-radius: var(--radius);
+    padding: 20px;
+    text-align: center;
+    color: #fff;
+    margin-bottom: 14px;
+}
+
+.eval-header h2 { font-size: 1.3rem; }
+.timer { font-size: 2rem; font-weight: 800; color: var(--accent); margin: 8px 0; font-variant-numeric: tabular-nums; }
+.timer.warning { color: var(--error); animation: pulse 1s infinite; }
+@keyframes pulse { 0%,100%{ opacity:1; } 50%{ opacity:0.5; } }
+
+/* ═══ CONFETTI ═══ */
+.confetti-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+/* ═══ RÉSULTAT FINAL ═══ */
+.final-result {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 24px;
+    text-align: center;
+    box-shadow: var(--shadow-hover);
+    margin: 14px 0;
+}
+
+.final-score {
+    font-size: 3rem;
+    font-weight: 900;
+    background: var(--gradient-cold);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.final-grade {
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin: 8px 0;
+    padding: 8px 20px;
+    border-radius: 30px;
+    display: inline-block;
+}
+
+.grade-a { background: var(--success-light); color: var(--success); }
+.grade-b { background: #d4efdf; color: #1e8449; }
+.grade-c { background: var(--warning-light); color: var(--warning); }
+.grade-d { background: var(--error-light); color: var(--error); }
+
+/* ═══ FOOTER ═══ */
+.app-footer {
+    text-align: center;
+    padding: 20px 16px;
+    font-size: 0.72rem;
+    color: var(--muted);
+}
+
+.app-footer a { color: var(--primary); text-decoration: none; }
+
+/* ═══ RESPONSIVE ═══ */
+@media (max-width: 400px) {
+    .student-fields { grid-template-columns: 1fr; }
+    .converter .input-grid { grid-template-columns: 1fr; }
+    .flashcard-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
+    .q-input { width: 90px; }
+}
+
+@media (min-width: 700px) {
+    .main { max-width: 680px; margin: 0 auto; }
+    .student-bar, .phase-nav { max-width: 680px; margin-left: auto; margin-right: auto; }
+}
+
+/* ═══ NOTIFICATION ═══ */
+.toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--primary);
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    z-index: 200;
+    transition: transform 0.4s ease;
+    white-space: nowrap;
+}
+
+.toast.show { transform: translateX(-50%) translateY(0); }
+.toast.success { background: var(--success); }
+.toast.error { background: var(--error); }
+
+/* ═══ PRINT ═══ */
+@media print {
+    .app-header, .phase-nav, .phase-label, .student-bar, .btn, .btn-row, .toast { display: none !important; }
+    .phase { display: block !important; page-break-before: always; }
+    body { background: #fff; }
+    .section { box-shadow: none; border: 1px solid #ddd; }
+}
+</style>
 </head>
 <body>
 
-<!-- HEADER -->
-<div class="header">
-    <div class="snowflake">❄️</div>
-    <div>
-        <h1>inerWeb FRIGOLO</h1>
-        <p>Conversion Pouce ↔ mm & Cintrage tubes cuivre</p>
+<!-- ═══════════════════════════════════════════════ -->
+<!-- HEADER                                         -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="app-header">
+    <h1>inerWeb <span>FRIGOLO</span></h1>
+    <div class="subtitle">Module Pouce ↔ mm & Cintrage tubes cuivre</div>
+    <div class="global-progress"><div class="global-progress-fill" id="globalBar"></div></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- IDENTIFICATION ÉLÈVE                           -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="student-bar" id="studentBar">
+    <h3>Identification</h3>
+    <div class="student-fields">
+        <input type="text" id="stu-nom" placeholder="Nom" autocomplete="family-name">
+        <input type="text" id="stu-prenom" placeholder="Prénom" autocomplete="given-name">
+        <select id="stu-classe">
+            <option value="">Classe...</option>
+            <option>2 MFER</option>
+            <option>1 MFER</option>
+            <option>T MFER</option>
+            <option>2 MV</option>
+            <option>1 MV</option>
+            <option>T MV</option>
+            <option>2 TNE</option>
+            <option>1 TNE</option>
+            <option>T TNE</option>
+            <option>BTS FED 1</option>
+            <option>BTS FED 2</option>
+            <option>Autre</option>
+        </select>
+        <input type="text" id="stu-date" value="" readonly style="background:#f0f4f8;">
     </div>
 </div>
 
-<!-- ONGLETS -->
-<div class="tabs">
-    <button class="tab active" onclick="showTab(0)">📏 Pouce ↔ mm</button>
-    <button class="tab" onclick="showTab(1)">📐 Cintrage</button>
-    <button class="tab" onclick="showTab(2)">🧮 Exercices</button>
-    <button class="tab" onclick="showTab(3)">📊 Tableau</button>
+<!-- ═══════════════════════════════════════════════ -->
+<!-- NAVIGATION PHASES                              -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="phase-nav" id="phaseNav"></div>
+<div class="phase-label" id="phaseLabel">—</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- CONTENU PRINCIPAL                              -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="main" id="mainContent">
+
+<!-- ============================================= -->
+<!-- PHASE 1 : DÉCOUVRIR — Le pouce et le mm       -->
+<!-- ============================================= -->
+<div class="phase" id="phase-0">
+    <div class="section">
+        <div class="phase-badge">Phase 1 — Découvrir</div>
+        <div class="section-title"><span class="emoji">📏</span> Le pouce et le millimètre</div>
+
+        <div class="card card-blue">
+            <h4>Pourquoi le pouce en froid ?</h4>
+            <p>En froid et climatisation, les tubes cuivre sont dimensionnés en <strong>pouces</strong> (notation <strong>"</strong>). C'est un héritage des normes américaines (ASHRAE). Tous les raccords, vannes et outillages suivent ce système.</p>
+        </div>
+
+        <div class="formula-box">
+            <h4>La règle fondamentale</h4>
+            <div class="formula">1 pouce (1") = 25,4 mm</div>
+            <div class="formula-small">Ce facteur est exact — pas d'arrondi !</div>
+        </div>
+
+        <div class="card card-orange">
+            <h4>Les fractions de pouce</h4>
+            <p>En froid, on utilise des <strong>fractions</strong> : 1/4", 3/8", 1/2", 5/8", 3/4", 7/8"...</p>
+            <p style="margin-top:6px;">Pour convertir : <strong>on multiplie la fraction par 25,4</strong></p>
+            <ul style="margin-top:8px;">
+                <li><strong>1/4"</strong> → 1 ÷ 4 × 25,4 = <strong>6,35 mm</strong></li>
+                <li><strong>3/8"</strong> → 3 ÷ 8 × 25,4 = <strong>9,525 mm</strong> ≈ <strong>9,52 mm</strong></li>
+                <li><strong>1/2"</strong> → 1 ÷ 2 × 25,4 = <strong>12,70 mm</strong></li>
+            </ul>
+        </div>
+
+        <div class="card card-green">
+            <h4>Dans l'autre sens : mm → pouces</h4>
+            <p>On <strong>divise par 25,4</strong> :</p>
+            <ul style="margin-top:6px;">
+                <li><strong>19,05 mm</strong> → 19,05 ÷ 25,4 = 0,75 = <strong>3/4"</strong></li>
+                <li><strong>22,22 mm</strong> → 22,22 ÷ 25,4 ≈ 0,875 = <strong>7/8"</strong></li>
+            </ul>
+        </div>
+
+        <!-- Convertisseur interactif -->
+        <div class="converter">
+            <h4>Convertisseur instantané</h4>
+            <div class="input-grid">
+                <div>
+                    <label>Pouces (in)</label>
+                    <input type="text" id="cv-inch" placeholder="ex : 3/8" inputmode="text">
+                </div>
+                <div>
+                    <label>Millimètres</label>
+                    <input type="text" id="cv-mm" placeholder="ex : 9,52" inputmode="decimal">
+                </div>
+            </div>
+            <div class="result" id="cv-result">Saisis une valeur</div>
+            <div style="margin-top:10px;">
+                <label style="font-size:0.78rem;">Clique pour convertir :</label>
+                <div class="pills" id="cv-pills"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mini-quiz Phase 1 -->
+    <div class="section">
+        <div class="section-title"><span class="emoji">✏️</span> Vérifie ta compréhension</div>
+        <div class="exercise-block" id="exo-p1"></div>
+        <div class="btn-row">
+            <button class="btn btn-success" onclick="checkPhase(0)">Vérifier</button>
+        </div>
+        <div class="score-bar" id="score-0" style="display:none;"><div class="score-fill" id="fill-0"></div></div>
+        <div class="score-msg" id="msg-0"></div>
+        <div class="btn-row" id="next-0" style="display:none;">
+            <button class="btn btn-accent btn-block" onclick="goPhase(1)">Phase suivante →</button>
+        </div>
+    </div>
 </div>
 
-<!-- ═══════════════════════════════════════════ -->
-<!-- PANEL 1 : CONVERSION POUCE ↔ MM           -->
-<!-- ═══════════════════════════════════════════ -->
-<div class="panel active" id="panel-0">
-    <h2>📏 Conversion Pouce ↔ Millimètre</h2>
+<!-- ============================================= -->
+<!-- PHASE 2 : REPÉRER — Diamètres courants        -->
+<!-- ============================================= -->
+<div class="phase" id="phase-1">
+    <div class="section">
+        <div class="phase-badge">Phase 2 — Repérer</div>
+        <div class="section-title"><span class="emoji">🔍</span> Les diamètres cuivre courants</div>
 
-    <div class="formula-box">
-        <div class="formula">1 pouce = 25,4 mm</div>
-        <div style="font-size:0.9rem; margin-top:0.3rem;">Saisir une fraction (3/8) ou un décimal (0,375)</div>
-    </div>
-
-    <div class="input-row">
-        <div>
-            <label>Pouces (in)</label>
-            <input type="text" id="inp-inch" inputmode="text" placeholder="ex : 3/8">
+        <div class="card card-blue">
+            <h4>Les 8 diamètres à connaître par coeur</h4>
+            <p>En froid commercial et domestique, tu utiliseras ces tubes en permanence. Il faut les connaître comme tes tables de multiplication !</p>
         </div>
-        <div>
-            <label>Millimètres (mm)</label>
-            <input type="text" id="inp-mm" inputmode="decimal" placeholder="ex : 9,52">
-        </div>
-    </div>
 
-    <div class="result-box" id="conv-result">—</div>
-
-    <div style="margin-top:0.6rem;">
-        <label style="font-size:0.9rem;">Diamètres cuivre courants — cliquer pour convertir :</label>
-        <div style="display:flex; flex-wrap:wrap; gap:4px; margin-top:0.4rem;" id="quick-pills"></div>
-    </div>
-
-    <div class="btn-row">
-        <button class="btn btn-coral" onclick="clearConv()">Effacer</button>
-    </div>
-</div>
-
-<!-- ═══════════════════════════════════════════ -->
-<!-- PANEL 2 : CINTRAGE                         -->
-<!-- ═══════════════════════════════════════════ -->
-<div class="panel" id="panel-1">
-    <h2>📐 Rayon de cintrage & Développé</h2>
-
-    <div class="card card-blue">
-        <h4>Principe</h4>
-        <p>Quand on cintre un tube, on <strong>ajoute de la longueur</strong> par rapport au trajet droit. Cette longueur supplémentaire dépend du <strong>rayon de cintrage</strong> et de l'<strong>angle</strong>.</p>
-    </div>
-
-    <!-- Visuel SVG -->
-    <div class="tube-visual">
-        <svg class="tube-svg" viewBox="0 0 200 180" xmlns="http://www.w3.org/2000/svg">
-            <!-- Tube cintré -->
-            <path d="M 30 160 L 30 100 A 50 50 0 0 1 80 50 L 170 50" fill="none" stroke="#cd7f32" stroke-width="12" stroke-linecap="round"/>
-            <!-- Fibre neutre -->
-            <path d="M 36 160 L 36 100 A 44 44 0 0 1 80 56 L 170 56" fill="none" stroke="#f44336" stroke-width="1.5" stroke-dasharray="4,3"/>
-            <!-- Rayon -->
-            <line x1="30" y1="100" x2="80" y2="100" stroke="#008cdf" stroke-width="2" stroke-dasharray="5,3"/>
-            <circle cx="30" cy="100" r="3" fill="#008cdf"/>
-            <text x="45" y="95" fill="#008cdf" font-size="11" font-weight="bold">R</text>
-            <!-- Angle -->
-            <path d="M 30 120 A 20 20 0 0 1 50 100" fill="none" stroke="#96c93f" stroke-width="1.5"/>
-            <text x="40" y="118" fill="#96c93f" font-size="10" font-weight="bold">90°</text>
-            <!-- Labels -->
-            <text x="5" y="145" fill="#2c3e50" font-size="9">Tube</text>
-            <text x="110" y="45" fill="#f44336" font-size="9">Fibre neutre</text>
-        </svg>
-    </div>
-
-    <div class="formula-box">
-        <h3 style="color:var(--primary); font-size:1.1rem; margin-bottom:0.5rem;">Formules de cintrage</h3>
-        <div class="formula">Développé 90° = (π / 2) × R = 1,5708 × R</div>
-        <div class="formula" style="font-size:1rem; margin-top:0.4rem;">Développé α° = (π × R × α) / 180</div>
-        <div style="font-size:0.85rem; margin-top:0.5rem; color:#666;">R = rayon de cintrage (mm) — α = angle en degrés</div>
-    </div>
-
-    <div class="card card-green">
-        <h4>Calculateur de développé</h4>
-        <div class="input-row">
-            <div>
-                <label>Diamètre tube</label>
-                <select id="calc-tube" onchange="calcDev()">
-                    <option value="">Choisir...</option>
-                </select>
-            </div>
-            <div>
-                <label>Angle (°)</label>
-                <input type="number" id="calc-angle" value="90" min="1" max="360" onchange="calcDev()" oninput="calcDev()">
-            </div>
-        </div>
-        <div class="input-row">
-            <div>
-                <label>Rayon cintrage (mm)</label>
-                <input type="number" id="calc-rayon" step="0.01" onchange="calcDev()" oninput="calcDev()">
-            </div>
-            <div>
-                <label>Développé (mm)</label>
-                <div class="result-box" id="calc-dev" style="margin:0;">—</div>
-            </div>
-        </div>
-        <div style="font-size:0.85rem; color:#666; margin-top:0.3rem;">Le rayon se remplit automatiquement selon le tube sélectionné (cintreuse standard).</div>
-    </div>
-
-    <div class="card card-orange">
-        <h4>Cintreuses frigorifiques courantes</h4>
-        <table class="conv-table">
-            <thead>
-                <tr><th>Cintreuse</th><th>Tubes compatibles</th><th>Rayon (mm)</th></tr>
-            </thead>
+        <table class="data-table">
+            <thead><tr><th>Pouce</th><th>Fraction</th><th>mm</th><th>Usage courant</th></tr></thead>
             <tbody>
-                <tr><td>1/4"</td><td>1/4"</td><td>6,35</td></tr>
-                <tr><td>3/8"</td><td>3/8"</td><td>9,52</td></tr>
-                <tr><td>1/2"</td><td>1/2"</td><td>12,70</td></tr>
-                <tr><td>5/8"</td><td>5/8"</td><td>15,88</td></tr>
-                <tr><td>3/4"</td><td>3/4"</td><td>19,05</td></tr>
-                <tr><td>7/8"</td><td>7/8"</td><td>22,22</td></tr>
+                <tr><td><strong>1/4"</strong></td><td>1 ÷ 4</td><td>6,35</td><td>Ligne liquide, capillaire</td></tr>
+                <tr class="highlight"><td><strong>3/8"</strong></td><td>3 ÷ 8</td><td>9,52</td><td>Aspiration petite puissance</td></tr>
+                <tr><td><strong>1/2"</strong></td><td>1 ÷ 2</td><td>12,70</td><td>Multi-usages</td></tr>
+                <tr class="highlight"><td><strong>5/8"</strong></td><td>5 ÷ 8</td><td>15,88</td><td>Aspiration clim split</td></tr>
+                <tr><td><strong>3/4"</strong></td><td>3 ÷ 4</td><td>19,05</td><td>Aspiration puissance moyenne</td></tr>
+                <tr class="highlight"><td><strong>7/8"</strong></td><td>7 ÷ 8</td><td>22,22</td><td>Aspiration froid commercial</td></tr>
+                <tr><td><strong>1 1/8"</strong></td><td>9 ÷ 8</td><td>28,58</td><td>Collecteur, grosse puissance</td></tr>
+                <tr><td><strong>1 3/8"</strong></td><td>11 ÷ 8</td><td>34,93</td><td>Collecteur central</td></tr>
             </tbody>
         </table>
     </div>
-</div>
 
-<!-- ═══════════════════════════════════════════ -->
-<!-- PANEL 3 : EXERCICES                        -->
-<!-- ═══════════════════════════════════════════ -->
-<div class="panel" id="panel-2">
-    <h2>🧮 Exercices interactifs</h2>
-
-    <div class="exercise" id="exo-zone">
-        <h3>Conversions & Cintrage — Teste-toi !</h3>
-        <div id="exo-list"></div>
-
-        <div class="btn-row" style="justify-content:center; margin-top:1rem;">
-            <button class="btn btn-success" onclick="checkAll()">Vérifier</button>
-            <button class="btn btn-warning" onclick="generateExos()">Nouveaux exercices</button>
+    <div class="section">
+        <div class="section-title"><span class="emoji">🃏</span> Flashcards — Mémorise !</div>
+        <p style="font-size:0.85rem; color:var(--muted); margin-bottom:10px; text-align:center;">Touche une carte pour la retourner. Essaie de deviner avant !</p>
+        <div class="flashcard-grid" id="flashcards"></div>
+        <div class="btn-row">
+            <button class="btn btn-secondary" onclick="shuffleCards()">Mélanger</button>
         </div>
+    </div>
 
-        <div class="score-bar" id="score-bar" style="display:none;">
-            <div class="score-fill" id="score-fill">0%</div>
+    <!-- Exercices Phase 2 -->
+    <div class="section">
+        <div class="section-title"><span class="emoji">✏️</span> Exercices de mémorisation</div>
+        <div class="exercise-block" id="exo-p2"></div>
+        <div class="btn-row">
+            <button class="btn btn-success" onclick="checkPhase(1)">Vérifier</button>
         </div>
-        <div id="score-text" style="text-align:center; font-weight:600; margin-top:0.3rem;"></div>
+        <div class="score-bar" id="score-1" style="display:none;"><div class="score-fill" id="fill-1"></div></div>
+        <div class="score-msg" id="msg-1"></div>
+        <div class="btn-row" id="next-1" style="display:none;">
+            <button class="btn btn-accent btn-block" onclick="goPhase(2)">Phase suivante →</button>
+        </div>
     </div>
 </div>
 
-<!-- ═══════════════════════════════════════════ -->
-<!-- PANEL 4 : TABLEAU RÉCAP                    -->
-<!-- ═══════════════════════════════════════════ -->
-<div class="panel" id="panel-3">
-    <h2>📊 Tableau récapitulatif complet</h2>
+<!-- ============================================= -->
+<!-- PHASE 3 : CONVERTIR — Exercices progressifs   -->
+<!-- ============================================= -->
+<div class="phase" id="phase-2">
+    <div class="section">
+        <div class="phase-badge">Phase 3 — Convertir</div>
+        <div class="section-title"><span class="emoji">🔄</span> Exercices de conversion</div>
 
-    <table class="conv-table" id="full-table">
-        <thead>
-            <tr>
-                <th>Pouce</th>
-                <th>mm</th>
-                <th>Rayon cintrage (mm)</th>
-                <th>Développé 90° (mm)</th>
-            </tr>
-        </thead>
-        <tbody id="full-table-body"></tbody>
-    </table>
+        <div class="card card-teal">
+            <h4>Rappel méthode</h4>
+            <ul>
+                <li><strong>Pouce → mm</strong> : multiplier par 25,4</li>
+                <li><strong>mm → pouce</strong> : diviser par 25,4</li>
+                <li>Fractions : d'abord calculer la fraction, puis multiplier</li>
+            </ul>
+        </div>
 
-    <div class="card card-blue" style="margin-top:1rem;">
-        <h4>Rappels utiles</h4>
-        <ul style="margin-left:1.2rem;">
-            <li><strong>1 pouce</strong> = 25,4 mm exactement</li>
-            <li><strong>Rayon de cintrage</strong> = rayon de la cintreuse (souvent = diamètre nominal du tube en pouces)</li>
-            <li><strong>Développé 90°</strong> = π/2 × R ≈ 1,5708 × R</li>
-            <li>Pour un autre angle : Développé = π × R × angle / 180</li>
-        </ul>
+        <div id="conv-levels"></div>
+    </div>
+
+    <div class="section">
+        <div class="section-title"><span class="emoji">✏️</span> Validation Phase 3</div>
+        <div class="exercise-block" id="exo-p3"></div>
+        <div class="btn-row">
+            <button class="btn btn-success" onclick="checkPhase(2)">Vérifier</button>
+        </div>
+        <div class="score-bar" id="score-2" style="display:none;"><div class="score-fill" id="fill-2"></div></div>
+        <div class="score-msg" id="msg-2"></div>
+        <div class="btn-row" id="next-2" style="display:none;">
+            <button class="btn btn-accent btn-block" onclick="goPhase(3)">Phase suivante →</button>
+        </div>
     </div>
 </div>
+
+<!-- ============================================= -->
+<!-- PHASE 4 : COMPRENDRE — Le cintrage            -->
+<!-- ============================================= -->
+<div class="phase" id="phase-3">
+    <div class="section">
+        <div class="phase-badge">Phase 4 — Comprendre</div>
+        <div class="section-title"><span class="emoji">🔧</span> Le cintrage des tubes cuivre</div>
+
+        <div class="card card-blue">
+            <h4>Pourquoi cintrer ?</h4>
+            <p>Sur un circuit frigorifique, les tubes doivent suivre des parcours avec des <strong>changements de direction</strong>. Plutôt que de souder un coude (brasure = risque de fuite), on <strong>cintre le tube</strong> avec une cintreuse.</p>
+        </div>
+
+        <!-- SVG Cintrage -->
+        <div class="svg-container">
+            <svg viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg">
+                <!-- Fond -->
+                <rect x="0" y="0" width="300" height="220" rx="12" fill="#f8fafe"/>
+                <!-- Tube cintré -->
+                <path d="M 40 200 L 40 120 A 60 60 0 0 1 100 60 L 260 60" fill="none" stroke="#cd7f32" stroke-width="14" stroke-linecap="round" opacity="0.9"/>
+                <!-- Fibre neutre -->
+                <path d="M 47 200 L 47 120 A 53 53 0 0 1 100 67 L 260 67" fill="none" stroke="#e74c3c" stroke-width="2" stroke-dasharray="6,4"/>
+                <!-- Rayon -->
+                <line x1="40" y1="120" x2="100" y2="120" stroke="#2aafaf" stroke-width="2.5" stroke-dasharray="5,3"/>
+                <circle cx="40" cy="120" r="4" fill="#2aafaf"/>
+                <circle cx="100" cy="120" r="3" fill="#2aafaf"/>
+                <text x="55" y="112" fill="#2aafaf" font-size="13" font-weight="bold">R</text>
+                <!-- Arc angle -->
+                <path d="M 40 145 A 25 25 0 0 1 65 120" fill="none" stroke="#e8914a" stroke-width="2"/>
+                <text x="48" y="142" fill="#e8914a" font-size="11" font-weight="bold">90°</text>
+                <!-- Labels -->
+                <text x="10" y="195" fill="#7f8c8d" font-size="10">Partie droite</text>
+                <text x="150" y="52" fill="#7f8c8d" font-size="10">Partie droite</text>
+                <text x="200" y="80" fill="#e74c3c" font-size="10">Fibre neutre</text>
+                <text x="115" y="140" fill="#0f2d52" font-size="11" font-weight="bold">Centre de cintrage</text>
+                <!-- Légende compression/extension -->
+                <text x="20" y="20" fill="#2aafaf" font-size="9" font-weight="bold">Intrados : compression</text>
+                <text x="170" y="20" fill="#e74c3c" font-size="9" font-weight="bold">Extrados : extension</text>
+            </svg>
+        </div>
+
+        <div class="card card-green">
+            <h4>Le rayon de cintrage (R)</h4>
+            <p>Le <strong>rayon de cintrage</strong> est la distance entre le centre du cintrage et la <strong>fibre neutre</strong> du tube (le milieu de sa paroi).</p>
+            <p style="margin-top:6px;">Chaque cintreuse a un <strong>rayon fixe</strong>, souvent égal au diamètre nominal du tube :</p>
+            <ul style="margin-top:6px;">
+                <li>Cintreuse 3/8" → R = 3/8" = <strong>9,52 mm</strong></li>
+                <li>Cintreuse 1/2" → R = 1/2" = <strong>12,70 mm</strong></li>
+                <li>Cintreuse 5/8" → R = 5/8" = <strong>15,88 mm</strong></li>
+            </ul>
+        </div>
+
+        <div class="card card-orange">
+            <h4>La fibre neutre</h4>
+            <p>Quand un tube est cintré, le côté <strong>intérieur</strong> (intrados) est <strong>comprimé</strong> et le côté <strong>extérieur</strong> (extrados) est <strong>étiré</strong>.</p>
+            <p style="margin-top:6px;">La <strong>fibre neutre</strong> est la ligne imaginaire au milieu, qui ne change pas de longueur. C'est sur elle qu'on mesure le <strong>développé</strong>.</p>
+        </div>
+
+        <div class="card card-teal">
+            <h4>Cintreuses frigorifiques</h4>
+            <table class="data-table">
+                <thead><tr><th>Cintreuse</th><th>Tubes compatibles</th><th>Rayon R (mm)</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>1/4"</strong></td><td>1/4"</td><td>6,35</td></tr>
+                    <tr><td><strong>3/8"</strong></td><td>3/8"</td><td>9,52</td></tr>
+                    <tr><td><strong>1/2"</strong></td><td>1/2"</td><td>12,70</td></tr>
+                    <tr><td><strong>5/8"</strong></td><td>5/8"</td><td>15,88</td></tr>
+                    <tr><td><strong>3/4"</strong></td><td>3/4"</td><td>19,05</td></tr>
+                    <tr><td><strong>7/8"</strong></td><td>7/8"</td><td>22,22</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Exercices Phase 4 -->
+    <div class="section">
+        <div class="section-title"><span class="emoji">✏️</span> Vérifie ta compréhension</div>
+        <div class="exercise-block" id="exo-p4"></div>
+        <div class="btn-row">
+            <button class="btn btn-success" onclick="checkPhase(3)">Vérifier</button>
+        </div>
+        <div class="score-bar" id="score-3" style="display:none;"><div class="score-fill" id="fill-3"></div></div>
+        <div class="score-msg" id="msg-3"></div>
+        <div class="btn-row" id="next-3" style="display:none;">
+            <button class="btn btn-accent btn-block" onclick="goPhase(4)">Phase suivante →</button>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================= -->
+<!-- PHASE 5 : CALCULER — Le développé             -->
+<!-- ============================================= -->
+<div class="phase" id="phase-4">
+    <div class="section">
+        <div class="phase-badge">Phase 5 — Calculer</div>
+        <div class="section-title"><span class="emoji">📐</span> Calcul du développé</div>
+
+        <div class="card card-blue">
+            <h4>Qu'est-ce que le développé ?</h4>
+            <p>Le <strong>développé</strong> est la longueur de tube consommée par le cintrage (mesurée sur la fibre neutre). C'est la longueur de l'<strong>arc de cercle</strong> formé par le tube cintré.</p>
+        </div>
+
+        <div class="formula-box">
+            <h4>Formule du développé</h4>
+            <div class="formula">D = (π × R × α) / 180</div>
+            <div class="formula-small">
+                D = développé (mm) &nbsp;|&nbsp; R = rayon de cintrage (mm) &nbsp;|&nbsp; α = angle (°)
+            </div>
+        </div>
+
+        <div class="formula-box" style="border-color: var(--accent); background: linear-gradient(135deg, #fef3e8, #fdebd0);">
+            <h4 style="color: var(--accent2);">Cas particulier : cintrage à 90°</h4>
+            <div class="formula" style="color: var(--accent2);">D = π/2 × R ≈ 1,5708 × R</div>
+            <div class="formula-small">Le plus courant en installation frigorifique</div>
+        </div>
+
+        <!-- Exemples guidés -->
+        <div class="card card-green">
+            <h4>Exemple guidé n°1 : tube 3/8" à 90°</h4>
+            <div class="step-guide">
+                <div class="step"><strong>Identifier le rayon :</strong> Cintreuse 3/8" → R = 9,52 mm</div>
+                <div class="step"><strong>Appliquer la formule :</strong> D = π/2 × 9,52</div>
+                <div class="step"><strong>Calculer :</strong> D = 1,5708 × 9,52 = <span class="step-result">14,95 mm</span></div>
+            </div>
+        </div>
+
+        <div class="card card-orange">
+            <h4>Exemple guidé n°2 : tube 5/8" à 45°</h4>
+            <div class="step-guide">
+                <div class="step"><strong>Identifier le rayon :</strong> Cintreuse 5/8" → R = 15,88 mm</div>
+                <div class="step"><strong>Appliquer la formule :</strong> D = (π × 15,88 × 45) / 180</div>
+                <div class="step"><strong>Calculer :</strong> D = (49,89 × 45) / 180 = 2245,05 / 180 = <span class="step-result">12,47 mm</span></div>
+            </div>
+        </div>
+
+        <!-- Calculateur -->
+        <div class="converter">
+            <h4>Calculateur de développé</h4>
+            <div class="input-grid">
+                <div>
+                    <label>Tube</label>
+                    <select id="dev-tube" onchange="devCalc()"></select>
+                </div>
+                <div>
+                    <label>Angle (°)</label>
+                    <input type="number" id="dev-angle" value="90" min="1" max="360" oninput="devCalc()">
+                </div>
+            </div>
+            <div class="input-grid" style="margin-top:10px;">
+                <div>
+                    <label>Rayon R (mm)</label>
+                    <input type="number" id="dev-rayon" step="0.01" oninput="devCalc()">
+                </div>
+                <div>
+                    <label>Développé D (mm)</label>
+                    <div class="result" id="dev-result">—</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exercices Phase 5 -->
+    <div class="section">
+        <div class="section-title"><span class="emoji">✏️</span> Exercices de calcul</div>
+        <div class="exercise-block" id="exo-p5"></div>
+        <div class="btn-row">
+            <button class="btn btn-success" onclick="checkPhase(4)">Vérifier</button>
+        </div>
+        <div class="score-bar" id="score-4" style="display:none;"><div class="score-fill" id="fill-4"></div></div>
+        <div class="score-msg" id="msg-4"></div>
+        <div class="btn-row" id="next-4" style="display:none;">
+            <button class="btn btn-accent btn-block" onclick="goPhase(5)">Phase suivante →</button>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================= -->
+<!-- PHASE 6 : MAÎTRISER — Cas pratiques           -->
+<!-- ============================================= -->
+<div class="phase" id="phase-5">
+    <div class="section">
+        <div class="phase-badge">Phase 6 — Maîtriser</div>
+        <div class="section-title"><span class="emoji">🏗️</span> Problèmes de synthèse</div>
+
+        <div class="card card-blue">
+            <h4>Mise en situation</h4>
+            <p>Tu es sur un chantier d'installation de climatisation. Le chef d'équipe te demande de préparer des tubes pour le raccordement. Tu dois <strong>convertir les dimensions</strong>, choisir la bonne cintreuse et <strong>calculer les développés</strong> pour couper les tubes à la bonne longueur.</p>
+        </div>
+
+        <!-- Tableau récap complet -->
+        <div class="card card-teal">
+            <h4>Ton aide-mémoire</h4>
+            <table class="data-table">
+                <thead><tr><th>Tube</th><th>mm</th><th>Rayon (mm)</th><th>Dév. 45°</th><th>Dév. 90°</th><th>Dév. 180°</th></tr></thead>
+                <tbody id="recap-table"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title"><span class="emoji">✏️</span> Problèmes pratiques</div>
+        <div class="exercise-block" id="exo-p6"></div>
+        <div class="btn-row">
+            <button class="btn btn-success" onclick="checkPhase(5)">Vérifier</button>
+        </div>
+        <div class="score-bar" id="score-5" style="display:none;"><div class="score-fill" id="fill-5"></div></div>
+        <div class="score-msg" id="msg-5"></div>
+        <div class="btn-row" id="next-5" style="display:none;">
+            <button class="btn btn-accent btn-block" onclick="goPhase(6)">Évaluation finale →</button>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================= -->
+<!-- PHASE 7 : ÉVALUATION FINALE                   -->
+<!-- ============================================= -->
+<div class="phase" id="phase-6">
+    <div class="eval-header">
+        <div class="phase-badge" style="background:rgba(255,255,255,0.2);">Phase 7 — Évaluation</div>
+        <h2>Évaluation finale</h2>
+        <p style="font-size:0.85rem; opacity:0.8; margin-top:4px;">15 questions — Conversion + Cintrage + Développé</p>
+        <div class="timer" id="timer">15:00</div>
+    </div>
+
+    <div class="section" id="eval-zone">
+        <div class="exercise-block" id="exo-eval"></div>
+        <div class="btn-row">
+            <button class="btn btn-success btn-block" onclick="submitEval()" id="btn-submit-eval">Terminer et envoyer</button>
+        </div>
+    </div>
+
+    <!-- Résultat final (masqué au début) -->
+    <div id="eval-result" style="display:none;">
+        <div class="final-result">
+            <div style="font-size:0.9rem; color:var(--muted); margin-bottom:4px;">Ton score</div>
+            <div class="final-score" id="final-score-value">—</div>
+            <div class="final-grade" id="final-grade">—</div>
+            <div class="score-bar" style="margin-top:14px;"><div class="score-fill" id="final-bar"></div></div>
+            <div id="final-details" style="font-size:0.85rem; color:var(--muted); margin-top:10px;"></div>
+        </div>
+        <div class="section" id="eval-corrections" style="margin-top:12px;"></div>
+        <div class="btn-row">
+            <button class="btn btn-primary" onclick="location.reload()">Recommencer</button>
+            <button class="btn btn-accent" onclick="goPhase(0)">Revoir le cours</button>
+        </div>
+    </div>
+</div>
+
+</div><!-- /main -->
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- CONFETTI CANVAS -->
+<canvas class="confetti-canvas" id="confetti"></canvas>
 
 <!-- FOOTER -->
-<div class="footer">
-    inerWeb FRIGOLO — Conversion Pouce & Cintrage<br>
-    <a href="https://frigorx.github.io/inerweb-frigolo/">← Retour portail FRIGOLO</a>
+<div class="app-footer">
+    <p><strong>inerWeb FRIGOLO</strong> — Module Conversion & Cintrage — F. Henninot</p>
+    <p><a href="../index.html">← Retour portail FRIGOLO</a></p>
 </div>
 
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SCRIPT PRINCIPAL                               -->
+<!-- ═══════════════════════════════════════════════ -->
 <script>
-// ══════════════════════════════════════════════
-// DONNÉES TUBES CUIVRE FRIGORIFIQUE
-// ══════════════════════════════════════════════
+(function(){
+'use strict';
+
+// ═══════════════════════════════════════════════
+// CONFIGURATION
+// ═══════════════════════════════════════════════
+const APPS_SCRIPT_URL = ''; // ← Coller l'URL du déploiement Apps Script ici
+
 const TUBES = [
-    { pouce: '1/8',   frac: [1,8],   mm: 3.18,  rayon: 3.18  },
-    { pouce: '3/16',  frac: [3,16],  mm: 4.76,  rayon: 4.76  },
-    { pouce: '1/4',   frac: [1,4],   mm: 6.35,  rayon: 6.35  },
-    { pouce: '5/16',  frac: [5,16],  mm: 7.94,  rayon: 7.94  },
-    { pouce: '3/8',   frac: [3,8],   mm: 9.52,  rayon: 9.52  },
-    { pouce: '1/2',   frac: [1,2],   mm: 12.70, rayon: 12.70 },
-    { pouce: '5/8',   frac: [5,8],   mm: 15.88, rayon: 15.88 },
-    { pouce: '3/4',   frac: [3,4],   mm: 19.05, rayon: 19.05 },
-    { pouce: '7/8',   frac: [7,8],   mm: 22.22, rayon: 22.22 },
-    { pouce: '1 1/8', frac: [9,8],   mm: 28.58, rayon: 28.58 },
-    { pouce: '1 3/8', frac: [11,8],  mm: 34.93, rayon: 34.93 }
+    { pouce:'1/4',   num:1, den:4,  mm:6.35,  rayon:6.35  },
+    { pouce:'3/8',   num:3, den:8,  mm:9.52,  rayon:9.52  },
+    { pouce:'1/2',   num:1, den:2,  mm:12.70, rayon:12.70 },
+    { pouce:'5/8',   num:5, den:8,  mm:15.88, rayon:15.88 },
+    { pouce:'3/4',   num:3, den:4,  mm:19.05, rayon:19.05 },
+    { pouce:'7/8',   num:7, den:8,  mm:22.22, rayon:22.22 },
+    { pouce:'1 1/8', num:9, den:8,  mm:28.58, rayon:28.58 },
+    { pouce:'1 3/8', num:11,den:8,  mm:34.93, rayon:34.93 }
 ];
 
-const MM_PER_IN = 25.4;
+const TUBES_SMALL = TUBES.filter(t => t.mm <= 22.22); // pour exercices courants
+const PHASES = [
+    { name:'Découvrir',  icon:'📏' },
+    { name:'Repérer',    icon:'🔍' },
+    { name:'Convertir',  icon:'🔄' },
+    { name:'Comprendre', icon:'🔧' },
+    { name:'Calculer',   icon:'📐' },
+    { name:'Maîtriser',  icon:'🏗️' },
+    { name:'Évaluation', icon:'🎯' }
+];
 
-// ══════════════════════════════════════════════
-// ONGLETS
-// ══════════════════════════════════════════════
-function showTab(i) {
-    document.querySelectorAll('.tab').forEach((t,idx) => t.classList.toggle('active', idx===i));
-    document.querySelectorAll('.panel').forEach((p,idx) => p.classList.toggle('active', idx===i));
-}
+const PASS_THRESHOLD = 0.6; // 60% pour passer
+const EVAL_DURATION = 15 * 60; // 15 minutes
 
-// ══════════════════════════════════════════════
-// PARSEUR FRACTION / DÉCIMAL
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+// ÉTAT
+// ═══════════════════════════════════════════════
+let currentPhase = 0;
+let phaseScores = new Array(7).fill(null); // null = pas encore fait
+let phaseExos = {}; // { phaseIdx: [{q, answer, tol, unit, ...}] }
+let evalTimer = null;
+let evalTimeLeft = EVAL_DURATION;
+let evalSubmitted = false;
+
+// ═══════════════════════════════════════════════
+// UTILITAIRES
+// ═══════════════════════════════════════════════
+function fmt(n, d) { return Number.isFinite(n) ? n.toFixed(d).replace('.', ',') : '—'; }
+
 function parseVal(s) {
     if (!s) return NaN;
     s = String(s).trim().replace(',', '.');
-    // "1 3/8" → 1 + 3/8
-    const mixed = s.match(/^(\d+)\s+(\d+)\/(\d+)$/);
-    if (mixed) return parseInt(mixed[1]) + parseInt(mixed[2]) / parseInt(mixed[3]);
+    // "1 3/8"
+    const m = s.match(/^(\d+)\s+(\d+)\/(\d+)$/);
+    if (m) return parseInt(m[1]) + parseInt(m[2]) / parseInt(m[3]);
     // "3/8"
     if (s.includes('/')) {
         const p = s.split('/');
-        if (p.length === 2) { const a = parseFloat(p[0]), b = parseFloat(p[1]); if (b !== 0) return a / b; }
+        if (p.length === 2) { const a = parseFloat(p[0]), b = parseFloat(p[1]); if (b) return a / b; }
     }
     return parseFloat(s);
 }
 
-function fmt(n, d) { return Number.isFinite(n) ? n.toFixed(d).replace('.', ',') : '—'; }
+function rand(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function randInt(a, b) { return Math.floor(Math.random() * (b - a + 1)) + a; }
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
 
-// ══════════════════════════════════════════════
-// PANEL 1 : CONVERSION
-// ══════════════════════════════════════════════
-const inpInch = document.getElementById('inp-inch');
-const inpMm = document.getElementById('inp-mm');
-let lock = false;
+function toast(msg, type) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast ' + (type || '') + ' show';
+    setTimeout(() => t.classList.remove('show'), 2500);
+}
 
-function fromInch() {
-    if (lock) return;
-    lock = true;
-    const v = parseVal(inpInch.value);
-    if (Number.isFinite(v)) {
-        const mm = v * MM_PER_IN;
-        inpMm.value = fmt(mm, 2);
-        document.getElementById('conv-result').textContent = inpInch.value.trim() + '" = ' + fmt(mm, 2) + ' mm';
-    } else {
-        document.getElementById('conv-result').textContent = '—';
+// ═══════════════════════════════════════════════
+// DATE
+// ═══════════════════════════════════════════════
+document.getElementById('stu-date').value = new Date().toLocaleDateString('fr-FR');
+
+// ═══════════════════════════════════════════════
+// NAVIGATION PHASES
+// ═══════════════════════════════════════════════
+function buildPhaseNav() {
+    const nav = document.getElementById('phaseNav');
+    nav.innerHTML = '';
+    PHASES.forEach((p, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'phase-btn';
+        btn.textContent = p.icon;
+        btn.title = p.name;
+        btn.dataset.idx = i;
+        btn.onclick = () => {
+            if (i === 0 || phaseScores[i-1] !== null || i <= currentPhase) goPhase(i);
+            else toast('Termine la phase précédente !', 'error');
+        };
+        nav.appendChild(btn);
+    });
+    updateNav();
+}
+
+function updateNav() {
+    document.querySelectorAll('.phase-btn').forEach((btn, i) => {
+        btn.classList.remove('active', 'completed', 'unlocked', 'locked');
+        if (i === currentPhase) btn.classList.add('active');
+        else if (phaseScores[i] !== null && phaseScores[i] >= PASS_THRESHOLD) btn.classList.add('completed');
+        else if (i === 0 || phaseScores[i-1] !== null || i <= currentPhase) btn.classList.add('unlocked');
+        else btn.classList.add('locked');
+    });
+    document.getElementById('phaseLabel').textContent = PHASES[currentPhase].name;
+
+    // Barre globale
+    const done = phaseScores.filter(s => s !== null && s >= PASS_THRESHOLD).length;
+    document.getElementById('globalBar').style.width = (done / PHASES.length * 100) + '%';
+}
+
+window.goPhase = function(i) {
+    currentPhase = i;
+    document.querySelectorAll('.phase').forEach((p, idx) => p.classList.toggle('active', idx === i));
+    updateNav();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Démarrer timer si phase évaluation
+    if (i === 6 && !evalSubmitted) startTimer();
+
+    // Sauver progression
+    saveProgress();
+};
+
+// ═══════════════════════════════════════════════
+// CONVERTISSEUR (Phase 1)
+// ═══════════════════════════════════════════════
+(function initConverter() {
+    const inpInch = document.getElementById('cv-inch');
+    const inpMm = document.getElementById('cv-mm');
+    let lock = false;
+
+    function fromInch() {
+        if (lock) return; lock = true;
+        const v = parseVal(inpInch.value);
+        if (Number.isFinite(v)) {
+            const mm = v * 25.4;
+            inpMm.value = fmt(mm, 2);
+            document.getElementById('cv-result').textContent = inpInch.value.trim() + '" = ' + fmt(mm, 2) + ' mm';
+        } else {
+            document.getElementById('cv-result').textContent = 'Saisis une valeur';
+        }
+        lock = false;
     }
-    lock = false;
-}
 
-function fromMm() {
-    if (lock) return;
-    lock = true;
-    const v = parseVal(inpMm.value);
-    if (Number.isFinite(v)) {
-        const inch = v / MM_PER_IN;
-        inpInch.value = fmt(inch, 4);
-        document.getElementById('conv-result').textContent = fmt(v, 2) + ' mm = ' + fmt(inch, 4) + '"';
-    } else {
-        document.getElementById('conv-result').textContent = '—';
+    function fromMm() {
+        if (lock) return; lock = true;
+        const v = parseVal(inpMm.value);
+        if (Number.isFinite(v)) {
+            const inch = v / 25.4;
+            inpInch.value = fmt(inch, 4);
+            document.getElementById('cv-result').textContent = fmt(v, 2) + ' mm = ' + fmt(inch, 4) + '"';
+        } else {
+            document.getElementById('cv-result').textContent = 'Saisis une valeur';
+        }
+        lock = false;
     }
-    lock = false;
-}
 
-inpInch.addEventListener('input', fromInch);
-inpMm.addEventListener('input', fromMm);
+    inpInch.addEventListener('input', fromInch);
+    inpMm.addEventListener('input', fromMm);
 
-function clearConv() {
-    inpInch.value = ''; inpMm.value = '';
-    document.getElementById('conv-result').textContent = '—';
-}
-
-// Pastilles rapides
-(function buildPills() {
-    const c = document.getElementById('quick-pills');
+    // Pastilles
+    const pills = document.getElementById('cv-pills');
     TUBES.forEach(t => {
-        const p = document.createElement('span');
-        p.className = 'pill';
-        p.textContent = t.pouce + '"';
-        p.onclick = () => { inpInch.value = t.pouce; fromInch(); };
-        c.appendChild(p);
+        const s = document.createElement('span');
+        s.className = 'pill pill-blue';
+        s.textContent = t.pouce + '"';
+        s.onclick = () => { inpInch.value = t.pouce; fromInch(); };
+        pills.appendChild(s);
     });
 })();
 
-// ══════════════════════════════════════════════
-// PANEL 2 : CINTRAGE
-// ══════════════════════════════════════════════
-(function buildSelect() {
-    const sel = document.getElementById('calc-tube');
-    TUBES.forEach(t => {
+// ═══════════════════════════════════════════════
+// FLASHCARDS (Phase 2)
+// ═══════════════════════════════════════════════
+function buildFlashcards() {
+    const grid = document.getElementById('flashcards');
+    grid.innerHTML = '';
+    const cards = shuffle([...TUBES_SMALL]);
+    cards.forEach(t => {
+        const fc = document.createElement('div');
+        fc.className = 'flashcard';
+        fc.innerHTML = `
+            <div class="flashcard-inner">
+                <div class="flashcard-front">${t.pouce}"<div class="flashcard-hint">touche pour retourner</div></div>
+                <div class="flashcard-back">${fmt(t.mm, 2)} mm</div>
+            </div>`;
+        fc.onclick = () => fc.classList.toggle('flipped');
+        grid.appendChild(fc);
+    });
+}
+
+window.shuffleCards = function() {
+    buildFlashcards();
+    toast('Cartes mélangées !');
+};
+
+// ═══════════════════════════════════════════════
+// NIVEAUX CONVERSION (Phase 3)
+// ═══════════════════════════════════════════════
+function buildConvLevels() {
+    const zone = document.getElementById('conv-levels');
+    zone.innerHTML = '';
+
+    // Niveau 1 : fractions simples
+    const lvl1 = ['1/4', '1/2', '3/4'];
+    let html = '<div class="exercise-block"><h3>Niveau 1 — Fractions simples</h3>';
+    lvl1.forEach((f, i) => {
+        const t = TUBES.find(x => x.pouce === f);
+        html += `<div class="question"><p><strong>${i+1}.</strong> Convertir <strong>${f}"</strong> en mm</p>
+            <div class="q-row"><input class="q-input" id="cv3a-${i}" inputmode="decimal" placeholder="?"><span class="q-unit">mm</span>
+            <span class="q-feedback" id="cv3af-${i}"></span></div></div>`;
+    });
+    html += '</div>';
+
+    // Niveau 2 : fractions huitièmes
+    const lvl2 = ['3/8', '5/8', '7/8'];
+    html += '<div class="exercise-block"><h3>Niveau 2 — Les huitièmes</h3>';
+    lvl2.forEach((f, i) => {
+        const t = TUBES.find(x => x.pouce === f);
+        html += `<div class="question"><p><strong>${i+1}.</strong> Convertir <strong>${f}"</strong> en mm</p>
+            <div class="q-row"><input class="q-input" id="cv3b-${i}" inputmode="decimal" placeholder="?"><span class="q-unit">mm</span>
+            <span class="q-feedback" id="cv3bf-${i}"></span></div></div>`;
+    });
+    html += '</div>';
+
+    // Niveau 3 : mm vers pouce
+    const lvl3 = [12.70, 19.05, 9.52];
+    html += '<div class="exercise-block"><h3>Niveau 3 — De mm vers pouce (décimal)</h3>';
+    lvl3.forEach((mm, i) => {
+        html += `<div class="question"><p><strong>${i+1}.</strong> <strong>${fmt(mm,2)} mm</strong> = combien de pouces ? (décimal)</p>
+            <div class="q-row"><input class="q-input" id="cv3c-${i}" inputmode="decimal" placeholder="?"><span class="q-unit">"</span>
+            <span class="q-feedback" id="cv3cf-${i}"></span></div></div>`;
+    });
+    html += '</div>';
+
+    // Bouton vérifier niveaux
+    html += '<div class="btn-row"><button class="btn btn-secondary" onclick="checkConvLevels()">Vérifier les 3 niveaux</button></div>';
+    html += '<div class="score-bar" id="conv-score-bar" style="display:none;"><div class="score-fill" id="conv-score-fill"></div></div>';
+
+    zone.innerHTML = html;
+}
+
+window.checkConvLevels = function() {
+    let ok = 0, total = 9;
+    const lvl1 = ['1/4','1/2','3/4'];
+    lvl1.forEach((f, i) => {
+        const t = TUBES.find(x => x.pouce === f);
+        const inp = document.getElementById('cv3a-' + i);
+        const fb = document.getElementById('cv3af-' + i);
+        const v = parseVal(inp.value);
+        if (Math.abs(v - t.mm) <= 0.05) { inp.className='q-input correct'; fb.className='q-feedback ok'; fb.textContent='✓'; ok++; }
+        else { inp.className='q-input wrong'; fb.className='q-feedback ko'; fb.textContent='→ ' + fmt(t.mm,2); }
+    });
+
+    const lvl2 = ['3/8','5/8','7/8'];
+    lvl2.forEach((f, i) => {
+        const t = TUBES.find(x => x.pouce === f);
+        const inp = document.getElementById('cv3b-' + i);
+        const fb = document.getElementById('cv3bf-' + i);
+        const v = parseVal(inp.value);
+        if (Math.abs(v - t.mm) <= 0.05) { inp.className='q-input correct'; fb.className='q-feedback ok'; fb.textContent='✓'; ok++; }
+        else { inp.className='q-input wrong'; fb.className='q-feedback ko'; fb.textContent='→ ' + fmt(t.mm,2); }
+    });
+
+    const lvl3 = [12.70, 19.05, 9.52];
+    lvl3.forEach((mm, i) => {
+        const ans = mm / 25.4;
+        const inp = document.getElementById('cv3c-' + i);
+        const fb = document.getElementById('cv3cf-' + i);
+        const v = parseVal(inp.value);
+        if (Math.abs(v - ans) <= 0.01) { inp.className='q-input correct'; fb.className='q-feedback ok'; fb.textContent='✓'; ok++; }
+        else { inp.className='q-input wrong'; fb.className='q-feedback ko'; fb.textContent='→ ' + fmt(ans,4); }
+    });
+
+    const pct = Math.round(ok/total*100);
+    const bar = document.getElementById('conv-score-bar');
+    const fill = document.getElementById('conv-score-fill');
+    bar.style.display = 'block';
+    fill.style.width = pct + '%';
+    fill.textContent = ok + '/' + total;
+    fill.className = 'score-fill ' + (pct >= 80 ? 'good' : pct >= 50 ? 'mid' : 'bad');
+};
+
+// ═══════════════════════════════════════════════
+// CALCULATEUR DÉVELOPPÉ (Phase 5)
+// ═══════════════════════════════════════════════
+(function initDevCalc() {
+    const sel = document.getElementById('dev-tube');
+    sel.innerHTML = '<option value="">Choisir un tube...</option>';
+    TUBES_SMALL.forEach(t => {
         const o = document.createElement('option');
-        o.value = t.mm;
-        o.dataset.rayon = t.rayon;
+        o.value = t.rayon;
         o.textContent = t.pouce + '" (' + fmt(t.mm, 2) + ' mm)';
         sel.appendChild(o);
     });
 })();
 
-function calcDev() {
-    const sel = document.getElementById('calc-tube');
-    const opt = sel.options[sel.selectedIndex];
-    if (opt && opt.dataset.rayon) {
-        document.getElementById('calc-rayon').value = parseFloat(opt.dataset.rayon).toFixed(2);
-    }
-    const R = parseVal(document.getElementById('calc-rayon').value);
-    const angle = parseVal(document.getElementById('calc-angle').value);
-    if (Number.isFinite(R) && Number.isFinite(angle) && R > 0 && angle > 0) {
-        const dev = Math.PI * R * angle / 180;
-        document.getElementById('calc-dev').textContent = fmt(dev, 2) + ' mm';
+window.devCalc = function() {
+    const sel = document.getElementById('dev-tube');
+    if (sel.value) document.getElementById('dev-rayon').value = parseFloat(sel.value).toFixed(2);
+    const R = parseVal(document.getElementById('dev-rayon').value);
+    const a = parseVal(document.getElementById('dev-angle').value);
+    if (Number.isFinite(R) && Number.isFinite(a) && R > 0 && a > 0) {
+        document.getElementById('dev-result').textContent = fmt(Math.PI * R * a / 180, 2) + ' mm';
     } else {
-        document.getElementById('calc-dev').textContent = '—';
+        document.getElementById('dev-result').textContent = '—';
     }
-}
+};
 
-// ══════════════════════════════════════════════
-// PANEL 3 : EXERCICES
-// ══════════════════════════════════════════════
-let currentExos = [];
-
-function rand(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
-function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
-
-function generateExos() {
-    currentExos = [];
-    const usable = TUBES.filter(t => t.mm >= 6.35); // 1/4" et plus
-    document.getElementById('score-bar').style.display = 'none';
-    document.getElementById('score-text').textContent = '';
-
-    // 3 conversions pouce→mm
-    for (let i = 0; i < 3; i++) {
-        const t = rand(usable);
-        currentExos.push({
-            type: 'pouce2mm',
-            q: 'Convertir <strong>' + t.pouce + '"</strong> en millimètres.',
-            answer: t.mm,
-            unit: 'mm',
-            tol: 0.05
-        });
-    }
-
-    // 2 conversions mm→pouce (fraction)
-    for (let i = 0; i < 2; i++) {
-        const t = rand(usable);
-        currentExos.push({
-            type: 'mm2pouce',
-            q: '<strong>' + fmt(t.mm, 2) + ' mm</strong> correspond à combien de pouces ? (décimal)',
-            answer: t.frac[0] / t.frac[1],
-            unit: '"',
-            tol: 0.005
-        });
-    }
-
-    // 3 développés
-    const angles = [45, 60, 90, 120, 180];
-    for (let i = 0; i < 3; i++) {
-        const t = rand(usable);
-        const a = rand(angles);
-        const dev = Math.PI * t.rayon * a / 180;
-        currentExos.push({
-            type: 'dev',
-            q: 'Développé d\'un cintrage à <strong>' + a + '°</strong> pour un tube <strong>' + t.pouce + '"</strong> (R = ' + fmt(t.rayon, 2) + ' mm).',
-            answer: dev,
-            unit: 'mm',
-            tol: 0.5
-        });
-    }
-
-    // 2 questions rayon
-    for (let i = 0; i < 2; i++) {
-        const t = rand(usable);
-        currentExos.push({
-            type: 'rayon',
-            q: 'Quel est le rayon de cintrage (mm) pour un tube de <strong>' + t.pouce + '"</strong> ?',
-            answer: t.rayon,
-            unit: 'mm',
-            tol: 0.05
-        });
-    }
-
-    shuffle(currentExos);
-    renderExos();
-}
-
-function renderExos() {
-    const zone = document.getElementById('exo-list');
-    zone.innerHTML = '';
-    currentExos.forEach((ex, i) => {
-        const div = document.createElement('div');
-        div.className = 'question';
-        div.innerHTML = '<p><strong>Q' + (i+1) + '.</strong> ' + ex.q + '</p>' +
-            '<div class="answer-row">' +
-            '<input type="text" class="answer-input" id="ans-' + i + '" inputmode="decimal" placeholder="?">' +
-            '<span>' + ex.unit + '</span>' +
-            '<span class="feedback" id="fb-' + i + '"></span>' +
-            '</div>';
-        zone.appendChild(div);
-    });
-}
-
-function checkAll() {
-    let ok = 0;
-    currentExos.forEach((ex, i) => {
-        const inp = document.getElementById('ans-' + i);
-        const fb = document.getElementById('fb-' + i);
-        const v = parseVal(inp.value);
-        if (Number.isFinite(v) && Math.abs(v - ex.answer) <= ex.tol) {
-            inp.classList.remove('incorrect');
-            inp.classList.add('correct');
-            fb.className = 'feedback ok';
-            fb.textContent = '✓ Correct';
-            ok++;
-        } else {
-            inp.classList.remove('correct');
-            inp.classList.add('incorrect');
-            fb.className = 'feedback ko';
-            fb.textContent = '✗ ' + fmt(ex.answer, 2);
-        }
-    });
-
-    const total = currentExos.length;
-    const pct = Math.round(ok / total * 100);
-    const bar = document.getElementById('score-bar');
-    const fill = document.getElementById('score-fill');
-    bar.style.display = 'block';
-    fill.style.width = pct + '%';
-    fill.textContent = ok + '/' + total;
-
-    const txt = document.getElementById('score-text');
-    if (pct === 100) txt.textContent = '🏆 Parfait ! Tu maîtrises les conversions et le cintrage.';
-    else if (pct >= 70) txt.textContent = '👍 Bien ! Quelques révisions et c\'est bon.';
-    else if (pct >= 40) txt.textContent = '📖 Pas mal, relis le tableau et les formules.';
-    else txt.textContent = '💪 Courage ! Revois l\'onglet Tableau et Cintrage.';
-}
-
-// ══════════════════════════════════════════════
-// PANEL 4 : TABLEAU COMPLET
-// ══════════════════════════════════════════════
-(function buildTable() {
-    const body = document.getElementById('full-table-body');
-    TUBES.forEach(t => {
-        const dev90 = Math.PI / 2 * t.rayon;
+// ═══════════════════════════════════════════════
+// TABLEAU RÉCAP (Phase 6)
+// ═══════════════════════════════════════════════
+(function buildRecap() {
+    const body = document.getElementById('recap-table');
+    TUBES_SMALL.forEach(t => {
+        const d45 = Math.PI * t.rayon * 45 / 180;
+        const d90 = Math.PI * t.rayon * 90 / 180;
+        const d180 = Math.PI * t.rayon * 180 / 180;
         const tr = document.createElement('tr');
-        tr.innerHTML = '<td><strong>' + t.pouce + '"</strong></td>' +
-            '<td>' + fmt(t.mm, 2) + '</td>' +
-            '<td>' + fmt(t.rayon, 2) + '</td>' +
-            '<td>' + fmt(dev90, 2) + '</td>';
+        tr.innerHTML = `<td><strong>${t.pouce}"</strong></td><td>${fmt(t.mm,2)}</td><td>${fmt(t.rayon,2)}</td>
+            <td>${fmt(d45,2)}</td><td>${fmt(d90,2)}</td><td>${fmt(d180,2)}</td>`;
         body.appendChild(tr);
     });
 })();
 
-// Init exercices au chargement
-generateExos();
-</script>
+// ═══════════════════════════════════════════════
+// GÉNÉRATEUR D'EXERCICES PAR PHASE
+// ═══════════════════════════════════════════════
+function generatePhaseExos(phaseIdx) {
+    const exos = [];
 
+    switch (phaseIdx) {
+        case 0: // Phase 1 : découvrir
+            // 4 conversions simples
+            shuffle([...TUBES_SMALL]).slice(0, 4).forEach(t => {
+                exos.push({ q: `Convertir <strong>${t.pouce}"</strong> en millimètres.`, answer: t.mm, tol: 0.05, unit: 'mm' });
+            });
+            // 1 question inverse
+            { const t = rand(TUBES_SMALL);
+            exos.push({ q: `<strong>${fmt(t.mm,2)} mm</strong> correspond à combien de pouces ? (décimal, ex: 0,5)`, answer: t.num/t.den, tol: 0.005, unit: '"' }); }
+            break;
+
+        case 1: // Phase 2 : repérer
+            // Relier diamètre à usage (on demande juste le mm)
+            shuffle([...TUBES_SMALL]).slice(0, 5).forEach(t => {
+                exos.push({ q: `Quel est le diamètre en mm du tube <strong>${t.pouce}"</strong> ? (de mémoire !)`, answer: t.mm, tol: 0.1, unit: 'mm' });
+            });
+            break;
+
+        case 2: // Phase 3 : convertir
+            // Mix conversions
+            shuffle([...TUBES]).slice(0, 3).forEach(t => {
+                exos.push({ q: `${t.pouce}" = ? mm`, answer: t.mm, tol: 0.05, unit: 'mm' });
+            });
+            shuffle([...TUBES_SMALL]).slice(0, 2).forEach(t => {
+                exos.push({ q: `${fmt(t.mm,2)} mm = ? pouces (décimal)`, answer: t.num/t.den, tol: 0.005, unit: '"' });
+            });
+            // Calcul fraction
+            { const n = randInt(1,7), d = 8;
+            exos.push({ q: `Calculer <strong>${n}/${d}</strong> × 25,4 = ?`, answer: n/d*25.4, tol: 0.05, unit: 'mm' }); }
+            break;
+
+        case 3: // Phase 4 : comprendre cintrage
+            // Rayon de cintrage
+            shuffle([...TUBES_SMALL]).slice(0, 3).forEach(t => {
+                exos.push({ q: `Quel est le rayon de cintrage (mm) pour un tube <strong>${t.pouce}"</strong> ?`, answer: t.rayon, tol: 0.05, unit: 'mm' });
+            });
+            // Questions conceptuelles via calcul
+            { const t = rand(TUBES_SMALL);
+            exos.push({ q: `Le rayon de cintrage d'un tube ${t.pouce}" vaut ${fmt(t.rayon,2)} mm. Quel est le <strong>diamètre</strong> du cercle de cintrage ?`, answer: t.rayon * 2, tol: 0.1, unit: 'mm' }); }
+            { const t = rand(TUBES_SMALL);
+            exos.push({ q: `Convertir le rayon de cintrage du tube ${t.pouce}" en pouces (décimal).`, answer: t.num/t.den, tol: 0.005, unit: '"' }); }
+            break;
+
+        case 4: // Phase 5 : calculer développé
+            [90, 45, 90, 60, 120].forEach((angle, i) => {
+                const t = rand(TUBES_SMALL);
+                const dev = Math.PI * t.rayon * angle / 180;
+                exos.push({ q: `Développé d'un cintrage à <strong>${angle}°</strong> pour un tube <strong>${t.pouce}"</strong> (R=${fmt(t.rayon,2)} mm)`, answer: dev, tol: 0.5, unit: 'mm' });
+            });
+            break;
+
+        case 5: // Phase 6 : synthèse
+            // Problème 1 : conversion + rayon + développé
+            { const t = rand(TUBES_SMALL);
+            exos.push({ q: `Tube ${t.pouce}" : donne le diamètre en mm.`, answer: t.mm, tol: 0.05, unit: 'mm' });
+            exos.push({ q: `Tube ${t.pouce}" : donne le rayon de cintrage en mm.`, answer: t.rayon, tol: 0.05, unit: 'mm' });
+            exos.push({ q: `Tube ${t.pouce}" : calcule le développé à 90°.`, answer: Math.PI/2*t.rayon, tol: 0.5, unit: 'mm' }); }
+            // Problème 2 : longueur totale
+            { const t = rand(TUBES_SMALL);
+            const L1 = randInt(10,30) * 10; // longueur droite en mm
+            const L2 = randInt(5,20) * 10;
+            const dev = Math.PI/2*t.rayon;
+            const total = L1 + dev + L2;
+            exos.push({ q: `Un tube ${t.pouce}" fait un parcours : <strong>${L1} mm</strong> droit, puis un <strong>coude à 90°</strong>, puis <strong>${L2} mm</strong> droit. Quelle longueur totale de tube couper ? (R=${fmt(t.rayon,2)} mm)`, answer: total, tol: 1, unit: 'mm' }); }
+            // Problème 3 : angle quelconque
+            { const t = rand(TUBES_SMALL); const a = rand([30, 45, 60, 120]);
+            exos.push({ q: `Développé d'un tube ${t.pouce}" cintré à <strong>${a}°</strong>.`, answer: Math.PI*t.rayon*a/180, tol: 0.5, unit: 'mm' }); }
+            break;
+
+        case 6: // Évaluation finale : 15 questions mixtes
+            // 4 conversions
+            shuffle([...TUBES]).slice(0, 4).forEach(t => {
+                exos.push({ q: `${t.pouce}" = ? mm`, answer: t.mm, tol: 0.05, unit: 'mm', cat: 'Conversion' });
+            });
+            // 2 conversions inverses
+            shuffle([...TUBES_SMALL]).slice(0, 2).forEach(t => {
+                exos.push({ q: `${fmt(t.mm,2)} mm = ? pouces (décimal)`, answer: t.num/t.den, tol: 0.005, unit: '"', cat: 'Conversion' });
+            });
+            // 3 rayons
+            shuffle([...TUBES_SMALL]).slice(0, 3).forEach(t => {
+                exos.push({ q: `Rayon de cintrage du tube ${t.pouce}" en mm ?`, answer: t.rayon, tol: 0.05, unit: 'mm', cat: 'Rayon' });
+            });
+            // 4 développés
+            [90, 45, 90, 60].forEach(a => {
+                const t = rand(TUBES_SMALL);
+                exos.push({ q: `Développé : tube ${t.pouce}" à ${a}° (R=${fmt(t.rayon,2)} mm)`, answer: Math.PI*t.rayon*a/180, tol: 0.5, unit: 'mm', cat: 'Développé' });
+            });
+            // 2 problèmes synthèse
+            { const t = rand(TUBES_SMALL);
+            const L1 = randInt(8,25)*10, L2 = randInt(5,15)*10;
+            const total = L1 + Math.PI/2*t.rayon + L2;
+            exos.push({ q: `Longueur totale : ${L1} mm droit + coude 90° + ${L2} mm droit, tube ${t.pouce}" (R=${fmt(t.rayon,2)} mm)`, answer: total, tol: 1, unit: 'mm', cat: 'Synthèse' }); }
+            { const t = rand(TUBES_SMALL);
+            exos.push({ q: `Un tube ${t.pouce}" cintré à 180° (demi-tour complet). Développé = ?`, answer: Math.PI*t.rayon, tol: 0.5, unit: 'mm', cat: 'Synthèse' }); }
+            break;
+    }
+
+    return shuffle(exos);
+}
+
+// ═══════════════════════════════════════════════
+// RENDU DES EXERCICES
+// ═══════════════════════════════════════════════
+function renderExos(containerId, exos, prefix) {
+    const zone = document.getElementById(containerId);
+    if (!zone) return;
+    let html = '';
+    exos.forEach((ex, i) => {
+        html += `<div class="question">
+            <p><strong>Q${i+1}.</strong> ${ex.q}</p>
+            <div class="q-row">
+                <input class="q-input" id="${prefix}-${i}" inputmode="decimal" placeholder="?">
+                <span class="q-unit">${ex.unit}</span>
+                <span class="q-feedback" id="${prefix}f-${i}"></span>
+            </div>
+        </div>`;
+    });
+    zone.innerHTML = (zone.querySelector('h3') ? '<h3>' + zone.querySelector('h3').textContent + '</h3>' : '') + html;
+}
+
+// ═══════════════════════════════════════════════
+// VÉRIFICATION EXERCICES
+// ═══════════════════════════════════════════════
+window.checkPhase = function(phaseIdx) {
+    const prefix = phaseIdx === 6 ? 'eval' : 'p' + (phaseIdx + 1);
+    const exos = phaseExos[phaseIdx];
+    if (!exos) return;
+
+    let ok = 0;
+    exos.forEach((ex, i) => {
+        const inp = document.getElementById(prefix + '-' + i);
+        const fb = document.getElementById(prefix + 'f-' + i);
+        if (!inp || !fb) return;
+        const v = parseVal(inp.value);
+        if (Number.isFinite(v) && Math.abs(v - ex.answer) <= ex.tol) {
+            inp.className = 'q-input correct';
+            fb.className = 'q-feedback ok';
+            fb.textContent = '✓ Correct';
+            ok++;
+        } else {
+            inp.className = 'q-input wrong';
+            fb.className = 'q-feedback ko';
+            fb.textContent = '✗ ' + fmt(ex.answer, ex.tol < 0.01 ? 4 : 2);
+        }
+    });
+
+    const total = exos.length;
+    const pct = ok / total;
+    const pctRound = Math.round(pct * 100);
+
+    if (phaseIdx < 6) {
+        // Score bar
+        const bar = document.getElementById('score-' + phaseIdx);
+        const fill = document.getElementById('fill-' + phaseIdx);
+        const msg = document.getElementById('msg-' + phaseIdx);
+        bar.style.display = 'block';
+        fill.style.width = pctRound + '%';
+        fill.textContent = ok + '/' + total + ' (' + pctRound + '%)';
+        fill.className = 'score-fill ' + (pct >= 0.8 ? 'good' : pct >= PASS_THRESHOLD ? 'mid' : 'bad');
+
+        phaseScores[phaseIdx] = pct;
+
+        if (pct >= PASS_THRESHOLD) {
+            msg.textContent = pct >= 0.8 ? '🏆 Excellent ! Tu maîtrises cette partie.' : '👍 Validé ! Tu peux passer à la suite.';
+            msg.style.color = 'var(--success)';
+            document.getElementById('next-' + phaseIdx).style.display = 'flex';
+            toast('Phase validée !', 'success');
+        } else {
+            msg.textContent = '📖 Pas encore... Relis le cours et réessaie. (' + pctRound + '% — il faut 60%)';
+            msg.style.color = 'var(--error)';
+            document.getElementById('next-' + phaseIdx).style.display = 'none';
+        }
+
+        updateNav();
+        saveProgress();
+    }
+
+    return { ok, total, pct };
+};
+
+// ═══════════════════════════════════════════════
+// TIMER ÉVALUATION
+// ═══════════════════════════════════════════════
+function startTimer() {
+    if (evalTimer) return;
+    evalTimeLeft = EVAL_DURATION;
+    updateTimerDisplay();
+    evalTimer = setInterval(() => {
+        evalTimeLeft--;
+        updateTimerDisplay();
+        if (evalTimeLeft <= 0) {
+            clearInterval(evalTimer);
+            submitEval();
+        }
+    }, 1000);
+}
+
+function updateTimerDisplay() {
+    const m = Math.floor(evalTimeLeft / 60);
+    const s = evalTimeLeft % 60;
+    const el = document.getElementById('timer');
+    el.textContent = String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+    el.classList.toggle('warning', evalTimeLeft <= 120);
+}
+
+// ═══════════════════════════════════════════════
+// SOUMISSION ÉVALUATION
+// ═══════════════════════════════════════════════
+window.submitEval = function() {
+    if (evalSubmitted) return;
+    evalSubmitted = true;
+    if (evalTimer) clearInterval(evalTimer);
+
+    const result = checkPhase(6);
+    phaseScores[6] = result.pct;
+
+    // Masquer zone exo, afficher résultat
+    document.getElementById('eval-zone').style.display = 'none';
+    document.getElementById('eval-result').style.display = 'block';
+
+    const pctRound = Math.round(result.pct * 100);
+    document.getElementById('final-score-value').textContent = result.ok + ' / ' + result.total;
+
+    const gradeEl = document.getElementById('final-grade');
+    if (pctRound >= 85) { gradeEl.textContent = 'Maîtrisé'; gradeEl.className = 'final-grade grade-a'; }
+    else if (pctRound >= 70) { gradeEl.textContent = 'Acquis'; gradeEl.className = 'final-grade grade-b'; }
+    else if (pctRound >= 50) { gradeEl.textContent = 'En cours d\'acquisition'; gradeEl.className = 'final-grade grade-c'; }
+    else { gradeEl.textContent = 'Non acquis'; gradeEl.className = 'final-grade grade-d'; }
+
+    const bar = document.getElementById('final-bar');
+    bar.style.width = pctRound + '%';
+    bar.textContent = pctRound + '%';
+    bar.className = 'score-fill ' + (pctRound >= 70 ? 'good' : pctRound >= 50 ? 'mid' : 'bad');
+
+    const elapsed = EVAL_DURATION - evalTimeLeft;
+    const em = Math.floor(elapsed / 60), es = elapsed % 60;
+    document.getElementById('final-details').textContent =
+        'Temps : ' + em + ' min ' + String(es).padStart(2, '0') + ' s — ' +
+        'Correct : ' + result.ok + '/' + result.total + ' (' + pctRound + '%)';
+
+    // Corrections
+    const corrections = document.getElementById('eval-corrections');
+    const exos = phaseExos[6];
+    let corrHtml = '<h3 style="color:var(--primary); margin-bottom:10px;">Corrections</h3>';
+    exos.forEach((ex, i) => {
+        const inp = document.getElementById('eval-' + i);
+        const v = parseVal(inp ? inp.value : '');
+        const isOk = Number.isFinite(v) && Math.abs(v - ex.answer) <= ex.tol;
+        corrHtml += `<div style="padding:6px 0; border-bottom:1px solid var(--border); font-size:0.85rem;">
+            <span style="color:${isOk ? 'var(--success)' : 'var(--error)'}; font-weight:700;">${isOk ? '✓' : '✗'}</span>
+            Q${i+1}. ${ex.q} → <strong>${fmt(ex.answer, ex.tol < 0.01 ? 4 : 2)} ${ex.unit}</strong>
+            ${!isOk && inp ? ' (ta réponse : ' + (inp.value || '—') + ')' : ''}</div>`;
+    });
+    corrections.innerHTML = corrHtml;
+
+    // Confetti si >= 70%
+    if (pctRound >= 70) launchConfetti();
+
+    // Envoi Google Sheets
+    sendToSheets(result);
+
+    updateNav();
+    saveProgress();
+};
+
+// ═══════════════════════════════════════════════
+// ENVOI GOOGLE SHEETS
+// ═══════════════════════════════════════════════
+function sendToSheets(result) {
+    if (!APPS_SCRIPT_URL) return;
+
+    const data = {
+        timestamp: new Date().toISOString(),
+        nom: document.getElementById('stu-nom').value.trim(),
+        prenom: document.getElementById('stu-prenom').value.trim(),
+        classe: document.getElementById('stu-classe').value,
+        scorePhase1: phaseScores[0] !== null ? Math.round(phaseScores[0]*100) : '',
+        scorePhase2: phaseScores[1] !== null ? Math.round(phaseScores[1]*100) : '',
+        scorePhase3: phaseScores[2] !== null ? Math.round(phaseScores[2]*100) : '',
+        scorePhase4: phaseScores[3] !== null ? Math.round(phaseScores[3]*100) : '',
+        scorePhase5: phaseScores[4] !== null ? Math.round(phaseScores[4]*100) : '',
+        scorePhase6: phaseScores[5] !== null ? Math.round(phaseScores[5]*100) : '',
+        scoreEval: Math.round(result.pct * 100),
+        detail: result.ok + '/' + result.total,
+        tempsSecondes: EVAL_DURATION - evalTimeLeft
+    };
+
+    fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    }).then(() => {
+        toast('Résultats envoyés !', 'success');
+    }).catch(() => {
+        // Stocker en local si échec
+        const pending = JSON.parse(localStorage.getItem('frigolo-pending') || '[]');
+        pending.push(data);
+        localStorage.setItem('frigolo-pending', JSON.stringify(pending));
+        toast('Sauvegardé localement', 'error');
+    });
+}
+
+// ═══════════════════════════════════════════════
+// CONFETTI
+// ═══════════════════════════════════════════════
+function launchConfetti() {
+    const canvas = document.getElementById('confetti');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    canvas.style.display = 'block';
+
+    const particles = [];
+    const colors = ['#e8914a', '#2aafaf', '#0f2d52', '#27ae60', '#f39c12', '#e74c3c', '#9b59b6'];
+
+    for (let i = 0; i < 120; i++) {
+        particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height - canvas.height,
+            w: Math.random() * 10 + 4,
+            h: Math.random() * 6 + 3,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            vy: Math.random() * 3 + 2,
+            vx: (Math.random() - 0.5) * 2,
+            rot: Math.random() * 360,
+            vr: (Math.random() - 0.5) * 8
+        });
+    }
+
+    let frame = 0;
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let alive = false;
+        particles.forEach(p => {
+            p.x += p.vx;
+            p.y += p.vy;
+            p.rot += p.vr;
+            p.vy += 0.05;
+            if (p.y < canvas.height + 20) alive = true;
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rot * Math.PI / 180);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+            ctx.restore();
+        });
+        frame++;
+        if (alive && frame < 300) requestAnimationFrame(animate);
+        else { ctx.clearRect(0, 0, canvas.width, canvas.height); canvas.style.display = 'none'; }
+    }
+    animate();
+}
+
+// ═══════════════════════════════════════════════
+// SAUVEGARDE LOCALE (localStorage)
+// ═══════════════════════════════════════════════
+function saveProgress() {
+    const data = {
+        phase: currentPhase,
+        scores: phaseScores,
+        nom: document.getElementById('stu-nom').value,
+        prenom: document.getElementById('stu-prenom').value,
+        classe: document.getElementById('stu-classe').value
+    };
+    localStorage.setItem('frigolo-conv-progress', JSON.stringify(data));
+}
+
+function loadProgress() {
+    try {
+        const data = JSON.parse(localStorage.getItem('frigolo-conv-progress'));
+        if (!data) return;
+        if (data.nom) document.getElementById('stu-nom').value = data.nom;
+        if (data.prenom) document.getElementById('stu-prenom').value = data.prenom;
+        if (data.classe) document.getElementById('stu-classe').value = data.classe;
+        if (data.scores) phaseScores = data.scores;
+        if (data.phase != null) currentPhase = data.phase;
+    } catch(e) {}
+}
+
+// ═══════════════════════════════════════════════
+// INITIALISATION
+// ═══════════════════════════════════════════════
+function init() {
+    loadProgress();
+    buildPhaseNav();
+    buildFlashcards();
+    buildConvLevels();
+
+    // Générer exercices pour chaque phase
+    const exoContainers = {
+        0: { id: 'exo-p1', prefix: 'p1', title: 'Vérifie ta compréhension' },
+        1: { id: 'exo-p2', prefix: 'p2', title: 'Exercices de mémorisation' },
+        2: { id: 'exo-p3', prefix: 'p3', title: 'Validation' },
+        3: { id: 'exo-p4', prefix: 'p4', title: 'Vérifie ta compréhension' },
+        4: { id: 'exo-p5', prefix: 'p5', title: 'Exercices de calcul' },
+        5: { id: 'exo-p6', prefix: 'p6', title: 'Problèmes pratiques' },
+        6: { id: 'exo-eval', prefix: 'eval', title: 'Évaluation' }
+    };
+
+    for (let i = 0; i <= 6; i++) {
+        phaseExos[i] = generatePhaseExos(i);
+        const c = exoContainers[i];
+        const zone = document.getElementById(c.id);
+        if (zone) {
+            zone.innerHTML = '<h3>' + c.title + '</h3>';
+            renderExos(c.id, phaseExos[i], c.prefix);
+        }
+    }
+
+    // Afficher la bonne phase
+    goPhase(currentPhase);
+}
+
+init();
+
+})();
+</script>
 </body>
 </html>
