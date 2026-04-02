@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Espace Enseignant — Conversion Pouce & Cintrage — inerWeb</title>
+<style>
+:root {
+    --primary: #0f2d52;
+    --primary-light: #1a5276;
+    --secondary: #2aafaf;
+    --accent: #e8914a;
+    --accent2: #d47a35;
+    --success: #27ae60;
+    --error: #e74c3c;
+    --warning: #f39c12;
+    --bg: #f0f4f8;
+    --card: #ffffff;
+    --text: #2c3e50;
+    --muted: #7f8c8d;
+    --border: #dfe6e9;
+    --gradient-cold: linear-gradient(135deg, #0f2d52, #1a5276, #2aafaf);
+    --shadow: 0 4px 20px rgba(15,45,82,0.08);
+    --radius: 16px;
+    --radius-sm: 10px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+/* ═══ ÉCRAN VERROUILLAGE ═══ */
+.lock-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--gradient-cold);
+    padding: 20px;
+}
+
+.lock-box {
+    background: #fff;
+    border-radius: 24px;
+    padding: 40px 32px;
+    max-width: 380px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.lock-icon { font-size: 3rem; margin-bottom: 12px; }
+
+.lock-box h1 {
+    font-size: 1.3rem;
+    color: var(--primary);
+    margin-bottom: 4px;
+}
+
+.lock-box .sub {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 20px;
+}
+
+.lock-box input {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 1.3rem;
+    text-align: center;
+    font-weight: 800;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    font-family: inherit;
+    margin-bottom: 14px;
+    transition: border 0.3s;
+}
+
+.lock-box input:focus { border-color: var(--accent); outline: none; }
+
+.lock-box .error-msg {
+    color: var(--error);
+    font-size: 0.85rem;
+    font-weight: 700;
+    display: none;
+    margin-bottom: 10px;
+}
+
+.lock-box .btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.3s;
+}
+
+.lock-box .btn:hover { background: var(--accent2); }
+
+/* ═══ DASHBOARD PROF ═══ */
+.dashboard { display: none; }
+.dashboard.visible { display: block; }
+
+.dash-header {
+    background: var(--gradient-cold);
+    padding: 24px 20px;
+    text-align: center;
+    border-bottom: 4px solid var(--accent);
+}
+
+.dash-header h1 { color: #fff; font-size: 1.4rem; font-weight: 800; }
+.dash-header h1 span { color: var(--accent); }
+.dash-header .sub { color: rgba(255,255,255,0.75); font-size: 0.85rem; margin-top: 4px; }
+
+.dash-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 16px;
+}
+
+.dash-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+}
+
+.dash-card h2 {
+    font-size: 1.05rem;
+    color: var(--primary);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dash-card p { font-size: 0.88rem; color: #555; margin-bottom: 6px; }
+
+.link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 18px;
+    background: var(--primary);
+    color: #fff;
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    font-size: 0.9rem;
+    transition: background 0.3s, transform 0.2s;
+    margin: 4px 4px 4px 0;
+}
+
+.link-btn:hover { background: var(--primary-light); transform: translateY(-2px); }
+.link-btn.orange { background: var(--accent); }
+.link-btn.orange:hover { background: var(--accent2); }
+.link-btn.green { background: var(--success); }
+.link-btn.teal { background: var(--secondary); }
+
+/* ═══ CORRIGÉS ═══ */
+.corriges-section {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+}
+
+.corriges-section h2 {
+    font-size: 1.05rem;
+    color: var(--primary);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.phase-corrige {
+    background: #f8fafe;
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    margin: 8px 0;
+    border-left: 4px solid var(--secondary);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.phase-corrige:hover { background: #e8f4f8; }
+
+.phase-corrige h3 {
+    font-size: 0.92rem;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.phase-corrige .toggle { color: var(--muted); font-size: 0.8rem; }
+
+.phase-corrige-content {
+    display: none;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+}
+
+.phase-corrige.open .phase-corrige-content { display: block; }
+.phase-corrige.open .toggle::after { content: '▲'; }
+.phase-corrige:not(.open) .toggle::after { content: '▼'; }
+
+.corrige-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.corrige-table th {
+    background: var(--primary);
+    color: #fff;
+    padding: 8px 6px;
+    text-align: center;
+    font-size: 0.78rem;
+}
+
+.corrige-table td {
+    padding: 6px;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+}
+
+.corrige-table tr:nth-child(even) { background: #f0f4f8; }
+
+/* ═══ TABLEAU RÉCAP ═══ */
+.recap-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    margin: 10px 0;
+}
+
+.recap-table th {
+    background: var(--primary);
+    color: #fff;
+    padding: 8px 5px;
+    font-size: 0.78rem;
+}
+
+.recap-table td {
+    padding: 7px 5px;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+}
+
+.recap-table tr:nth-child(even) { background: #f8fafe; }
+
+/* ═══ FOOTER ═══ */
+.dash-footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 0.75rem;
+    color: var(--muted);
+}
+
+.dash-footer a { color: var(--primary); text-decoration: none; }
+
+@media (max-width: 500px) {
+    .lock-box { padding: 28px 20px; }
+    .link-btn { font-size: 0.82rem; padding: 8px 14px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- ÉCRAN DE VERROUILLAGE                          -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="lock-screen" id="lockScreen">
+    <div class="lock-box">
+        <div class="lock-icon">🔐</div>
+        <h1>Espace Enseignant</h1>
+        <div class="sub">Module Conversion Pouce & Cintrage</div>
+        <input type="password" id="codeInput" placeholder="CODE" autocomplete="off" maxlength="10" autofocus>
+        <div class="error-msg" id="errorMsg">Code incorrect</div>
+        <button class="btn" onclick="tryCode()">Accéder</button>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- DASHBOARD ENSEIGNANT                           -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="dashboard" id="dashboard">
+
+    <div class="dash-header">
+        <h1>inerWeb <span>Enseignant</span></h1>
+        <div class="sub">Module Conversion Pouce ↔ mm & Cintrage</div>
+    </div>
+
+    <div class="dash-content">
+
+        <!-- Liens rapides -->
+        <div class="dash-card">
+            <h2>🔗 Accès rapides</h2>
+            <div>
+                <a class="link-btn orange" href="conversion-pouce-cintrage.html" target="_blank">📱 Page élève</a>
+                <a class="link-btn green" href="https://docs.google.com/spreadsheets/d/1YvTSTEyQUcdiNYjQUx9TrnWV5uaWbEhW43-ZY6RlO8Y" target="_blank">📊 Google Sheet résultats</a>
+                <a class="link-btn teal" href="https://script.google.com/d/1hGF4Vd7ueUaoEjwvnk-XHMjkQ9CjmRQLALjlb8yi51wmReW62mlgj2oy/edit" target="_blank">⚙️ Apps Script</a>
+                <a class="link-btn" href="../index.html">← Portail FRIGOLO</a>
+            </div>
+        </div>
+
+        <!-- URL à projeter / partager -->
+        <div class="dash-card">
+            <h2>📲 Lien à donner aux élèves</h2>
+            <div style="background:#f0f4f8; border-radius:8px; padding:12px; font-family:monospace; font-size:0.85rem; word-break:break-all; cursor:pointer; border:2px solid var(--border);" onclick="copyLink(this)">
+                https://frigorx.github.io/inerweb-frigolo/outils/conversion-pouce-cintrage.html
+            </div>
+            <p style="font-size:0.78rem; color:var(--muted); margin-top:6px;">Cliquer pour copier — fonctionne sur téléphone, tablette et PC</p>
+        </div>
+
+        <!-- Infos module -->
+        <div class="dash-card">
+            <h2>📋 Structure du module</h2>
+            <table class="recap-table">
+                <thead><tr><th>Phase</th><th>Intitulé</th><th>Contenu</th><th>Nb questions</th><th>Seuil</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>1</strong></td><td>Découvrir</td><td>Cours pouce/mm + convertisseur</td><td>5</td><td>60%</td></tr>
+                    <tr><td><strong>2</strong></td><td>Repérer</td><td>Diamètres courants + flashcards</td><td>5</td><td>60%</td></tr>
+                    <tr><td><strong>3</strong></td><td>Convertir</td><td>3 niveaux progressifs + validation</td><td>6</td><td>60%</td></tr>
+                    <tr><td><strong>4</strong></td><td>Comprendre</td><td>Cintrage, rayon, fibre neutre</td><td>5</td><td>60%</td></tr>
+                    <tr><td><strong>5</strong></td><td>Calculer</td><td>Formule développé + exemples guidés</td><td>5</td><td>60%</td></tr>
+                    <tr><td><strong>6</strong></td><td>Maîtriser</td><td>Problèmes de synthèse (chantier)</td><td>5</td><td>60%</td></tr>
+                    <tr><td><strong>7</strong></td><td>Évaluation</td><td>15 questions chrono 15 min</td><td>15</td><td>—</td></tr>
+                </tbody>
+            </table>
+            <p style="font-size:0.82rem; color:var(--muted);">Progression spiralaire : chaque concept est repris avec plus de profondeur. Les exercices sont générés aléatoirement (chaque élève a des questions différentes). Progression sauvegardée dans le navigateur.</p>
+        </div>
+
+        <!-- Tableau référence complet -->
+        <div class="dash-card">
+            <h2>📐 Tableau de référence complet</h2>
+            <table class="recap-table" id="refTable">
+                <thead>
+                    <tr><th>Pouce</th><th>mm</th><th>Rayon R (mm)</th><th>Dév. 45°</th><th>Dév. 90°</th><th>Dév. 120°</th><th>Dév. 180°</th></tr>
+                </thead>
+                <tbody id="refTableBody"></tbody>
+            </table>
+            <p style="font-size:0.78rem; color:var(--muted); margin-top:4px;">Formule : D = π × R × α / 180 &nbsp;|&nbsp; Pour 90° : D = 1,5708 × R</p>
+        </div>
+
+        <!-- Corrigés par phase -->
+        <div class="corriges-section">
+            <h2>✏️ Corrigés types</h2>
+            <p style="font-size:0.82rem; color:var(--muted); margin-bottom:10px;">Les exercices sont aléatoires, mais les réponses sont toujours calculées avec les mêmes formules. Voici les valeurs de référence pour chaque tube.</p>
+
+            <div class="phase-corrige" onclick="this.classList.toggle('open')">
+                <h3>Phase 1-2-3 — Conversions Pouce ↔ mm <span class="toggle"></span></h3>
+                <div class="phase-corrige-content">
+                    <table class="corrige-table" id="corrigeConv">
+                        <thead><tr><th>Pouce</th><th>Fraction</th><th>× 25,4</th><th>= mm</th><th>Décimal pouce</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="phase-corrige" onclick="this.classList.toggle('open')">
+                <h3>Phase 4 — Rayons de cintrage <span class="toggle"></span></h3>
+                <div class="phase-corrige-content">
+                    <table class="corrige-table" id="corrigeRayon">
+                        <thead><tr><th>Tube</th><th>Rayon R (mm)</th><th>Diamètre cercle (mm)</th><th>Rayon en pouces</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                    <p style="font-size:0.82rem; color:var(--muted); margin-top:8px;">En froid, le rayon de cintrage = diamètre nominal du tube (cintreuse standard).</p>
+                </div>
+            </div>
+
+            <div class="phase-corrige" onclick="this.classList.toggle('open')">
+                <h3>Phase 5-6 — Développés <span class="toggle"></span></h3>
+                <div class="phase-corrige-content">
+                    <table class="corrige-table" id="corrigeDev">
+                        <thead><tr><th>Tube</th><th>R (mm)</th><th>Dév. 30°</th><th>Dév. 45°</th><th>Dév. 60°</th><th>Dév. 90°</th><th>Dév. 120°</th><th>Dév. 180°</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                    <p style="font-size:0.82rem; color:var(--muted); margin-top:8px;"><strong>Formule :</strong> D = π × R × α / 180<br>
+                    <strong>Problème synthèse :</strong> Longueur totale = partie droite 1 + développé + partie droite 2</p>
+                </div>
+            </div>
+
+            <div class="phase-corrige" onclick="this.classList.toggle('open')">
+                <h3>Phase 7 — Évaluation (barème) <span class="toggle"></span></h3>
+                <div class="phase-corrige-content">
+                    <table class="corrige-table">
+                        <thead><tr><th>Score</th><th>Appréciation</th><th>Couleur Sheet</th></tr></thead>
+                        <tbody>
+                            <tr><td>≥ 85%</td><td><strong>Maîtrisé</strong></td><td style="background:#d5f5e3;">Vert</td></tr>
+                            <tr><td>70 — 84%</td><td><strong>Acquis</strong></td><td style="background:#d4efdf;">Vert clair</td></tr>
+                            <tr><td>50 — 69%</td><td><strong>En cours d'acquisition</strong></td><td style="background:#fef9e7;">Jaune</td></tr>
+                            <tr><td>< 50%</td><td><strong>Non acquis</strong></td><td style="background:#fdedec;">Rouge</td></tr>
+                        </tbody>
+                    </table>
+                    <p style="font-size:0.82rem; color:var(--muted); margin-top:8px;">15 questions mixtes : 4 conversions pouce→mm, 2 mm→pouce, 3 rayons, 4 développés, 2 synthèses. Chronomètre 15 minutes.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notes pédagogiques -->
+        <div class="dash-card">
+            <h2>💡 Notes pédagogiques</h2>
+            <ul style="font-size:0.88rem; margin-left:1.2rem; color:#555;">
+                <li><strong>Durée estimée :</strong> 45 min à 1h15 selon le niveau</li>
+                <li><strong>Progression :</strong> chaque phase doit être validée à 60% pour débloquer la suivante</li>
+                <li><strong>Aléatoire :</strong> les exercices changent à chaque chargement — pas de copie possible entre élèves</li>
+                <li><strong>Reprise :</strong> la progression est sauvegardée dans le navigateur (même téléphone = reprise automatique)</li>
+                <li><strong>Résultats :</strong> envoyés au Google Sheet uniquement à la Phase 7 (évaluation finale)</li>
+                <li><strong>Hors ligne :</strong> le module fonctionne sans connexion (sauf l'envoi des résultats, qui sera mis en file d'attente)</li>
+                <li><strong>Tolérance :</strong> conversions ±0,05 mm / développés ±0,5 mm / pouces décimaux ±0,005</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <div class="dash-footer">
+        <p><strong>inerWeb</strong> — Espace Enseignant — F. Henninot — 2026</p>
+        <p><a href="conversion-pouce-cintrage.html">Page élève</a> &nbsp;|&nbsp; <a href="../index.html">Portail FRIGOLO</a></p>
+    </div>
+
+</div>
+
+<script>
+(function(){
+'use strict';
+
+const CODE = 'LPPJR';
+
+const TUBES = [
+    { pouce:'1/4',   num:1, den:4,  mm:6.35,  rayon:6.35  },
+    { pouce:'3/8',   num:3, den:8,  mm:9.52,  rayon:9.52  },
+    { pouce:'1/2',   num:1, den:2,  mm:12.70, rayon:12.70 },
+    { pouce:'5/8',   num:5, den:8,  mm:15.88, rayon:15.88 },
+    { pouce:'3/4',   num:3, den:4,  mm:19.05, rayon:19.05 },
+    { pouce:'7/8',   num:7, den:8,  mm:22.22, rayon:22.22 },
+    { pouce:'1 1/8', num:9, den:8,  mm:28.58, rayon:28.58 },
+    { pouce:'1 3/8', num:11,den:8,  mm:34.93, rayon:34.93 }
+];
+
+function fmt(n, d) { return n.toFixed(d).replace('.', ','); }
+
+// ═══ VERROUILLAGE ═══
+const codeInput = document.getElementById('codeInput');
+codeInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') tryCode(); });
+
+// Accès via URL ?code=LPPJR
+const params = new URLSearchParams(window.location.search);
+if (params.get('code') === CODE) unlock();
+
+window.tryCode = function() {
+    const v = codeInput.value.trim().toUpperCase();
+    if (v === CODE) {
+        unlock();
+    } else {
+        document.getElementById('errorMsg').style.display = 'block';
+        codeInput.value = '';
+        codeInput.focus();
+        codeInput.style.borderColor = '#e74c3c';
+        setTimeout(() => { codeInput.style.borderColor = ''; }, 1500);
+    }
+};
+
+function unlock() {
+    document.getElementById('lockScreen').style.display = 'none';
+    document.getElementById('dashboard').classList.add('visible');
+    buildTables();
+}
+
+// ═══ COPIER LIEN ═══
+window.copyLink = function(el) {
+    navigator.clipboard.writeText(el.textContent.trim()).then(() => {
+        el.style.borderColor = '#27ae60';
+        el.style.background = '#d5f5e3';
+        setTimeout(() => { el.style.borderColor = ''; el.style.background = ''; }, 1200);
+    });
+};
+
+// ═══ CONSTRUCTION DES TABLEAUX ═══
+function buildTables() {
+    // Tableau de référence
+    const refBody = document.getElementById('refTableBody');
+    TUBES.forEach(t => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td><strong>${t.pouce}"</strong></td><td>${fmt(t.mm,2)}</td><td>${fmt(t.rayon,2)}</td>
+            <td>${fmt(Math.PI*t.rayon*45/180,2)}</td><td>${fmt(Math.PI*t.rayon*90/180,2)}</td>
+            <td>${fmt(Math.PI*t.rayon*120/180,2)}</td><td>${fmt(Math.PI*t.rayon,2)}</td>`;
+        refBody.appendChild(tr);
+    });
+
+    // Corrigé conversions
+    const convBody = document.querySelector('#corrigeConv tbody');
+    TUBES.forEach(t => {
+        const dec = t.num / t.den;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td><strong>${t.pouce}"</strong></td><td>${t.num} ÷ ${t.den} = ${fmt(dec,4)}</td>
+            <td>${fmt(dec,4)} × 25,4</td><td><strong>${fmt(t.mm,2)}</strong></td><td>${fmt(dec,4)}</td>`;
+        convBody.appendChild(tr);
+    });
+
+    // Corrigé rayons
+    const rayBody = document.querySelector('#corrigeRayon tbody');
+    TUBES.filter(t => t.mm <= 22.22).forEach(t => {
+        const dec = t.num / t.den;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td><strong>${t.pouce}"</strong></td><td>${fmt(t.rayon,2)}</td>
+            <td>${fmt(t.rayon*2,2)}</td><td>${fmt(dec,4)}</td>`;
+        rayBody.appendChild(tr);
+    });
+
+    // Corrigé développés
+    const devBody = document.querySelector('#corrigeDev tbody');
+    TUBES.filter(t => t.mm <= 22.22).forEach(t => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td><strong>${t.pouce}"</strong></td><td>${fmt(t.rayon,2)}</td>
+            <td>${fmt(Math.PI*t.rayon*30/180,2)}</td><td>${fmt(Math.PI*t.rayon*45/180,2)}</td>
+            <td>${fmt(Math.PI*t.rayon*60/180,2)}</td><td>${fmt(Math.PI*t.rayon*90/180,2)}</td>
+            <td>${fmt(Math.PI*t.rayon*120/180,2)}</td><td>${fmt(Math.PI*t.rayon,2)}</td>`;
+        devBody.appendChild(tr);
+    });
+}
+
+})();
+</script>
+</body>
+</html>
