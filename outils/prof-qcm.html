@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Espace Enseignant — QCM Frigoriste — inerWeb</title>
+<style>
+:root {
+    --primary: #0f2d52;
+    --primary-light: #1a5276;
+    --secondary: #2aafaf;
+    --accent: #e8914a;
+    --accent2: #d47a35;
+    --success: #27ae60;
+    --error: #e74c3c;
+    --warning: #f39c12;
+    --bg: #f0f4f8;
+    --card: #ffffff;
+    --text: #2c3e50;
+    --muted: #7f8c8d;
+    --border: #dfe6e9;
+    --gradient-cold: linear-gradient(135deg, #0f2d52, #1a5276, #2aafaf);
+    --shadow: 0 4px 20px rgba(15,45,82,0.08);
+    --radius: 16px;
+    --radius-sm: 10px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+/* ═══ ÉCRAN VERROUILLAGE ═══ */
+.lock-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--gradient-cold);
+    padding: 20px;
+}
+
+.lock-box {
+    background: #fff;
+    border-radius: 24px;
+    padding: 40px 32px;
+    max-width: 380px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.lock-icon { font-size: 3rem; margin-bottom: 12px; }
+
+.lock-box h1 {
+    font-size: 1.3rem;
+    color: var(--primary);
+    margin-bottom: 4px;
+}
+
+.lock-box .sub {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 20px;
+}
+
+.lock-box input {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 1.3rem;
+    text-align: center;
+    font-weight: 800;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    font-family: inherit;
+    margin-bottom: 14px;
+    transition: border 0.3s;
+}
+
+.lock-box input:focus { border-color: var(--accent); outline: none; }
+
+.lock-box .error-msg {
+    color: var(--error);
+    font-size: 0.85rem;
+    font-weight: 700;
+    display: none;
+    margin-bottom: 10px;
+}
+
+.lock-box .btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.3s;
+}
+
+.lock-box .btn:hover { background: var(--accent2); }
+
+/* ═══ DASHBOARD PROF ═══ */
+.dashboard { display: none; }
+.dashboard.visible { display: block; }
+
+.dash-header {
+    background: var(--gradient-cold);
+    padding: 24px 20px;
+    text-align: center;
+    border-bottom: 4px solid var(--accent);
+}
+
+.dash-header h1 { color: #fff; font-size: 1.4rem; font-weight: 800; }
+.dash-header h1 span { color: var(--accent); }
+.dash-header .sub { color: rgba(255,255,255,0.75); font-size: 0.85rem; margin-top: 4px; }
+
+.dash-content {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 16px;
+}
+
+.dash-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+}
+
+.dash-card h2 {
+    font-size: 1.05rem;
+    color: var(--primary);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dash-card p { font-size: 0.88rem; color: #555; margin-bottom: 6px; }
+
+.link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 18px;
+    background: var(--primary);
+    color: #fff;
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    font-size: 0.9rem;
+    transition: background 0.3s, transform 0.2s;
+    margin: 4px 4px 4px 0;
+}
+
+.link-btn:hover { background: var(--primary-light); transform: translateY(-2px); }
+.link-btn.orange { background: var(--accent); }
+.link-btn.orange:hover { background: var(--accent2); }
+.link-btn.green { background: var(--success); }
+.link-btn.teal { background: var(--secondary); }
+
+/* ═══ TABLEAU RÉCAP ═══ */
+.recap-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    margin: 10px 0;
+}
+
+.recap-table th {
+    background: var(--primary);
+    color: #fff;
+    padding: 8px 5px;
+    font-size: 0.78rem;
+}
+
+.recap-table td {
+    padding: 7px 5px;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+}
+
+.recap-table tr:nth-child(even) { background: #f8fafe; }
+
+/* ═══ BARÈME ═══ */
+.bareme-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+    margin: 12px 0;
+}
+
+.bareme-item {
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.88rem;
+}
+
+.bareme-item .seuil { font-size: 1.4rem; display: block; margin-bottom: 2px; }
+.bareme-maitrise { background: #d5f5e3; color: #1e8449; border: 2px solid #27ae60; }
+.bareme-acquis { background: #d4efdf; color: #1a7a3a; border: 2px solid #2ecc71; }
+.bareme-encours { background: #fef9e7; color: #b7950b; border: 2px solid #f1c40f; }
+.bareme-nonacquis { background: #fadbd8; color: #c0392b; border: 2px solid #e74c3c; }
+
+/* ═══ CATÉGORIES DÉPLIABLES ═══ */
+.cat-section {
+    background: var(--card);
+    border-radius: var(--radius);
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.cat-header {
+    padding: 16px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background 0.2s;
+    user-select: none;
+}
+
+.cat-header:hover { background: #f0f4f8; }
+
+.cat-header h2 {
+    font-size: 1rem;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+}
+
+.cat-badge {
+    display: inline-block;
+    background: var(--secondary);
+    color: #fff;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+.cat-toggle {
+    color: var(--muted);
+    font-size: 0.85rem;
+    transition: transform 0.3s;
+}
+
+.cat-section.open .cat-toggle { transform: rotate(180deg); }
+
+.cat-body {
+    display: none;
+    padding: 0 20px 20px;
+}
+
+.cat-section.open .cat-body { display: block; }
+
+.cat-themes {
+    background: #f8fafe;
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    margin-bottom: 14px;
+    border-left: 4px solid var(--secondary);
+}
+
+.cat-themes h3 {
+    font-size: 0.88rem;
+    color: var(--primary);
+    margin-bottom: 6px;
+}
+
+.cat-themes ul {
+    padding-left: 18px;
+    font-size: 0.84rem;
+    color: #555;
+}
+
+.cat-themes li { margin-bottom: 3px; }
+
+/* Questions corrigées */
+.q-item {
+    background: #f8fafe;
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    margin-bottom: 10px;
+    border-left: 4px solid var(--accent);
+}
+
+.q-item .q-num {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.q-item .q-enonce {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 8px;
+}
+
+.q-choices {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 8px;
+}
+
+.q-choices li {
+    padding: 5px 10px;
+    font-size: 0.84rem;
+    border-radius: 6px;
+    margin-bottom: 3px;
+}
+
+.q-choices li.correct {
+    background: #d5f5e3;
+    color: #1e8449;
+    font-weight: 700;
+    border: 1px solid #27ae60;
+}
+
+.q-choices li.wrong {
+    color: #7f8c8d;
+}
+
+.q-explanation {
+    background: #eaf6fb;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 0.82rem;
+    color: #2c3e50;
+    border-left: 3px solid var(--secondary);
+}
+
+.q-explanation strong { color: var(--primary); }
+
+/* ═══ FOOTER ═══ */
+.dash-footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 0.75rem;
+    color: var(--muted);
+}
+
+.dash-footer a { color: var(--primary); text-decoration: none; }
+
+/* ═══ NAV RAPIDE ═══ */
+.nav-cats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 10px 0;
+}
+
+.nav-cats a {
+    padding: 6px 14px;
+    background: var(--primary);
+    color: #fff;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.nav-cats a:hover { background: var(--secondary); transform: translateY(-2px); }
+
+/* Bouton tout ouvrir/fermer */
+.toggle-all-btn {
+    padding: 8px 16px;
+    background: var(--secondary);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.3s;
+    margin: 8px 0;
+}
+
+.toggle-all-btn:hover { background: var(--primary); }
+
+@media (max-width: 500px) {
+    .lock-box { padding: 28px 20px; }
+    .link-btn { font-size: 0.82rem; padding: 8px 14px; }
+    .bareme-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- ÉCRAN DE VERROUILLAGE                          -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="lock-screen" id="lockScreen">
+    <div class="lock-box">
+        <div class="lock-icon">🔐</div>
+        <h1>Espace Enseignant</h1>
+        <div class="sub">Module QCM Frigoriste</div>
+        <input type="password" id="codeInput" placeholder="CODE" autocomplete="off" maxlength="10" autofocus>
+        <div class="error-msg" id="errorMsg">Code incorrect</div>
+        <button class="btn" onclick="tryCode()">Accéder</button>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- DASHBOARD ENSEIGNANT                           -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="dashboard" id="dashboard">
+
+    <div class="dash-header">
+        <h1>inerWeb <span>Enseignant</span></h1>
+        <div class="sub">Module QCM Frigoriste — Corrigé & Barème</div>
+    </div>
+
+    <div class="dash-content">
+
+        <!-- Liens rapides -->
+        <div class="dash-card">
+            <h2>🔗 Accès rapides</h2>
+            <div>
+                <a class="link-btn orange" href="qcm-frigoriste.html" target="_blank">📱 Page élève</a>
+                <a class="link-btn green" href="https://docs.google.com/spreadsheets/d/16T1T3yL6M49OhJUQS1SmFHwW7Bywp7m2kSXDiXdmItk" target="_blank">📊 Google Sheet</a>
+                <a class="link-btn teal" href="admin.html" target="_blank">⚙️ Dashboard admin</a>
+                <a class="link-btn" href="../portail-prof.html">👨‍🏫 Portail prof</a>
+                <a class="link-btn" href="../index.html">← Portail FRIGOLO</a>
+            </div>
+        </div>
+
+        <!-- Lien élève -->
+        <div class="dash-card">
+            <h2>📲 Lien à donner aux élèves</h2>
+            <div style="background:#f0f4f8; border-radius:8px; padding:12px; font-family:monospace; font-size:0.85rem; word-break:break-all; cursor:pointer; border:2px solid var(--border);" onclick="copyLink(this)">
+                https://frigorx.github.io/inerweb-frigolo/outils/qcm-frigoriste.html
+            </div>
+            <p style="font-size:0.78rem; color:var(--muted); margin-top:6px;">Cliquer pour copier — fonctionne sur téléphone, tablette et PC</p>
+        </div>
+
+        <!-- Structure du module -->
+        <div class="dash-card">
+            <h2>📋 Structure du module</h2>
+            <table class="recap-table">
+                <thead><tr><th>Code</th><th>Catégorie</th><th>Thématique</th><th>Nb questions</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>C1</strong></td><td>Thermodynamique</td><td>Chaleur, pression, température, changements d'état</td><td>12+</td></tr>
+                    <tr><td><strong>C2</strong></td><td>Circuit frigorifique</td><td>Composants, cycle, HP/BP, surchauffe, sous-refroidissement</td><td>12+</td></tr>
+                    <tr><td><strong>C3</strong></td><td>Fluides frigorigènes</td><td>Types, GWP, classification sécurité, huiles</td><td>12+</td></tr>
+                    <tr><td><strong>C4</strong></td><td>Électricité froid</td><td>Moteurs, protections, relais, contacteurs, couplage</td><td>12+</td></tr>
+                    <tr><td><strong>C5</strong></td><td>Réglementation & Sécurité</td><td>F-GAZ, attestation capacité, DESP, EPI</td><td>12+</td></tr>
+                </tbody>
+            </table>
+            <p style="font-size:0.82rem; color:var(--muted); margin-top:8px;">Total : 60+ questions réparties sur 5 compétences. Les questions sont tirées aléatoirement selon le mode choisi par l'élève.</p>
+        </div>
+
+        <!-- Barème -->
+        <div class="dash-card">
+            <h2>📊 Barème & Notation</h2>
+            <p><strong>Mode catégorie :</strong> 10 questions sur une catégorie → note sur 20 (2 pts par question)</p>
+            <p><strong>Mode examen :</strong> 20 questions (4 par catégorie) → note sur 20 (1 pt par question) + évaluation compétences C1-C5</p>
+            <h3 style="font-size:0.9rem; color:var(--primary); margin:14px 0 8px;">Seuils de compétences</h3>
+            <div class="bareme-grid">
+                <div class="bareme-item bareme-maitrise">
+                    <span class="seuil">≥ 85%</span>
+                    Maîtrisé
+                </div>
+                <div class="bareme-item bareme-acquis">
+                    <span class="seuil">≥ 70%</span>
+                    Acquis
+                </div>
+                <div class="bareme-item bareme-encours">
+                    <span class="seuil">≥ 50%</span>
+                    En cours
+                </div>
+                <div class="bareme-item bareme-nonacquis">
+                    <span class="seuil">< 50%</span>
+                    Non acquis
+                </div>
+            </div>
+            <p style="font-size:0.82rem; color:var(--muted); margin-top:8px;">En mode examen, chaque compétence C1-C5 est évaluée individuellement sur ses 4 questions. Le radar de compétences est affiché à l'élève en fin d'épreuve.</p>
+        </div>
+
+        <!-- Navigation catégories -->
+        <div class="dash-card">
+            <h2>📝 Corrigé complet — Navigation</h2>
+            <div class="nav-cats">
+                <a href="#cat-c1">C1 Thermo</a>
+                <a href="#cat-c2">C2 Circuit</a>
+                <a href="#cat-c3">C3 Fluides</a>
+                <a href="#cat-c4">C4 Électricité</a>
+                <a href="#cat-c5">C5 Réglementation</a>
+            </div>
+            <button class="toggle-all-btn" onclick="toggleAll()">📂 Tout ouvrir / fermer</button>
+        </div>
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- C1 — THERMODYNAMIQUE                   -->
+        <!-- ═══════════════════════════════════════ -->
+        <div class="cat-section" id="cat-c1">
+            <div class="cat-header" onclick="toggleCat(this)">
+                <h2>🌡️ C1 — Thermodynamique <span class="cat-badge">12+ questions</span></h2>
+                <span class="cat-toggle">▼</span>
+            </div>
+            <div class="cat-body">
+                <div class="cat-themes">
+                    <h3>Thèmes couverts</h3>
+                    <ul>
+                        <li>Chaleur sensible vs chaleur latente (définitions, formules, exemples)</li>
+                        <li>Pression absolue, relative, atmosphérique, manométrique</li>
+                        <li>Échelles de température (Celsius, Kelvin, Fahrenheit) et conversions</li>
+                        <li>Changements d'état : vaporisation, condensation, fusion, sublimation</li>
+                        <li>Diagramme enthalpique (Mollier) : lecture des zones, courbe de saturation</li>
+                        <li>Enthalpie, entropie, titre de vapeur</li>
+                    </ul>
+                </div>
+
+                <div class="q-item">
+                    <div class="q-num">C1 — Q1</div>
+                    <div class="q-enonce">La chaleur latente correspond à :</div>
+                    <ul class="q-choices">
+                        <li class="wrong">A) Une élévation de température du fluide</li>
+                        <li class="correct">B) Un changement d'état sans variation de température</li>
+                        <li class="wrong">C) La quantité de chaleur perdue par rayonnement</li>
+                        <li class="wrong">D) L'énergie stockée dans le compresseur</li>
+                    </ul>
+                    <div class="q-explanation"><strong>Explication :</strong> La chaleur latente est l'énergie absorbée ou libérée lors d'un changement d'état (vaporisation, condensation) à température constante. C'est le principe fondamental de la réfrigération : le fluide absorbe la chaleur de l'enceinte en s'évaporant.</div>
+                </div>
+
+                <div class="q-item">
+                    <div class="q-num">C1 — Q2</div>
+                    <div class="q-enonce">La pression absolue est égale à :</div>
+                    <ul class="q-choices">
+                        <li class="wrong">A) Pression relative - pression atmosphérique</li>
+                        <li class="correct">B) Pression relative + pression atmosphérique</li>
+                        <li class="wrong">C) Pression atmosphérique uniquement</li>
+                        <li class="wrong">D) Pression manométrique × 2</li>
+                    </ul>
+                    <div class="q-explanation"><strong>Explication :</strong> P_abs = P_relative + P_atm. En froid, les manomètres affichent la pression relative. Il faut ajouter ~1,013 bar (pression atmosphérique) pour obtenir la pression absolue nécessaire aux calculs thermodynamiques et à la lecture du diagramme de Mollier.</div>
+                </div>
+
+                <div class="q-item">
+                    <div class="q-num">C1 — Q3</div>
+                    <div class="q-enonce">0°C correspond à combien de Kelvin ?</div>
+                    <ul class="q-choices">
+                        <li class="wrong">A) 0 K</li>
+                        <li class="wrong">B) 100 K</li>
+                        <li class="correct">C) 273,15 K</li>
+                        <li class="wrong">D) 373,15 K</li>
+                    </ul>
+                    <div class="q-explanation"><strong>Explication :</strong> T(K) = T(°C) + 273,15. Le zéro absolu (0 K = -273,15°C) est la température la plus basse théoriquement possible, où toute agitation moléculaire cesse.</div>
+                </div>
+
+                <div class="q-item">
+                    <div class="q-num">C1 — Q4</div>
+                    <div class="q-enonce">Sur un diagramme de Mollier, la zone mixte (liquide + vapeur) se trouve :</div>
+                    <ul class="q-choices">
+                        <li class="wrong">A) À droite de la courbe de rosée</li>
+                        <li class="wrong">B) À gauche de la courbe de bulle</li>
+                        <li class="correct">C) Sous la courbe de saturation (entre bulle et rosée)</li>
+                        <li class="wrong">D) Au-dessus du point critique</li>
+                    </ul>
+                    <div class="q-explanation"><strong>Explication :</strong> La cloche de saturation délimite trois zones : liquide sous-refroidi (gauche), mélange diphasique (sous la cloche), vapeur surchauffée (droite). Le sommet de la cloche est le point critique.</div>
+                </div>
+
+                <div class="q-item">
+                    <div class="q-num">C1 — Q5</div>
+                    <div class="q-enonce">La chaleur sensible se caractérise par :</div>
+                    <ul class="q-choices">
+                        <li class="correct">A) Une variation de température sans changement d'état</li>
+                        <li class="wrong">B) Un changement d'état à température constante</li>
+                        <li class="wrong">C) Une perte d'énergie par convection uniquement</li>
+                        <li class="wrong">D) Un phénomène qui n'existe qu'en phase gazeuse</li>
+                    </ul>
+                    <div class="q-explanation"><strong>Explication :</strong> Q = m × Cp × ΔT. La chaleur sensible provoque un changement de température mesurable (d'où le nom "sensible"), contrairement à la chaleur latente qui agit à température constante lors d'un changement de phase.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- C2 — CIRCUIT FRIGORIFIQUE              -->
+        <!-- ═══════════════════════════════════════ -->
+        <div class="cat-section" id="cat-c2">
+            <div class="cat-header" onclick="toggleCat(this)">
+                <h2>❄️ C2 — Circuit frigorifique <span class="cat-badge">12+ questions</span></h2>
+                <span class="cat-toggle">▼</span>
+            </div>
+            <div class="cat-body">
+                <div class="cat-themes">
+                    <h3>Thèmes couverts</h3>
+                    <ul>
+                        <li>Les 4 composants principaux : compresseur, condenseur, détendeur, évaporateur</li>
+                        <li>Rôle de chaque organe dans le cycle frigorifique</li>
+                        <li>Haute pression (HP) et basse pression (BP) : valeurs, mesure, signification</li>
+                        <li>Surchauffe : définition, mesure, réglage (5-8 K typique)</li>
+                        <li>Sous-refroidissement : définition, mesure, importance</li>
+                        <li>Organes annexes : déshydrateur, voyant liquide, bouteille anti-coups de liquide</li>
+                        <li>Types de compresseurs : hermétique, semi-hermétique, ouvert, scroll</li>
+                        <li>Types de détendeurs : thermostatique (TEV), électronique (EEV), capillaire</li>
+                    </ul>
+                </div>
+
+                <div class="q-item">
+                    <div class="q-num">C2 — Q1</div>
+                    <div class="q-enonce">Le rôle du compresseur dans un circuit frigorifique est de :</div>
+                    <ul class="q-choices">
+                        <li class="wrong">A) Refroidir le fluide frigorigène</li>
+                        <li class="correct">B) Aspirer les vapeurs BP et les refouler en HP</li>
+                        <li class="wrong">C) Détendre le fluide pour baisser sa température</li>
+                        <li class="wrong">D) Filtrer les impuretés du circuit</li>
+                    </ul>
+                    <div class="q-explanation"><strong>Explication :</strong> Le compresseur est le "cœur" du circuit. Il aspire les vapeurs basse pression de l'évaporateur et les comprime pour les refouler en haute pression vers le condenseur. C'est le seul composant qui consomme de l'énergie mécanique.</div>
+                </div>
+
+                <div class="q-item">
+                    <div class="q-num">C2 — Q2</div>
+                    <div class="q-enonce">La surchauffe se mesure :</div>
+                    <ul class="q-choices">
+                        <li class="wrong">A) À la sortie du condenseur</li>
+                        <li class="correct">B) À la sortie de l'évaporateur (différence entre T° tubulure et T° évaporation)</li>
+                        <li class="wrong">C) À l'entrée du détendeur</li>
+                        <li class="wrong">D) Au point milieu de l'évaporateur</li>
+                    </ul>
+                    <div class="q-explanation"><strong>Explication :</strong> Surchauffe = T° mesurée sur la tubulure d'aspiration - T° d'évaporation (lue sur le manomètre BP). Une surchauffe de 5-8 K garantit que seule de la vapeur entre dans le compresseur (protection contre les coups de liquide).</div>
+                </div>
+
+                <div class="q-item">
+                    <div class="q-num">C2 — Q3</div>
+                    <div class="q-enonce">Le sous-refroidissement se situe :</div>
+                    <ul class="q-choices">
+                        <li class="wrong">A) En sortie d'évaporateur</li>
+                        <li class="correct">B) En sortie de condenseur</li>
+                        <li class="wrong">C) En sortie de compresseur</li>
+                        <li class="wrong">D) En sortie de détendeur</li>
+                    </ul>
+                    <div class="q-explanation"><strong>Explication :</strong> Sous-refroidissement = T° condensation (lue sur manomètre HP) - T° mesurée sur la conduite liquide en sortie de condenseur. Un SR de 4-7 K assure que le fluide est bien 100% liquide avant le détendeur, améliorant le rendement.</div>
+                </div>
+
+                <div class="q-item">
+                    <div class="q-num">C2 — Q4</div>
+                    <div class="q-enonce">Le détendeur thermostatique régule :</div>
+                    <ul class="q-choices">
+                        <li class="wrong">A) La pression de condensation</li>
+                        <li class="wrong">B) La température du compresseur</li>
+                        <li class="correct">C) La surchauffe à la sortie de l'évaporateur</li>
+                        <li class="wrong">D) Le débit d'huile dans le circuit</li>
+                    </ul>
+                    <div class="q-explanation"><strong>Explication :</strong> Le détendeur thermostatique (TEV) régule l'injection de fluide dans l'évaporateur pour maintenir une surchauffe constante. Son bulbe, fixé sur la tubulure d'aspiration, transmet la pression correspondant à la température mesurée.</div>
+                </div>
+
+                <div class="q-item">
+                    <div class="q-num">C2 — Q5</div>
+                    <div class="q-enonce">Des bulles dans le voyant liquide indiquent :</div>
+                    <ul class="q-choices">
+                        <li class="wrong">A) Un fonctionnement normal</li>
+                        <li class="correct">B) Un manque de charge en fluide ou un sous-refroidissement insuffisant</li>
+                        <li class="wrong">C) Un excès de fluide frigorigène</li>
+                        <li class="wrong">D) Une surchauffe trop élevée</li>
+                    </ul>
+                    <div class="q-explanation"><strong>Explication :</strong> Le voyant liquide doit montrer un flux clair (100% liquide). Des bulles signalent un flash-gas, souvent dû à un manque de charge, un filtre bouché ou un sous-refroidissement insuffisant. L'indicateur d'humidité intégré doit rester vert.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- C3 — FLUIDES FRIGORIGÈNES              -->
+        <!-- ═══════════════════════════════════════ -->
+        <div class="cat-section" id="cat-c3">
+            <div class="cat-header" onclick="toggleCat(this)">
+                <h2>🧪 C3 — Fluides frigorigènes <span class="cat-badge">12+ questions</span></h2>
+                <span class="cat-toggle">▼</span>
+            </div>
+            <div class="cat-body">
+                <div class="cat-themes">
+                    <h3>Thèmes couverts</h3>
+                    <ul>
+                        <li>Classification : CFC, HCFC, HFC, HFO, fluides naturels (NH3, CO2, HC)</li>
+                        <li>GWP (PRG) : valeurs clés (R-410A=2088, R-32=675, R-290=3, R-744=1)</li>
+                        <li>Classification sécurité (ISO 817) : A1, A2L, A3, B1, B2L</li>
+                        <li>Compatibilité huiles : POE, PVE, PAG, minérale</li>
+                        <li>Fluides de transition et remplacement (R-404A → R-448A/R-449A, R-410A → R-32/R-454B)</li>
+                        <li>Mélanges zéotropes vs azéotropes : glissement de température</li>
+                    </ul>
+                </div>
+
+                <div class="q-item">
+                    <div class="q-num">C3 — Q1</div>
+                    <div class="q-enonce">Le GWP (Global Warming Potential) du R-410A est de :</div>
+                    <ul class="q-choices">
+                        <li class="wrong">A) 675</li>
+                        <li class="wrong">B) 1430</li>
+                        <li class="correct">C) 2088</li>
+                        <li class="wrong">D) 3922</li>
+                    </ul>
+                    <div class="q-explanation"><strong>Explication :</strong> Le R-410A (mélange 50/50 de R-32 et R-125) a un GWP de 2088. C'est un HFC en cours de phase-down selon le règlement F-GAZ européen. Il est progressivement remplacé par le R-32 (GWP 675) ou le R-454B (GWP 466).</div>
+                </div>
+
+                <div class="q-item">
+                    <div class="q-num">C3 — Q2</div>
+                    <div class="q-enonce">Un fluide classé A2L est :</div>
+                    <ul class="q-choices">
+                        <li class="wrong">A) Non inflammable, toxicité élevée</li>
+                        <li class="wrong">B) Hautement inflammable, faible toxicité</li>
+                        <li class="correct">C) Légèrement inflammable, faible toxicité</li>
+                        <li class="wrong">D) Non inflammable, faible toxicité</li>
+                    </ul>
+                    <div class="q-explanation"><strong>Explication :</strong> Classification ISO 817 : la lettre (A=faible toxicité, B=haute toxicité) et le chiffre (1=non inflammable, 2L=légèrement inflammable à vitesse de propagation lente, 2=inflammable, 3=hautement inflammable). R-32 et R-454B sont A2L.</div>
+                </div>
+
+                <div class="q-item">
+                    <div class="q-num">C3 — Q3</div>
+                    <div class="q-enonce">Les HFC utilisent typiquement quelle huile ?</div>
+                    <ul class="q-choices">
+                        <li class="wrong">A) Huile minérale</li>
+                        <li class="correct">B) Huile POE (polyolester)</li>
+                        <li class="wrong">C) Huile PAG</li>
+                        <li class="wrong">D) Huile de silicone</li>
+                    </ul>
+                    <div class="q-explanation"><strong>Explication :</strong> Les HFC (R-134a, R-404A, R-410A, R-407C...) ne sont pas miscibles avec l'huile minérale. Ils nécessitent de l'huile POE (polyolester) qui est hygroscopique — d'où l'importance du déshydrateur et de limiter l'exposition à l'air. Les HCFC (R-22) utilisaient l'huile minérale.</div>
+                </div>
+
+                <div class="q-item">
+                    <div class="q-num">C3 — Q4</div>
+                    <div class="q-enonce">Le R-290 (propane) est classé :</div>
+                    <ul class="q-choices">
+                        <li class="wrong">A) A1</li>
+                        <li class="wrong">B) A2L</li>
+                        <li class="correct">C) A3</li>
+                        <li class="wrong">D) B2L</li>
+                    </ul>
+                    <div class="q-explanation"><strong>Explication :</strong> Le R-290 (propane) est un hydrocarbure classé A3 : faible toxicité mais hautement inflammable. Son GWP est de 3 seulement, ce qui en fait un excellent fluide naturel. Utilisé dans les petits équipements (réfrigérateurs domestiques, petites PAC) avec charge limitée.</div>
+                </div>
+
+                <div class="q-item">
+                    <div class="q-num">C3 — Q5</div>
+                    <div class="q-enonce">Un mélange zéotrope se caractérise par :</div>
+                    <ul class="q-choices">
+                        <li class="wrong">A) Un changement d'état à température constante</li>
+                        <li class="correct">B) Un glissement de température lors du changement d'état</li>
+                        <li class="wrong">C) Une impossibilité de fuir partiellement</li>
+                        <li class="wrong">D) Un GWP toujours inférieur à 150</li>
+                    </ul>
+                    <div class="q-explanation"><strong>Explication :</strong> Les mélanges zéotropes (R-407C, R-448A, R-449A...) ont un glissement de température : la température d'évaporation n'est pas constante. Contrairement aux azéotropes (R-410A, R-507), ils ne peuvent pas être rechargés en phase vapeur après une fuite partielle.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- C4 — ÉLECTRICITÉ FROID                 -->
+        <!-- ═══════════════════════════════════════ -->
+        <div class="cat-section" id="cat-c4">
+            <div class="cat-header" onclick="toggleCat(this)">
+                <h2>⚡ C4 — Électricité froid <span class="cat-badge">12+ questions</span></h2>
+                <span class="cat-toggle">▼</span>
+            </div>
+            <div class="cat-body">
+                <div class="cat-themes">
+                    <h3>Thèmes couverts</h3>
+                    <ul>
+                        <li>Moteurs monophasés : condensateur de démarrage, condensateur permanent, relais d'intensité</li>
+                        <li>Moteurs triphasés : couplage étoile/triangle, sens de rotation</li>
+                        <li>Protections : klixon, pressostat HP/BP, disjoncteur moteur</li>
+                        <li>Relais de démarrage : PTC, relais d'intensité, relais de tension</li>
+                        <li>Contacteurs, télérupteurs, temporisations</li>
+                        <li>Lecture de schémas électriques (puissance et commande)</li>
+                        <li>Mesures : intensité, résistance d'enroulement, isolement</li>
+                    </ul>
+                </div>
+
+                <div class="q-item">
+                    <div class="q-num">C4 — Q1</div>
+                    <div class="q-enonce">Le klixon protège le compresseur contre :</div>
+                    <ul class="q-choices">
+                        <li class="wrong">A) Les surtensions du réseau</li>
+                        <li class="correct">B) Les surcharges thermiques et les surintensités</li>
+                        <li class="wrong">C) Les coups de bélier hydrauliques</li>
+                        <li class="wrong">D) Les inversions de phase</li>
+                    </ul>
+                    <div class="q-explanation"><strong>Explication :</strong> Le klixon est un protecteur thermique fixé sur (ou intégré dans) le compresseur. Il coupe l'alimentation en cas de température excessive ou de surintensité. C'est une sécurité de dernier recours — il se réarme automatiquement après refroidissement.</div>
+                </div>
+
+                <div class="q-item">
+                    <div class="q-num">C4 — Q2</div>
+                    <div class="q-enonce">En couplage étoile (Y), la tension aux bornes de chaque enroulement est :</div>
+                    <ul class="q-choices">
+                        <li class="correct">A) U / √3 (tension simple)</li>
+                        <li class="wrong">B) U (tension composée)</li>
+                        <li class="wrong">C) U × √3</li>
+                        <li class="wrong">D) U / 2</li>
+                    </ul>
+                    <div class="q-explanation"><strong>Explication :</strong> En étoile : V_enroulement = U/√3 et I_ligne = I_enroulement. En triangle : V_enroulement = U et I_ligne = I_enroulement × √3. Un moteur 230/400V se couple en triangle sur 230V tri et en étoile sur 400V tri.</div>
+                </div>
+
+                <div class="q-item">
+                    <div class="q-num">C4 — Q3</div>
+                    <div class="q-enonce">Le relais d'intensité sur un compresseur monophasé sert à :</div>
+                    <ul class="q-choices">
+                        <li class="wrong">A) Protéger contre les courts-circuits</li>
+                        <li class="wrong">B) Réguler la vitesse du moteur</li>
+                        <li class="correct">C) Couper l'enroulement de démarrage après le lancement</li>
+                        <li class="wrong">D) Inverser le sens de rotation</li>
+                    </ul>
+                    <div class="q-explanation"><strong>Explication :</strong> Au démarrage, l'intensité est élevée → le relais d'intensité ferme son contact et alimente l'enroulement de démarrage. Quand le moteur atteint sa vitesse nominale, l'intensité baisse → le relais s'ouvre et coupe l'enroulement de démarrage.</div>
+                </div>
+
+                <div class="q-item">
+                    <div class="q-num">C4 — Q4</div>
+                    <div class="q-enonce">Le pressostat HP coupe le compresseur lorsque :</div>
+                    <ul class="q-choices">
+                        <li class="wrong">A) La basse pression est trop basse</li>
+                        <li class="correct">B) La haute pression dépasse le seuil de sécurité</li>
+                        <li class="wrong">C) La température ambiante est trop basse</li>
+                        <li class="wrong">D) Le niveau d'huile est insuffisant</li>
+                    </ul>
+                    <div class="q-explanation"><strong>Explication :</strong> Le pressostat HP est une sécurité qui coupe le compresseur si la pression de refoulement dépasse le seuil réglé (ex: 28 bar pour R-410A). Causes possibles : condenseur encrassé, ventilateur HS, surcharge de fluide. Souvent à réarmement manuel pour obliger un diagnostic.</div>
+                </div>
+
+                <div class="q-item">
+                    <div class="q-num">C4 — Q5</div>
+                    <div class="q-enonce">Pour mesurer l'isolement d'un enroulement moteur, on utilise :</div>
+                    <ul class="q-choices">
+                        <li class="wrong">A) Un multimètre en mode ohmmètre</li>
+                        <li class="wrong">B) Une pince ampèremétrique</li>
+                        <li class="correct">C) Un mégohmmètre (500V DC minimum)</li>
+                        <li class="wrong">D) Un manomètre différentiel</li>
+                    </ul>
+                    <div class="q-explanation"><strong>Explication :</strong> L'isolement se mesure entre chaque enroulement et la carcasse (masse) avec un mégohmmètre sous tension de test (500V DC). La valeur minimale acceptable est généralement > 2 MΩ. Un isolement faible indique une dégradation du vernis d'enroulement.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- C5 — RÉGLEMENTATION & SÉCURITÉ         -->
+        <!-- ═══════════════════════════════════════ -->
+        <div class="cat-section" id="cat-c5">
+            <div class="cat-header" onclick="toggleCat(this)">
+                <h2>📜 C5 — Réglementation & Sécurité <span class="cat-badge">12+ questions</span></h2>
+                <span class="cat-toggle">▼</span>
+            </div>
+            <div class="cat-body">
+                <div class="cat-themes">
+                    <h3>Thèmes couverts</h3>
+                    <ul>
+                        <li>Règlement F-GAZ (UE 2024/573) : obligations, phase-down, seuils GWP</li>
+                        <li>Attestation de capacité : catégories I à IV, conditions d'obtention</li>
+                        <li>DESP (Directive Équipements Sous Pression) : marquage CE, épreuves</li>
+                        <li>Contrôles d'étanchéité : fréquence selon charge équivalent CO2</li>
+                        <li>EPI : gants cryogéniques, lunettes, détecteur de fuite</li>
+                        <li>CERFA et BSD (Bordereau de Suivi des Déchets) pour fluides récupérés</li>
+                        <li>Fiche d'intervention (registre de l'équipement)</li>
+                    </ul>
+                </div>
+
+                <div class="q-item">
+                    <div class="q-num">C5 — Q1</div>
+                    <div class="q-enonce">L'attestation de capacité de catégorie I permet de :</div>
+                    <ul class="q-choices">
+                        <li class="correct">A) Manipuler les fluides frigorigènes sans limite de charge</li>
+                        <li class="wrong">B) Manipuler uniquement les charges < 2 kg</li>
+                        <li class="wrong">C) Uniquement contrôler l'étanchéité</li>
+                        <li class="wrong">D) Intervenir seulement sur les climatisations de véhicules</li>
+                    </ul>
+                    <div class="q-explanation"><strong>Explication :</strong> Catégorie I : toutes opérations sans limite. Catégorie II : installation, maintenance, charge, récupération (pas de mise en service). Catégorie III : récupération sur équipements < 2 kg de charge. Catégorie IV : contrôle d'étanchéité uniquement.</div>
+                </div>
+
+                <div class="q-item">
+                    <div class="q-num">C5 — Q2</div>
+                    <div class="q-enonce">Un contrôle d'étanchéité est obligatoire pour les équipements contenant :</div>
+                    <ul class="q-choices">
+                        <li class="wrong">A) Plus de 1 kg de fluide</li>
+                        <li class="correct">B) 5 tonnes équivalent CO2 ou plus de fluide fluoré</li>
+                        <li class="wrong">C) N'importe quelle quantité de fluide</li>
+                        <li class="wrong">D) Plus de 100 kg de fluide uniquement</li>
+                    </ul>
+                    <div class="q-explanation"><strong>Explication :</strong> Selon le règlement F-GAZ (UE 2024/573), le seuil est de 5 tCO2eq. Fréquence : ≥5 tCO2eq → tous les 12 mois, ≥50 tCO2eq → tous les 6 mois, ≥500 tCO2eq → tous les 3 mois (ou détecteur permanent). Calcul : charge (kg) × GWP = tCO2eq.</div>
+                </div>
+
+                <div class="q-item">
+                    <div class="q-num">C5 — Q3</div>
+                    <div class="q-enonce">Le BSD (Bordereau de Suivi des Déchets) est obligatoire lors de :</div>
+                    <ul class="q-choices">
+                        <li class="wrong">A) Chaque mise en service d'un équipement</li>
+                        <li class="wrong">B) Chaque contrôle d'étanchéité annuel</li>
+                        <li class="correct">C) La récupération et le transport de fluides frigorigènes usagés</li>
+                        <li class="wrong">D) L'achat de fluide neuf uniquement</li>
+                    </ul>
+                    <div class="q-explanation"><strong>Explication :</strong> Le BSD assure la traçabilité des fluides frigorigènes récupérés, de leur collecte jusqu'à leur traitement (régénération ou destruction). Il est signé par l'opérateur, le transporteur et le centre de traitement. Conservation : 5 ans minimum.</div>
+                </div>
+
+                <div class="q-item">
+                    <div class="q-num">C5 — Q4</div>
+                    <div class="q-enonce">Lors d'une intervention sur un circuit frigorifique, les EPI obligatoires comprennent :</div>
+                    <ul class="q-choices">
+                        <li class="wrong">A) Uniquement des gants en cuir</li>
+                        <li class="wrong">B) Un casque de chantier et des bottes</li>
+                        <li class="correct">C) Gants cryogéniques, lunettes de protection, chaussures de sécurité</li>
+                        <li class="wrong">D) Aucun EPI n'est requis sur les petites installations</li>
+                    </ul>
+                    <div class="q-explanation"><strong>Explication :</strong> Le fluide frigorigène liquide provoque des brûlures cryogéniques au contact de la peau (détente rapide = froid extrême). Les gants cryogéniques et les lunettes sont indispensables. En espace confiné, un détecteur de fuite et une ventilation sont aussi nécessaires (risque d'asphyxie).</div>
+                </div>
+
+                <div class="q-item">
+                    <div class="q-num">C5 — Q5</div>
+                    <div class="q-enonce">Le registre de l'équipement (fiche d'intervention) doit mentionner :</div>
+                    <ul class="q-choices">
+                        <li class="wrong">A) Uniquement la date d'installation</li>
+                        <li class="wrong">B) Le prix de l'intervention</li>
+                        <li class="correct">C) La nature de l'intervention, la quantité de fluide ajoutée/récupérée, les résultats du contrôle d'étanchéité</li>
+                        <li class="wrong">D) Le numéro de sécurité sociale du technicien</li>
+                    </ul>
+                    <div class="q-explanation"><strong>Explication :</strong> Le registre doit contenir : date, nature de l'intervention, type et quantité de fluide (ajout/retrait), résultats des contrôles d'étanchéité, identité de l'opérateur et son numéro d'attestation de capacité. Ce document doit être tenu à jour et disponible pour inspection.</div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /dash-content -->
+
+    <div class="dash-footer">
+        <p>inerWeb FRIGOLO — Espace Enseignant — QCM Frigoriste</p>
+        <p><a href="../index.html">Portail FRIGOLO</a> · <a href="../portail-prof.html">Portail prof</a> · Licence propriétaire — usage pédagogique uniquement</p>
+    </div>
+
+</div><!-- /dashboard -->
+
+<script>
+const CODE = 'LPPJR';
+
+// Vérifier si le code est dans l'URL
+(function(){
+    const params = new URLSearchParams(window.location.search);
+    if(params.get('code') && params.get('code').toUpperCase() === CODE){
+        unlock();
+    }
+})();
+
+function tryCode(){
+    const input = document.getElementById('codeInput');
+    const err = document.getElementById('errorMsg');
+    if(input.value.toUpperCase().trim() === CODE){
+        unlock();
+    } else {
+        err.style.display = 'block';
+        input.style.borderColor = 'var(--error)';
+        input.value = '';
+        input.focus();
+        setTimeout(()=>{ err.style.display='none'; input.style.borderColor='var(--border)'; }, 2000);
+    }
+}
+
+function unlock(){
+    document.getElementById('lockScreen').style.display = 'none';
+    document.getElementById('dashboard').classList.add('visible');
+}
+
+// Enter pour valider
+document.getElementById('codeInput').addEventListener('keydown', function(e){
+    if(e.key === 'Enter') tryCode();
+});
+
+// Copier lien
+function copyLink(el){
+    const text = el.textContent.trim();
+    navigator.clipboard.writeText(text).then(()=>{
+        const orig = el.style.borderColor;
+        el.style.borderColor = 'var(--success)';
+        el.textContent = '✅ Copié !';
+        setTimeout(()=>{ el.textContent = text; el.style.borderColor = orig; }, 1500);
+    });
+}
+
+// Toggle catégorie
+function toggleCat(header){
+    header.closest('.cat-section').classList.toggle('open');
+}
+
+// Tout ouvrir / tout fermer
+function toggleAll(){
+    const sections = document.querySelectorAll('.cat-section');
+    const allOpen = [...sections].every(s => s.classList.contains('open'));
+    sections.forEach(s => {
+        if(allOpen) s.classList.remove('open');
+        else s.classList.add('open');
+    });
+}
+</script>
+</body>
+</html>
