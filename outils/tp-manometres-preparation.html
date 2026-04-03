@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TP Manometres — Preparation | inerWeb FRIGOLO</title>
+    <meta name="description" content="Travaux Preparatoires — Pose/Depose Manometres frigorifiques. Niveau 1 : preparation theorique.">
+    <style>
+        /* ══════════════════════════════════════
+           CHARTE FRIGORX / INERWEB FRIGOLO
+           ══════════════════════════════════════ */
+        :root {
+            --navy:  #0f2d52;
+            --navy2: #1a4a6e;
+            --teal:  #2aafaf;
+            --accent:  #e8914a;
+            --accent2: #d47a35;
+            --success: #27ae60;
+            --error:   #e74c3c;
+            --warning: #f39c12;
+            --bg:   #f0f4f8;
+            --card: #ffffff;
+            --text: #2c3e50;
+            --muted: #7f8c8d;
+            --border: #dce3ea;
+            --radius-section: 16px;
+            --radius-elem: 10px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            font-size: 17px;
+            line-height: 1.7;
+        }
+
+        /* Mode accessibilite / dyslexique */
+        body.accessibility-mode {
+            font-size: 20px;
+            line-height: 2;
+            letter-spacing: 0.8px;
+        }
+        body.accessibility-mode h1 { font-size: 2.4rem; }
+        body.accessibility-mode h2 { font-size: 1.8rem; }
+        body.accessibility-mode h3 { font-size: 1.4rem; }
+
+        @media (prefers-reduced-motion: reduce) {
+            * { animation: none !important; transition: none !important; }
+        }
+
+        /* ── HEADER STICKY ── */
+        .header {
+            position: sticky; top: 0; z-index: 100;
+            background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 50%, var(--teal) 100%);
+            color: #fff;
+            padding: 18px 24px;
+            border-bottom: 4px solid var(--accent);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .header-left {
+            display: flex; align-items: center; gap: 14px;
+        }
+        .header-logo {
+            width: 42px; height: 42px;
+            background: #fff; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.2);
+            flex-shrink: 0;
+        }
+        .header-titles h1 {
+            font-size: 1.3rem; font-weight: 700; line-height: 1.2;
+        }
+        .header-titles small {
+            font-size: 0.8rem; opacity: 0.85; font-weight: 400;
+        }
+        .header-controls {
+            display: flex; gap: 8px;
+        }
+        .ctrl-btn {
+            width: 38px; height: 38px; border: none; border-radius: 50%;
+            background: rgba(255,255,255,.15); color: #fff; cursor: pointer;
+            font-size: 1.1rem; display: flex; align-items: center; justify-content: center;
+            transition: background .2s;
+        }
+        .ctrl-btn:hover { background: rgba(255,255,255,.3); }
+
+        /* ── BARRE PROGRESSION GLOBALE ── */
+        .global-progress {
+            background: var(--card);
+            padding: 12px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; gap: 14px;
+        }
+        .global-progress label {
+            font-weight: 600; font-size: 0.9rem; color: var(--navy); white-space: nowrap;
+        }
+        .progress-track {
+            flex: 1; height: 22px; background: #e2e8f0; border-radius: 12px;
+            overflow: hidden; position: relative;
+        }
+        .progress-fill {
+            height: 100%; border-radius: 12px;
+            background: linear-gradient(90deg, var(--teal), var(--success));
+            transition: width .6s ease;
+            width: 0%;
+        }
+        .progress-label {
+            position: absolute; inset: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem; font-weight: 700; color: var(--text);
+        }
+
+        /* ── CONTENEUR PRINCIPAL ── */
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 20px 16px 60px;
+        }
+
+        /* ── IDENTIFICATION ELEVE ── */
+        .student-id {
+            background: var(--card);
+            border-radius: var(--radius-section);
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,.06);
+        }
+        .student-id h2 {
+            font-size: 1.1rem; color: var(--navy); margin-bottom: 16px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .id-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 14px;
+        }
+        .field label {
+            display: block; font-weight: 600; font-size: 0.82rem;
+            text-transform: uppercase; letter-spacing: .4px;
+            margin-bottom: 6px; color: var(--navy);
+        }
+        .field input, .field select {
+            width: 100%; padding: 10px 14px;
+            border: 2px solid var(--border); border-radius: var(--radius-elem);
+            font-size: 15px; font-family: inherit;
+            transition: border-color .2s, box-shadow .2s;
+            background: #fff;
+        }
+        .field input:focus, .field select:focus {
+            outline: none;
+            border-color: var(--teal);
+            box-shadow: 0 0 0 3px rgba(42,175,175,.15);
+        }
+
+        /* ── CONTEXTE PROFESSIONNEL ── */
+        .context-section {
+            background: var(--card);
+            border-radius: var(--radius-section);
+            padding: 28px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,.06);
+        }
+        .context-section h2 {
+            font-size: 1.25rem; color: var(--navy); margin-bottom: 18px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .context-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+            margin-bottom: 20px;
+        }
+        .context-card {
+            background: var(--bg); padding: 18px;
+            border-radius: var(--radius-elem);
+            border-left: 4px solid var(--teal);
+        }
+        .context-card h3 {
+            font-size: 1rem; color: var(--navy); margin-bottom: 8px;
+        }
+        .context-card p {
+            font-size: 0.95rem; line-height: 1.6;
+        }
+        .mission-box {
+            background: linear-gradient(135deg, var(--navy), var(--navy2));
+            color: #fff; padding: 22px; border-radius: var(--radius-elem);
+        }
+        .mission-box h3 {
+            font-size: 1.05rem; margin-bottom: 12px;
+        }
+        .mission-box ol {
+            margin-left: 20px;
+        }
+        .mission-box li {
+            margin: 8px 0; font-weight: 500;
+        }
+
+        /* ── SECTIONS ETAPES (accordeon) ── */
+        .step-section {
+            background: var(--card);
+            border-radius: var(--radius-section);
+            margin-bottom: 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,.06);
+            overflow: hidden;
+        }
+        .step-header {
+            background: linear-gradient(135deg, var(--navy), var(--teal));
+            color: #fff;
+            padding: 18px 24px;
+            cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
+            font-weight: 700; font-size: 1.05rem;
+            transition: filter .2s;
+            user-select: none;
+        }
+        .step-header:hover { filter: brightness(1.1); }
+        .step-header .chevron {
+            transition: transform .3s; font-size: 1.2rem;
+        }
+        .step-header .chevron.open { transform: rotate(180deg); }
+        .step-header .lock-icon {
+            margin-left: 8px; font-size: 0.9rem; opacity: 0.7;
+        }
+        .step-body {
+            max-height: 0; overflow: hidden;
+            transition: max-height .4s ease, padding .3s;
+        }
+        .step-body.open {
+            max-height: 12000px;
+            padding: 24px;
+        }
+
+        /* ── SUPPORT PEDAGOGIQUE ── */
+        .peda-support {
+            background: linear-gradient(135deg, #fef6ee, #fff);
+            border: 2px solid var(--accent);
+            border-radius: var(--radius-elem);
+            padding: 20px; margin-bottom: 20px;
+        }
+        .peda-support .title {
+            color: var(--accent2); font-weight: 700; font-size: 1rem;
+            margin-bottom: 14px;
+        }
+        .character-row {
+            display: flex; align-items: flex-start; gap: 16px; margin: 14px 0;
+        }
+        .character-avatar {
+            width: 60px; height: 60px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--navy), var(--teal));
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem; flex-shrink: 0;
+            box-shadow: 0 3px 10px rgba(0,0,0,.15);
+        }
+        .character-bubble {
+            background: #fff; border: 2px solid var(--navy2);
+            border-radius: var(--radius-elem); padding: 14px 18px;
+            flex: 1; position: relative;
+        }
+        .character-bubble::before {
+            content: ''; position: absolute; left: -9px; top: 18px;
+            border: 8px solid transparent; border-right-color: var(--navy2);
+            border-left: 0;
+        }
+        .character-name {
+            font-weight: 700; color: var(--navy); margin-bottom: 4px; font-size: 0.9rem;
+        }
+        .character-text {
+            font-size: 0.95rem; line-height: 1.6;
+        }
+
+        /* ── RESSOURCES DOC ── */
+        .doc-links {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px; margin: 14px 0;
+        }
+        .doc-link {
+            background: #fff; border: 1px solid var(--border);
+            border-radius: var(--radius-elem); padding: 12px;
+            cursor: pointer; display: flex; align-items: center; gap: 10px;
+            transition: border-color .2s, transform .2s;
+        }
+        .doc-link:hover {
+            border-color: var(--teal); transform: translateY(-2px);
+        }
+        .doc-link .icon { font-size: 1.4rem; }
+        .doc-link .lbl { font-weight: 600; font-size: 0.9rem; }
+        .doc-link .sub { font-size: 0.8rem; color: var(--muted); }
+
+        /* ── ALERTE / INFO ── */
+        .alert {
+            padding: 14px 18px; border-radius: var(--radius-elem);
+            margin: 16px 0; font-weight: 600; font-size: 0.95rem;
+            border-left: 4px solid;
+        }
+        .alert-info  { background: #eaf4fd; color: var(--navy);  border-color: var(--teal); }
+        .alert-warn  { background: #fef6ee; color: #b5651d; border-color: var(--warning); }
+        .alert-ok    { background: #eafaf1; color: var(--success); border-color: var(--success); }
+        .alert-err   { background: #fdeaea; color: var(--error);   border-color: var(--error); }
+
+        /* ── CARTES DANGER ── */
+        .danger-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px; margin: 18px 0;
+        }
+        .danger-card {
+            background: #fff; border: 3px solid var(--error);
+            border-radius: var(--radius-elem); padding: 18px;
+            text-align: center; cursor: pointer;
+            transition: transform .2s, box-shadow .2s, border-color .2s;
+        }
+        .danger-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(231,76,60,.2); }
+        .danger-card.revealed { border-color: var(--success); background: #f0faf4; }
+        .danger-card .d-icon { font-size: 2.2rem; margin-bottom: 10px; }
+        .danger-card .d-name { font-weight: 700; color: var(--error); margin-bottom: 8px; font-size: 0.95rem; }
+        .danger-card.revealed .d-name { color: var(--success); }
+        .danger-card .d-desc {
+            display: none; text-align: left; font-size: 0.88rem; line-height: 1.5; color: var(--text);
+        }
+        .danger-card.revealed .d-desc { display: block; }
+
+        /* ── QCM ── */
+        .qcm-block {
+            background: var(--bg); border: 2px solid var(--teal);
+            border-radius: var(--radius-elem); padding: 20px; margin: 16px 0;
+        }
+        .qcm-block h3 {
+            color: var(--navy); font-size: 1rem; margin-bottom: 14px;
+        }
+        .qcm-opts { display: grid; gap: 10px; }
+        .qcm-opt {
+            background: #fff; border: 2px solid var(--border);
+            border-radius: var(--radius-elem); padding: 12px 16px;
+            cursor: pointer; font-size: 0.95rem;
+            transition: border-color .2s, background .2s;
+        }
+        .qcm-opt:hover { border-color: var(--teal); background: #f4fafa; }
+        .qcm-opt.selected { border-color: var(--teal); background: #e6f7f7; }
+        .qcm-opt.correct  { border-color: var(--success); background: #eafaf1; }
+        .qcm-opt.wrong    { border-color: var(--error); background: #fdeaea; }
+
+        /* ── EPI / OUTILS (grille cliquable) ── */
+        .pick-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 14px; margin: 18px 0;
+        }
+        .pick-item {
+            background: #fff; border: 3px solid var(--border);
+            border-radius: var(--radius-elem); padding: 16px;
+            text-align: center; cursor: pointer;
+            transition: transform .2s, border-color .2s, background .2s;
+        }
+        .pick-item:hover { transform: scale(1.04); border-color: var(--teal); }
+        .pick-item.selected { border-color: var(--success); background: #eafaf1; }
+        .pick-item.wrong { border-color: var(--error); background: #fdeaea; animation: shake .4s; }
+        .pick-item.humor { border-color: var(--accent); background: #fef6ee; }
+        .pick-item .p-icon { font-size: 2.2rem; margin-bottom: 8px; }
+        .pick-item .p-name { font-size: 0.88rem; font-weight: 600; }
+
+        @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-4px)} 75%{transform:translateX(4px)} }
+
+        /* ── JAUGE SECTION ── */
+        .section-progress {
+            margin: 16px 0;
+        }
+        .section-bar {
+            height: 24px; background: #e2e8f0; border-radius: 12px;
+            overflow: hidden; position: relative;
+        }
+        .section-bar-fill {
+            height: 100%; border-radius: 12px;
+            background: linear-gradient(90deg, var(--teal), var(--success));
+            transition: width .6s;
+        }
+        .section-bar-text {
+            position: absolute; inset: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.78rem; font-weight: 700; color: var(--text);
+        }
+
+        /* ── BOUTONS ── */
+        .btn-row {
+            display: flex; gap: 14px; justify-content: center;
+            margin: 22px 0; flex-wrap: wrap;
+        }
+        .btn {
+            border: none; padding: 12px 28px; border-radius: 25px;
+            font-size: 1rem; font-weight: 600; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 8px;
+            transition: transform .2s, box-shadow .2s, filter .2s;
+            color: #fff;
+        }
+        .btn:hover { transform: translateY(-2px); filter: brightness(1.08); }
+        .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; filter: none; }
+        .btn-primary { background: linear-gradient(135deg, var(--navy), var(--teal)); }
+        .btn-success { background: linear-gradient(135deg, var(--success), #20c997); }
+        .btn-accent  { background: linear-gradient(135deg, var(--accent), var(--accent2)); }
+        .btn-nav     { background: linear-gradient(135deg, var(--teal), var(--navy2)); }
+
+        /* ── RESULTATS ── */
+        .results-section {
+            display: none;
+            background: var(--card);
+            border-radius: var(--radius-section);
+            padding: 28px; margin-top: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,.08);
+            border: 2px solid var(--teal);
+        }
+        .results-section h2 {
+            font-size: 1.3rem; color: var(--navy); text-align: center; margin-bottom: 20px;
+        }
+        .comp-row {
+            display: flex; align-items: center; gap: 12px;
+            background: var(--bg); border-radius: var(--radius-elem);
+            padding: 12px 16px; margin: 10px 0;
+        }
+        .comp-code { font-weight: 700; min-width: 50px; color: var(--navy); }
+        .comp-title { flex: 1; font-size: 0.9rem; }
+        .comp-bar-wrap { width: 120px; }
+        .comp-bar {
+            height: 14px; background: #e2e8f0; border-radius: 8px; overflow: hidden;
+        }
+        .comp-bar-fill {
+            height: 100%; border-radius: 8px; transition: width .6s;
+        }
+        .comp-badge {
+            font-size: 0.78rem; font-weight: 700; padding: 3px 10px;
+            border-radius: 20px; min-width: 56px; text-align: center; color: #fff;
+        }
+        .badge-M  { background: var(--success); }
+        .badge-A  { background: var(--teal); }
+        .badge-ECA { background: var(--warning); }
+        .badge-NI { background: var(--error); }
+
+        .note-big {
+            text-align: center; margin: 18px 0;
+            font-size: 2.4rem; font-weight: 800; color: var(--navy);
+        }
+        .note-big span { color: var(--teal); }
+
+        /* ── TOAST ── */
+        .toast {
+            position: fixed; top: 80px; right: 20px;
+            background: var(--navy); color: #fff;
+            padding: 12px 20px; border-radius: var(--radius-elem);
+            box-shadow: 0 4px 16px rgba(0,0,0,.25);
+            transform: translateX(420px);
+            transition: transform .3s;
+            z-index: 200; font-weight: 600; font-size: 0.9rem;
+            max-width: 340px;
+        }
+        .toast.show { transform: translateX(0); }
+
+        /* ── MODAL ── */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0; z-index: 300;
+            background: rgba(0,0,0,.7); backdrop-filter: blur(4px);
+            align-items: center; justify-content: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-box {
+            background: #fff; border-radius: var(--radius-section);
+            padding: 28px; max-width: 700px; width: 92%; max-height: 80vh;
+            overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,.3);
+            animation: modalIn .25s ease-out;
+        }
+        .modal-box h2 { color: var(--navy); margin-bottom: 16px; font-size: 1.2rem; }
+        .modal-box h3 { color: var(--teal); margin: 18px 0 10px; font-size: 1.05rem; }
+        .modal-box p { margin-bottom: 12px; line-height: 1.7; }
+        .modal-box ul { margin: 10px 0 14px 20px; }
+        .modal-box li { margin: 6px 0; }
+        @keyframes modalIn { from { opacity:0; transform:translateY(-30px) scale(.95); } to { opacity:1; transform:translateY(0) scale(1); } }
+
+        /* ── CADENAS PROF ── */
+        .prof-lock {
+            text-align: center; margin-top: 30px; padding: 10px;
+        }
+        .prof-lock a {
+            color: var(--muted); text-decoration: none; font-size: 0.78rem;
+            opacity: 0.4; transition: opacity .2s;
+        }
+        .prof-lock a:hover { opacity: 1; color: var(--navy); }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 700px) {
+            .header { padding: 14px 16px; }
+            .header-titles h1 { font-size: 1.05rem; }
+            .context-grid { grid-template-columns: 1fr; }
+            .danger-grid { grid-template-columns: 1fr; }
+            .character-row { flex-direction: column; }
+            .character-bubble::before { display: none; }
+            .btn-row { flex-direction: column; align-items: stretch; }
+            .btn { justify-content: center; }
+            .comp-row { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ╔══════════════════════════════════════════╗
+     ║  HEADER STICKY                          ║
+     ╚══════════════════════════════════════════╝ -->
+<div class="header">
+    <div class="header-left">
+        <div class="header-logo">&#10052;</div>
+        <div class="header-titles">
+            <h1>TP Manometres — Preparation</h1>
+            <small>inerWeb FRIGOLO &middot; Travaux Preparatoires</small>
+        </div>
+    </div>
+    <div class="header-controls">
+        <button class="ctrl-btn" onclick="toggleAccessibility()" title="Mode accessibilite" id="a11y-btn">&#128065;</button>
+        <button class="ctrl-btn" onclick="toggleFullscreen()" title="Plein ecran">&#9974;</button>
+    </div>
+</div>
+
+<!-- Barre de progression globale -->
+<div class="global-progress">
+    <label>Progression :</label>
+    <div class="progress-track">
+        <div class="progress-fill" id="global-fill"></div>
+        <div class="progress-label" id="global-label">0 %</div>
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- ── IDENTIFICATION ELEVE ── -->
+    <div class="student-id">
+        <h2>&#128100; Identification</h2>
+        <div class="id-grid">
+            <div class="field">
+                <label for="stu-nom">Nom</label>
+                <input type="text" id="stu-nom" placeholder="Nom de famille" autocomplete="family-name">
+            </div>
+            <div class="field">
+                <label for="stu-prenom">Prenom</label>
+                <input type="text" id="stu-prenom" placeholder="Prenom" autocomplete="given-name">
+            </div>
+            <div class="field">
+                <label for="stu-classe">Classe</label>
+                <select id="stu-classe">
+                    <option value="">-- Choisir --</option>
+                    <option value="1CAP IFCA">1CAP IFCA</option>
+                    <option value="2CAP IFCA">2CAP IFCA</option>
+                    <option value="2nde TNE">2nde TNE</option>
+                    <option value="1ere MFER">1ere Bac Pro MFER</option>
+                    <option value="Tle MFER">Tle Bac Pro MFER</option>
+                </select>
+            </div>
+            <div class="field">
+                <label for="stu-date">Date</label>
+                <input type="date" id="stu-date">
+            </div>
+        </div>
+    </div>
+
+    <!-- ── CONTEXTE PROFESSIONNEL ── -->
+    <div class="context-section">
+        <h2>&#127970; Contexte professionnel</h2>
+        <div class="context-grid">
+            <div class="context-card">
+                <h3>&#128205; Entreprise et mission</h3>
+                <p>Vous travaillez chez <strong>Froid Service Plus</strong>, specialisee dans la maintenance d'installations frigorifiques. Votre mission : intervenir sur une installation defaillante chez un client professionnel.</p>
+            </div>
+            <div class="context-card">
+                <h3>&#128222; Problematique technique</h3>
+                <p>L'installation frigorifique de la <strong>Boucherie du Marche</strong> presente des dysfonctionnements. Les temperatures sont instables et necessitent un diagnostic approfondi des pressions.</p>
+            </div>
+        </div>
+        <div class="mission-box">
+            <h3>&#127919; Demarche d'intervention en 3 etapes</h3>
+            <ol>
+                <li><strong>SECURITE</strong> — Identifier les dangers lies aux fluides frigorigenes</li>
+                <li><strong>PROTECTION</strong> — Selectionner les equipements de protection appropries</li>
+                <li><strong>OUTILLAGE</strong> — Choisir le materiel necessaire pour la pose des manometres</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- ╔══════════════════════════════════════════╗
+         ║  ETAPE 1 : ANALYSE DES RISQUES          ║
+         ╚══════════════════════════════════════════╝ -->
+    <div class="step-section" id="step1">
+        <div class="step-header" onclick="toggleStep('step1')">
+            <span>ETAPE 1 : Analyse des risques lies aux fluides frigorigenes</span>
+            <span>
+                <span class="chevron" id="step1-chev">&#9660;</span>
+            </span>
+        </div>
+        <div class="step-body" id="step1-body">
+
+            <div class="peda-support">
+                <div class="title">&#128218; Support Technique : Identification des Risques</div>
+                <div class="character-row">
+                    <div class="character-avatar">&#128104;&#8205;&#128295;</div>
+                    <div class="character-bubble">
+                        <div class="character-name">Paul Martineau — Technicien Expert</div>
+                        <div class="character-text">
+                            Avant toute manipulation de fluides frigorigenes, l'analyse des risques est obligatoire.
+                            Ces substances presentent des dangers reels pour la securite et l'environnement.
+                            Une connaissance approfondie de ces risques est essentielle pour intervenir en securite.
+                        </div>
+                    </div>
+                </div>
+                <div class="doc-links">
+                    <div class="doc-link" onclick="showDoc('securite')">
+                        <div class="icon">&#127909;</div>
+                        <div><div class="lbl">Securite frigoriste</div><div class="sub">Document technique integre</div></div>
+                    </div>
+                    <div class="doc-link" onclick="showDoc('dangers')">
+                        <div class="icon">&#128196;</div>
+                        <div><div class="lbl">Fiche technique</div><div class="sub">Dangers des fluides frigorigenes</div></div>
+                    </div>
+                    <div class="doc-link" onclick="showDoc('reglementation')">
+                        <div class="icon">&#128203;</div>
+                        <div><div class="lbl">Reglementation</div><div class="sub">Normes et securite</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert alert-info">
+                <strong>OBJECTIF :</strong> Cliquez sur chaque carte de risque pour decouvrir les dangers et comprendre leurs mecanismes.
+            </div>
+
+            <div class="danger-grid" id="danger-cards">
+                <div class="danger-card" onclick="revealDanger(this)">
+                    <div class="d-icon">&#129482;</div>
+                    <div class="d-name">Brulures par le froid</div>
+                    <div class="d-desc">
+                        <strong>Mecanisme :</strong> Contact direct avec le fluide liquide<br>
+                        <strong>Temperature critique :</strong> R134a evapore a -26&#176;C<br>
+                        <strong>Consequences :</strong> Engelures graves, lesions cutanees<br>
+                        <strong>Zones a risque :</strong> Yeux, mains, peau decouverte
+                    </div>
+                </div>
+                <div class="danger-card" onclick="revealDanger(this)">
+                    <div class="d-icon">&#128168;</div>
+                    <div class="d-name">Risque d'asphyxie</div>
+                    <div class="d-desc">
+                        <strong>Propriete physique :</strong> Densite superieure a l'air<br>
+                        <strong>Accumulation :</strong> Zones basses et confinees<br>
+                        <strong>Mecanisme :</strong> Deplacement de l'oxygene respirable<br>
+                        <strong>Seuil critique :</strong> Concentration &gt; 20% volume
+                    </div>
+                </div>
+                <div class="danger-card" onclick="revealDanger(this)">
+                    <div class="d-icon">&#128165;</div>
+                    <div class="d-name">Surpression</div>
+                    <div class="d-desc">
+                        <strong>Coefficient d'expansion :</strong> 1L liquide = 300L gazeux<br>
+                        <strong>Rupture de canalisations :</strong> Projection haute pression<br>
+                        <strong>Facteurs aggravants :</strong> Elevation de temperature<br>
+                        <strong>Consequences :</strong> Blessures par projection
+                    </div>
+                </div>
+                <div class="danger-card" onclick="revealDanger(this)">
+                    <div class="d-icon">&#127760;</div>
+                    <div class="d-name">Impact environnemental</div>
+                    <div class="d-desc">
+                        <strong>GWP :</strong> Potentiel de rechauffement climatique<br>
+                        <strong>Couche d'ozone :</strong> Destruction selon type de fluide<br>
+                        <strong>Obligation legale :</strong> Recuperation obligatoire<br>
+                        <strong>Sanctions :</strong> Amendes en cas de rejet
+                    </div>
+                </div>
+                <div class="danger-card" onclick="revealDanger(this)">
+                    <div class="d-icon">&#9888;&#65039;</div>
+                    <div class="d-name">Toxicite par inhalation</div>
+                    <div class="d-desc">
+                        <strong>Effets respiratoires :</strong> Irritation voies aeriennes<br>
+                        <strong>Symptomes :</strong> Vertiges, malaises, nausees<br>
+                        <strong>Decomposition thermique :</strong> Formation de gaz toxiques<br>
+                        <strong>Seuil d'exposition :</strong> Variable selon le fluide
+                    </div>
+                </div>
+                <div class="danger-card" onclick="revealDanger(this)">
+                    <div class="d-icon">&#128293;</div>
+                    <div class="d-name">Inflammabilite (selon fluide)</div>
+                    <div class="d-desc">
+                        <strong>Fluides concernes :</strong> R32, R290, R1234yf<br>
+                        <strong>Melange explosif :</strong> Proportion air/fluide critique<br>
+                        <strong>Sources d'ignition :</strong> Etincelles, flammes, arc electrique<br>
+                        <strong>Classification :</strong> A2L (faiblement inflammable) a A3
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-progress">
+                <div class="section-bar">
+                    <div class="section-bar-fill" id="danger-bar" style="width:0%"></div>
+                    <div class="section-bar-text" id="danger-bar-txt">0/6 risques identifies</div>
+                </div>
+            </div>
+
+            <!-- QCM Securite -->
+            <div class="peda-support" style="margin-top:20px">
+                <div class="character-row">
+                    <div class="character-avatar">&#128105;&#8205;&#127979;</div>
+                    <div class="character-bubble">
+                        <div class="character-name">Marie Dubois — Formatrice Securite</div>
+                        <div class="character-text">
+                            Verifions maintenant vos connaissances avec ces questions techniques essentielles.
+                            Ces informations sont fondamentales pour votre securite sur le terrain.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="qcm-block" data-qcm="q1">
+                <h3>Question 1 : Temperature d'ebullition du R134a a pression atmospherique</h3>
+                <div class="qcm-opts">
+                    <div class="qcm-opt" data-v="a" onclick="selectOpt(this)">A) +26&#176;C</div>
+                    <div class="qcm-opt" data-v="b" data-correct onclick="selectOpt(this)">B) -26&#176;C</div>
+                    <div class="qcm-opt" data-v="c" onclick="selectOpt(this)">C) 0&#176;C</div>
+                    <div class="qcm-opt" data-v="d" onclick="selectOpt(this)">D) -10&#176;C</div>
+                </div>
+            </div>
+            <div class="qcm-block" data-qcm="q2">
+                <h3>Question 2 : Pourquoi les fluides frigorigenes s'accumulent-ils dans les parties basses ?</h3>
+                <div class="qcm-opts">
+                    <div class="qcm-opt" data-v="a" data-correct onclick="selectOpt(this)">A) Densite superieure a l'air</div>
+                    <div class="qcm-opt" data-v="b" onclick="selectOpt(this)">B) Densite inferieure a l'air</div>
+                    <div class="qcm-opt" data-v="c" onclick="selectOpt(this)">C) Attraction gravitationnelle</div>
+                    <div class="qcm-opt" data-v="d" onclick="selectOpt(this)">D) Meme densite que l'air</div>
+                </div>
+            </div>
+            <div class="qcm-block" data-qcm="q3">
+                <h3>Question 3 : Principal risque d'une fuite importante de fluide frigorigene en local ferme</h3>
+                <div class="qcm-opts">
+                    <div class="qcm-opt" data-v="a" onclick="selectOpt(this)">A) Incendie spontane</div>
+                    <div class="qcm-opt" data-v="b" data-correct onclick="selectOpt(this)">B) Asphyxie par deplacement d'oxygene</div>
+                    <div class="qcm-opt" data-v="c" onclick="selectOpt(this)">C) Explosion</div>
+                    <div class="qcm-opt" data-v="d" onclick="selectOpt(this)">D) Intoxication alimentaire</div>
+                </div>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn btn-primary" onclick="validateStep1()" id="btn-val1">Valider l'analyse des risques</button>
+                <button class="btn btn-nav" onclick="unlockAndOpen('step2')" id="btn-next1" disabled>Etape suivante : Protection &#8594;</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ╔══════════════════════════════════════════╗
+         ║  ETAPE 2 : SELECTION EPI                ║
+         ╚══════════════════════════════════════════╝ -->
+    <div class="step-section" id="step2">
+        <div class="step-header" onclick="toggleStep('step2')">
+            <span>ETAPE 2 : Selection des equipements de protection individuelle</span>
+            <span>
+                <span class="lock-icon" id="step2-lock">&#128274;</span>
+                <span class="chevron" id="step2-chev">&#9660;</span>
+            </span>
+        </div>
+        <div class="step-body" id="step2-body">
+
+            <div class="peda-support">
+                <div class="title">&#128218; Support Technique : Protection Contre les Risques</div>
+                <div class="character-row">
+                    <div class="character-avatar">&#128737;</div>
+                    <div class="character-bubble">
+                        <div class="character-name">Paul Martineau — Technicien Expert</div>
+                        <div class="character-text">
+                            Maintenant que vous connaissez les risques, appliquons les mesures de protection.
+                            Pour manipuler des fluides frigorigenes, certains EPI sont obligatoires selon la reglementation,
+                            d'autres sont recommandes selon le contexte d'intervention.
+                        </div>
+                    </div>
+                </div>
+                <div class="doc-links">
+                    <div class="doc-link" onclick="showDoc('epi')">
+                        <div class="icon">&#127909;</div>
+                        <div><div class="lbl">EPI Frigoriste</div><div class="sub">Guide pratique integre</div></div>
+                    </div>
+                    <div class="doc-link" onclick="showDoc('inrs')">
+                        <div class="icon">&#128196;</div>
+                        <div><div class="lbl">INRS ED 105</div><div class="sub">Equipements de protection individuelle</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert alert-warn">
+                <strong>CONSIGNE :</strong> Selectionnez UNIQUEMENT les equipements de protection OBLIGATOIRES pour la manipulation des fluides frigorigenes et la pose de manometres.
+            </div>
+
+            <div class="pick-grid" id="epi-grid">
+                <div class="pick-item" data-correct onclick="togglePick(this)">
+                    <div class="p-icon">&#129405;</div><div class="p-name">Lunettes de securite</div>
+                </div>
+                <div class="pick-item" data-correct onclick="togglePick(this)">
+                    <div class="p-icon">&#129348;</div><div class="p-name">Gants frigoriste</div>
+                </div>
+                <div class="pick-item" data-correct onclick="togglePick(this)">
+                    <div class="p-icon">&#129406;</div><div class="p-name">Chaussures S3</div>
+                </div>
+                <div class="pick-item" data-correct onclick="togglePick(this)">
+                    <div class="p-icon">&#128085;</div><div class="p-name">Bleu de travail</div>
+                </div>
+                <div class="pick-item" onclick="togglePick(this)">
+                    <div class="p-icon">&#9937;&#65039;</div><div class="p-name">Casque de chantier</div>
+                </div>
+                <div class="pick-item" onclick="togglePick(this)">
+                    <div class="p-icon">&#128567;</div><div class="p-name">Masque respiratoire</div>
+                </div>
+                <div class="pick-item" onclick="togglePick(this)">
+                    <div class="p-icon">&#129466;</div><div class="p-name">Gilet haute visibilite</div>
+                </div>
+                <div class="pick-item" onclick="togglePick(this)">
+                    <div class="p-icon">&#127911;</div><div class="p-name">Protection auditive</div>
+                </div>
+            </div>
+
+            <div class="section-progress">
+                <div class="section-bar">
+                    <div class="section-bar-fill" id="epi-bar" style="width:0%"></div>
+                    <div class="section-bar-text" id="epi-bar-txt">Selectionnez les EPI obligatoires</div>
+                </div>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn btn-primary" onclick="validateStep2()" id="btn-val2">Valider la selection EPI</button>
+                <button class="btn btn-nav" onclick="unlockAndOpen('step3')" id="btn-next2" disabled>Etape suivante : Outillage &#8594;</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ╔══════════════════════════════════════════╗
+         ║  ETAPE 3 : OUTILLAGE                    ║
+         ╚══════════════════════════════════════════╝ -->
+    <div class="step-section" id="step3">
+        <div class="step-header" onclick="toggleStep('step3')">
+            <span>ETAPE 3 : Selection de l'outillage pour la pose des manometres</span>
+            <span>
+                <span class="lock-icon" id="step3-lock">&#128274;</span>
+                <span class="chevron" id="step3-chev">&#9660;</span>
+            </span>
+        </div>
+        <div class="step-body" id="step3-body">
+
+            <div class="peda-support">
+                <div class="title">&#128218; Support Technique : Outillage du Technicien Frigoriste</div>
+                <div class="character-row">
+                    <div class="character-avatar">&#128295;</div>
+                    <div class="character-bubble">
+                        <div class="character-name">Marc Leroy — Responsable Atelier</div>
+                        <div class="character-text">
+                            Pour une pose de manometres conforme aux regles de l'art, l'outillage approprie est indispensable.
+                            Chaque outil a une fonction specifique dans la procedure. Identifiez les outils necessaires
+                            et eliminez ceux qui n'ont pas leur place dans cette intervention.
+                        </div>
+                    </div>
+                </div>
+                <div class="doc-links">
+                    <div class="doc-link" onclick="showDoc('outillage')">
+                        <div class="icon">&#127909;</div>
+                        <div><div class="lbl">Outillage frigoriste</div><div class="sub">Guide des outils specialises</div></div>
+                    </div>
+                    <div class="doc-link" onclick="showDoc('manometres')">
+                        <div class="icon">&#128196;</div>
+                        <div><div class="lbl">Guide outillage</div><div class="sub">Pose et depose manometres</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert alert-warn">
+                <strong>CONSIGNE :</strong> Selectionnez les outils indispensables pour effectuer la pose des manometres (manifolds) selon les regles professionnelles.
+            </div>
+
+            <div class="pick-grid" id="tools-grid">
+                <div class="pick-item" data-correct onclick="togglePick(this)">
+                    <div class="p-icon">&#127777;&#65039;</div><div class="p-name">Manifold manometres</div>
+                </div>
+                <div class="pick-item" data-correct onclick="togglePick(this)">
+                    <div class="p-icon">&#128260;</div><div class="p-name">Pompe a vide</div>
+                </div>
+                <div class="pick-item" data-correct onclick="togglePick(this)">
+                    <div class="p-icon">&#128295;</div><div class="p-name">Cle a cliquet</div>
+                </div>
+                <div class="pick-item" data-correct onclick="togglePick(this)">
+                    <div class="p-icon">&#128295;</div><div class="p-name">Cle a molette</div>
+                </div>
+                <div class="pick-item" data-correct onclick="togglePick(this)">
+                    <div class="p-icon">&#128269;</div><div class="p-name">Detecteur de fuite</div>
+                </div>
+                <div class="pick-item" data-correct onclick="togglePick(this)">
+                    <div class="p-icon">&#12336;&#65039;</div><div class="p-name">Flexibles de charge</div>
+                </div>
+                <div class="pick-item" data-correct onclick="togglePick(this)">
+                    <div class="p-icon">&#128202;</div><div class="p-name">Vacuometre</div>
+                </div>
+                <div class="pick-item" data-correct onclick="togglePick(this)">
+                    <div class="p-icon">&#128295;</div><div class="p-name">Cles Allen</div>
+                </div>
+                <div class="pick-item humor" onclick="togglePick(this)">
+                    <div class="p-icon">&#127820;</div><div class="p-name">Collation</div>
+                </div>
+                <div class="pick-item humor" onclick="togglePick(this)">
+                    <div class="p-icon">&#9749;</div><div class="p-name">Pause cafe</div>
+                </div>
+                <div class="pick-item" onclick="togglePick(this)">
+                    <div class="p-icon">&#128296;</div><div class="p-name">Marteau</div>
+                </div>
+                <div class="pick-item" onclick="togglePick(this)">
+                    <div class="p-icon">&#129707;</div><div class="p-name">Tournevis cruciforme</div>
+                </div>
+            </div>
+
+            <div class="section-progress">
+                <div class="section-bar">
+                    <div class="section-bar-fill" id="tools-bar" style="width:0%"></div>
+                    <div class="section-bar-text" id="tools-bar-txt">Selectionnez l'outillage necessaire</div>
+                </div>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn btn-primary" onclick="validateStep3()" id="btn-val3">Valider la selection d'outils</button>
+                <button class="btn btn-success" onclick="showResults()" id="btn-results" disabled>Voir l'evaluation &#128202;</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ╔══════════════════════════════════════════╗
+         ║  RESULTATS / EVALUATION                 ║
+         ╚══════════════════════════════════════════╝ -->
+    <div class="results-section" id="results">
+        <h2>&#128202; Evaluation des competences professionnelles</h2>
+
+        <div class="peda-support">
+            <div class="character-row">
+                <div class="character-avatar">&#128105;&#8205;&#127979;</div>
+                <div class="character-bubble">
+                    <div class="character-name">Marie Dubois — Formatrice</div>
+                    <div class="character-text">
+                        Excellent travail ! Vous avez termine les travaux preparatoires.
+                        Voici votre evaluation detaillee. Ces competences seront evaluees tout au long de votre parcours professionnel.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="results-detail"></div>
+        <div class="note-big" id="note-display"></div>
+        <div id="comp-display"></div>
+
+        <div class="btn-row">
+            <button class="btn btn-primary" onclick="restart()">&#128260; Recommencer</button>
+            <button class="btn btn-accent" onclick="location.href='tp-manometres-formatif.html'">Passer au TP Formatif &#8594;</button>
+        </div>
+    </div>
+
+    <!-- Cadenas prof -->
+    <div class="prof-lock">
+        <a href="prof-tp-manometres.html" title="Acces enseignant">&#128274;</a>
+    </div>
+
+</div><!-- /container -->
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Modal doc -->
+<div class="modal-overlay" id="modal">
+    <div class="modal-box">
+        <div id="modal-content"></div>
+        <div style="text-align:center;margin-top:20px;">
+            <button class="btn btn-primary" onclick="closeModal()">Fermer</button>
+        </div>
+    </div>
+</div>
+
+<!-- Collecteur universel inerWeb -->
+<script src="../inerweb-results.js"></script>
+
+<script>
+(function() {
+    'use strict';
+
+    // ════════════════════════════════════════
+    // ETAT
+    // ════════════════════════════════════════
+    var startTime = Date.now();
+    var dangersRevealed = 0;
+    var scores = { step1: -1, step2: -1, step3: -1 };
+    var stepsUnlocked = { step1: true, step2: false, step3: false };
+    var stepsValidated = { step1: false, step2: false, step3: false };
+
+    // ════════════════════════════════════════
+    // UTILITAIRES
+    // ════════════════════════════════════════
+    function $(id) { return document.getElementById(id); }
+
+    function toast(msg) {
+        var t = $('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        clearTimeout(t._tid);
+        t._tid = setTimeout(function() { t.classList.remove('show'); }, 3200);
+    }
+
+    function updateGlobal() {
+        var done = 0;
+        if (stepsValidated.step1) done++;
+        if (stepsValidated.step2) done++;
+        if (stepsValidated.step3) done++;
+        var pct = Math.round(done / 3 * 100);
+        $('global-fill').style.width = pct + '%';
+        $('global-label').textContent = pct + ' %';
+    }
+
+    // ════════════════════════════════════════
+    // ACCORDEON
+    // ════════════════════════════════════════
+    window.toggleStep = function(id) {
+        if (!stepsUnlocked[id]) {
+            toast('Terminez l\'etape precedente pour debloquer celle-ci.');
+            return;
+        }
+        var body = $(id + '-body');
+        var chev = $(id + '-chev');
+        if (body.classList.contains('open')) {
+            body.classList.remove('open');
+            chev.classList.remove('open');
+        } else {
+            body.classList.add('open');
+            chev.classList.add('open');
+        }
+    };
+
+    window.unlockAndOpen = function(id) {
+        stepsUnlocked[id] = true;
+        var lock = $(id + '-lock');
+        if (lock) lock.style.display = 'none';
+        toggleStep(id);
+        $(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
+    // Ouvrir etape 1 au chargement
+    setTimeout(function() { toggleStep('step1'); }, 300);
+
+    // ════════════════════════════════════════
+    // ETAPE 1 : DANGERS + QCM
+    // ════════════════════════════════════════
+    window.revealDanger = function(card) {
+        if (card.classList.contains('revealed')) return;
+        card.classList.add('revealed');
+        dangersRevealed++;
+        var pct = Math.round(dangersRevealed / 6 * 100);
+        $('danger-bar').style.width = pct + '%';
+        $('danger-bar-txt').textContent = dangersRevealed + '/6 risques identifies';
+        if (dangersRevealed === 6) {
+            toast('Tous les risques identifies ! Repondez aux questions.');
+        }
+    };
+
+    window.selectOpt = function(el) {
+        var opts = el.parentElement.querySelectorAll('.qcm-opt');
+        for (var i = 0; i < opts.length; i++) opts[i].classList.remove('selected');
+        el.classList.add('selected');
+    };
+
+    window.validateStep1 = function() {
+        if (dangersRevealed < 4) {
+            toast('Identifiez au moins 4 risques sur 6 avant de continuer.');
+            return;
+        }
+        var blocks = document.querySelectorAll('.qcm-block');
+        var correct = 0;
+        for (var i = 0; i < blocks.length; i++) {
+            var sel = blocks[i].querySelector('.qcm-opt.selected');
+            var good = blocks[i].querySelector('.qcm-opt[data-correct]');
+            if (sel) {
+                if (sel.hasAttribute('data-correct')) {
+                    sel.classList.add('correct');
+                    correct++;
+                } else {
+                    sel.classList.add('wrong');
+                    good.classList.add('correct');
+                }
+            } else {
+                good.classList.add('correct');
+            }
+        }
+        scores.step1 = Math.round(((dangersRevealed / 6) * 0.4 + (correct / blocks.length) * 0.6) * 100);
+        stepsValidated.step1 = true;
+        updateGlobal();
+
+        if (scores.step1 >= 50) {
+            $('btn-next1').disabled = false;
+            toast('Analyse validee : ' + scores.step1 + '% — vous pouvez passer a l\'etape 2.');
+        } else {
+            toast('Score insuffisant (' + scores.step1 + '%). Minimum 50% requis.');
+        }
+    };
+
+    // ════════════════════════════════════════
+    // ETAPE 2 : EPI
+    // ════════════════════════════════════════
+    window.togglePick = function(el) {
+        el.classList.toggle('selected');
+        el.classList.remove('wrong');
+    };
+
+    window.validateStep2 = function() {
+        var items = $('epi-grid').querySelectorAll('.pick-item');
+        var selOk = 0, totalOk = 0, bad = 0;
+        for (var i = 0; i < items.length; i++) {
+            var isOk = items[i].hasAttribute('data-correct');
+            var isSel = items[i].classList.contains('selected');
+            if (isOk) totalOk++;
+            if (isSel && isOk) { selOk++; items[i].classList.remove('wrong'); }
+            else if (isSel && !isOk) { bad++; items[i].classList.add('wrong'); }
+            else if (!isSel && isOk) { items[i].classList.add('wrong'); }
+        }
+        scores.step2 = Math.max(0, Math.round(((selOk / totalOk) - bad * 0.15) * 100));
+        stepsValidated.step2 = true;
+        updateGlobal();
+
+        $('epi-bar').style.width = scores.step2 + '%';
+        $('epi-bar-txt').textContent = 'Score EPI : ' + scores.step2 + '%';
+
+        if (scores.step2 >= 60) {
+            $('btn-next2').disabled = false;
+            toast('Selection EPI validee : ' + scores.step2 + '%.');
+        } else {
+            toast('Score insuffisant (' + scores.step2 + '%). Minimum 60% requis.');
+        }
+    };
+
+    // ════════════════════════════════════════
+    // ETAPE 3 : OUTILLAGE
+    // ════════════════════════════════════════
+    window.validateStep3 = function() {
+        var items = $('tools-grid').querySelectorAll('.pick-item');
+        var selOk = 0, totalOk = 0, bad = 0;
+        for (var i = 0; i < items.length; i++) {
+            var isOk = items[i].hasAttribute('data-correct');
+            var isSel = items[i].classList.contains('selected');
+            if (isOk) totalOk++;
+            if (isSel && isOk) selOk++;
+            else if (isSel && !isOk) bad++;
+        }
+        scores.step3 = Math.max(0, Math.round(((selOk / totalOk) - bad * 0.1) * 100));
+        stepsValidated.step3 = true;
+        updateGlobal();
+
+        $('tools-bar').style.width = scores.step3 + '%';
+        $('tools-bar-txt').textContent = 'Score Outillage : ' + scores.step3 + '%';
+
+        if (scores.step3 >= 65) {
+            $('btn-results').disabled = false;
+            toast('Selection outillage validee : ' + scores.step3 + '%.');
+        } else {
+            toast('Score insuffisant (' + scores.step3 + '%). Minimum 65% requis.');
+        }
+    };
+
+    // ════════════════════════════════════════
+    // RESULTATS + ENVOI COLLECTEUR
+    // ════════════════════════════════════════
+    window.showResults = function() {
+        var s1 = Math.max(scores.step1, 0);
+        var s2 = Math.max(scores.step2, 0);
+        var s3 = Math.max(scores.step3, 0);
+        var global = Math.round((s1 + s2 + s3) / 3);
+        var note20 = Math.round(global / 100 * 20 * 2) / 2; // arrondi au 0.5
+
+        // Detail des scores
+        $('results-detail').innerHTML =
+            '<div class="alert alert-info">' +
+            '<strong>Detail par etape :</strong><br>' +
+            '&#8226; Analyse des risques : ' + s1 + '%<br>' +
+            '&#8226; Selection EPI : ' + s2 + '%<br>' +
+            '&#8226; Choix outillage : ' + s3 + '%<br>' +
+            '<strong>Score global : ' + global + '%</strong>' +
+            '</div>';
+
+        // Note
+        $('note-display').innerHTML = note20.toFixed(1) + ' <span>/ 20</span>';
+
+        // Competences C1-C4
+        // C1 = Securiser (dangers + epi)
+        // C2 = Organiser (epi + outils)
+        // C3 = Manipuler fluides (dangers)
+        // C4 = Raccorder equipements (outils)
+        var c1pct = Math.round((s1 + s2) / 2);
+        var c2pct = Math.round((s2 + s3) / 2);
+        var c3pct = s1;
+        var c4pct = s3;
+
+        function niveau(pct) {
+            if (pct >= 85) return { code: 'M', label: 'Maitrise', cls: 'badge-M' };
+            if (pct >= 65) return { code: 'A', label: 'Acquis', cls: 'badge-A' };
+            if (pct >= 40) return { code: 'ECA', label: 'En cours', cls: 'badge-ECA' };
+            return { code: 'NI', label: 'Non acquis', cls: 'badge-NI' };
+        }
+
+        var comps = [
+            { code: 'C1', ref: 'C2.4', title: 'Securiser l\'intervention', pct: c1pct },
+            { code: 'C2', ref: 'C3.1', title: 'Organiser le poste de travail', pct: c2pct },
+            { code: 'C3', ref: 'C4.2', title: 'Manipuler les fluides', pct: c3pct },
+            { code: 'C4', ref: 'C4.7', title: 'Raccorder les equipements', pct: c4pct }
+        ];
+
+        var html = '';
+        var compResult = {};
+        for (var i = 0; i < comps.length; i++) {
+            var c = comps[i];
+            var n = niveau(c.pct);
+            compResult[c.code] = n.code;
+            var color = n.cls === 'badge-M' ? 'var(--success)' :
+                        n.cls === 'badge-A' ? 'var(--teal)' :
+                        n.cls === 'badge-ECA' ? 'var(--warning)' : 'var(--error)';
+            html += '<div class="comp-row">' +
+                '<div class="comp-code">' + c.code + '</div>' +
+                '<div class="comp-title">' + c.ref + ' — ' + c.title + '</div>' +
+                '<div class="comp-bar-wrap"><div class="comp-bar"><div class="comp-bar-fill" style="width:' + c.pct + '%;background:' + color + '"></div></div></div>' +
+                '<div class="comp-badge ' + n.cls + '">' + n.label + '</div>' +
+                '</div>';
+        }
+        $('comp-display').innerHTML = html;
+
+        // Afficher la section
+        $('results').style.display = 'block';
+        $('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        // Envoi au collecteur universel
+        var temps = Math.round((Date.now() - startTime) / 1000);
+        var nom = $('stu-nom').value.trim();
+        var prenom = $('stu-prenom').value.trim();
+        var classe = $('stu-classe').value;
+
+        if (typeof inerwebSend === 'function') {
+            inerwebSend({
+                module: 'TP Manometres \u2014 Preparation',
+                nom: nom,
+                prenom: prenom,
+                classe: classe,
+                note20: note20,
+                score: global,
+                detail: 'Risques:' + s1 + ' EPI:' + s2 + ' Outils:' + s3,
+                temps: temps,
+                competences: compResult
+            });
+            toast('Resultats envoyes au collecteur inerWeb.');
+        } else {
+            console.warn('[inerWeb] inerweb-results.js non charge');
+            toast('Resultats calcules (collecteur non disponible).');
+        }
+    };
+
+    // ════════════════════════════════════════
+    // RECOMMENCER
+    // ════════════════════════════════════════
+    window.restart = function() {
+        scores = { step1: -1, step2: -1, step3: -1 };
+        dangersRevealed = 0;
+        stepsValidated = { step1: false, step2: false, step3: false };
+        stepsUnlocked = { step1: true, step2: false, step3: false };
+        startTime = Date.now();
+
+        // Reset danger cards
+        var dc = document.querySelectorAll('.danger-card');
+        for (var i = 0; i < dc.length; i++) dc[i].classList.remove('revealed');
+        $('danger-bar').style.width = '0%';
+        $('danger-bar-txt').textContent = '0/6 risques identifies';
+
+        // Reset QCM
+        var opts = document.querySelectorAll('.qcm-opt');
+        for (var i = 0; i < opts.length; i++) {
+            opts[i].classList.remove('selected', 'correct', 'wrong');
+        }
+
+        // Reset pick grids
+        var picks = document.querySelectorAll('.pick-item');
+        for (var i = 0; i < picks.length; i++) {
+            picks[i].classList.remove('selected', 'wrong');
+        }
+
+        // Reset progress bars
+        $('epi-bar').style.width = '0%';
+        $('epi-bar-txt').textContent = 'Selectionnez les EPI obligatoires';
+        $('tools-bar').style.width = '0%';
+        $('tools-bar-txt').textContent = 'Selectionnez l\'outillage necessaire';
+
+        // Reset buttons
+        $('btn-next1').disabled = true;
+        $('btn-next2').disabled = true;
+        $('btn-results').disabled = true;
+
+        // Reset locks
+        if ($('step2-lock')) $('step2-lock').style.display = '';
+        if ($('step3-lock')) $('step3-lock').style.display = '';
+
+        // Close sections
+        var bodies = document.querySelectorAll('.step-body');
+        for (var i = 0; i < bodies.length; i++) bodies[i].classList.remove('open');
+        var chevs = document.querySelectorAll('.chevron');
+        for (var i = 0; i < chevs.length; i++) chevs[i].classList.remove('open');
+
+        // Hide results
+        $('results').style.display = 'none';
+
+        updateGlobal();
+        document.querySelector('.header').scrollIntoView({ behavior: 'smooth' });
+        toast('Evaluation reinitialisee.');
+
+        setTimeout(function() { toggleStep('step1'); }, 400);
+    };
+
+    // ════════════════════════════════════════
+    // ACCESSIBILITE
+    // ════════════════════════════════════════
+    window.toggleAccessibility = function() {
+        document.body.classList.toggle('accessibility-mode');
+        var on = document.body.classList.contains('accessibility-mode');
+        localStorage.setItem('inerweb-a11y', on ? '1' : '0');
+        toast(on ? 'Mode accessibilite active' : 'Mode accessibilite desactive');
+    };
+
+    window.toggleFullscreen = function() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+        } else {
+            document.exitFullscreen();
+        }
+    };
+
+    // ════════════════════════════════════════
+    // DOCUMENTATION TECHNIQUE (MODAL)
+    // ════════════════════════════════════════
+    var docs = {
+        securite: {
+            title: 'Securite lors de la manipulation des fluides frigorigenes',
+            html: '<h3>Pourquoi la securite est-elle si importante ?</h3>' +
+                '<p>Les fluides frigorigenes ne sont pas "juste du gaz inoffensif". Ce sont des substances chimiques qui peuvent causer des blessures graves si elles sont mal manipulees. Imaginez que vous touchez accidentellement du fluide liquide : en une fraction de seconde, votre peau peut etre brulee par le froid extreme.</p>' +
+                '<h3>Les regles de base</h3>' +
+                '<p><strong>1. JAMAIS sans equipements de protection :</strong></p>' +
+                '<ul>' +
+                '<li><strong>Lunettes</strong> : Protegent vos yeux des projections.</li>' +
+                '<li><strong>Gants speciaux</strong> : Ils doivent resister au froid extreme.</li>' +
+                '<li><strong>Chaussures de securite</strong> : En cas de fuite au sol.</li>' +
+                '<li><strong>Vetements couvrants</strong> : Bras et jambes entierement couverts.</li>' +
+                '</ul>' +
+                '<p><strong>2. Ventilation obligatoire :</strong></p>' +
+                '<p>Avant d\'intervenir, assurez-vous que le local est bien aere. Les fluides frigorigenes sont plus lourds que l\'air et s\'accumulent au sol, chassant l\'oxygene.</p>'
+        },
+        dangers: {
+            title: 'Comprendre les dangers des fluides frigorigenes',
+            html: '<h3>Le danger du froid extreme</h3>' +
+                '<p>Les fluides frigorigenes sont stockes sous pression. Quand ils s\'echappent, ils passent brutalement de l\'etat liquide a l\'etat gazeux en refroidissant enormement. Le R134a bout a -26&#176;C !</p>' +
+                '<ul>' +
+                '<li>Si du liquide touche votre peau = gelure immediate</li>' +
+                '<li>Si des gouttelettes entrent dans vos yeux = lesions de la cornee</li>' +
+                '<li>L\'effet est comparable a toucher de la glace carbonique</li>' +
+                '</ul>' +
+                '<h3>Le risque d\'asphyxie</h3>' +
+                '<p>Les fluides frigorigenes sont plus denses que l\'air. Ils s\'accumulent dans les points bas et chassent l\'oxygene. Dans un local ferme, le risque d\'asphyxie est reel.</p>'
+        },
+        reglementation: {
+            title: 'Reglementation applicable',
+            html: '<h3>Cadre reglementaire</h3>' +
+                '<p>La manipulation des fluides frigorigenes est encadree par :</p>' +
+                '<ul>' +
+                '<li><strong>Reglement F-Gaz (UE) 2024/573</strong> : encadrement des fluides a effet de serre</li>' +
+                '<li><strong>Code de l\'environnement</strong> : articles R543-75 a R543-123</li>' +
+                '<li><strong>Attestation d\'aptitude</strong> : obligatoire pour tout technicien manipulant des fluides</li>' +
+                '</ul>' +
+                '<h3>Obligations du technicien</h3>' +
+                '<ul>' +
+                '<li>Recuperation obligatoire du fluide (pas de rejet dans l\'atmosphere)</li>' +
+                '<li>Controle d\'etancheite apres toute intervention</li>' +
+                '<li>Traçabilite des operations (fiche d\'intervention)</li>' +
+                '</ul>'
+        },
+        epi: {
+            title: 'EPI du frigoriste',
+            html: '<h3>Equipements obligatoires</h3>' +
+                '<ul>' +
+                '<li><strong>Lunettes de securite</strong> : protection oculaire contre les projections de fluide</li>' +
+                '<li><strong>Gants frigoriste</strong> : resistants au froid extreme et aux produits chimiques</li>' +
+                '<li><strong>Chaussures de securite S3</strong> : protection des pieds, antiderapantes</li>' +
+                '<li><strong>Bleu de travail</strong> : protection corporelle, couvrant bras et jambes</li>' +
+                '</ul>' +
+                '<h3>EPI complementaires selon contexte</h3>' +
+                '<p>Le casque, le masque respiratoire, le gilet haute visibilite et la protection auditive ne sont pas necessaires pour une intervention standard de pose de manometres en local technique.</p>'
+        },
+        inrs: {
+            title: 'INRS ED 105 — EPI',
+            html: '<h3>Principes de choix des EPI</h3>' +
+                '<p>L\'INRS recommande de suivre la hierarchie de prevention : suppression du risque, protection collective, puis protection individuelle.</p>' +
+                '<p>Pour la manipulation de fluides frigorigenes, les EPI doivent etre adaptes aux risques identifies : froid, pression, projection chimique.</p>'
+        },
+        outillage: {
+            title: 'Outillage du frigoriste',
+            html: '<h3>Outils essentiels pour la pose de manometres</h3>' +
+                '<ul>' +
+                '<li><strong>Manifold</strong> : ensemble de manometres HP/BP avec vannes de service</li>' +
+                '<li><strong>Flexibles de charge</strong> : tuyaux raccordant le manifold a l\'installation</li>' +
+                '<li><strong>Cles (cliquet, molette, Allen)</strong> : pour le serrage/desserrage des raccords</li>' +
+                '<li><strong>Detecteur de fuite</strong> : verification de l\'etancheite apres raccordement</li>' +
+                '<li><strong>Pompe a vide</strong> : pour la mise au vide des flexibles avant raccordement</li>' +
+                '<li><strong>Vacuometre</strong> : mesure du niveau de vide atteint</li>' +
+                '</ul>'
+        },
+        manometres: {
+            title: 'Guide : Pose et depose de manometres',
+            html: '<h3>Procedure de pose</h3>' +
+                '<ol>' +
+                '<li>Verifier les EPI</li>' +
+                '<li>Identifier les vannes de service sur l\'installation</li>' +
+                '<li>Connecter les flexibles au manifold (BP = bleu, HP = rouge)</li>' +
+                '<li>Purger les flexibles avant raccordement</li>' +
+                '<li>Raccorder aux vannes de service (sans forcer)</li>' +
+                '<li>Ouvrir lentement les vannes</li>' +
+                '<li>Lire les pressions et verifier la coherence</li>' +
+                '</ol>' +
+                '<h3>Procedure de depose</h3>' +
+                '<ol>' +
+                '<li>Fermer les vannes de service</li>' +
+                '<li>Recuperer le fluide residuel dans les flexibles</li>' +
+                '<li>Deconnecter les flexibles</li>' +
+                '<li>Obturer les vannes de service</li>' +
+                '<li>Controler l\'etancheite</li>' +
+                '</ol>'
+        }
+    };
+
+    window.showDoc = function(key) {
+        var doc = docs[key];
+        if (!doc) return;
+        $('modal-content').innerHTML = '<h2>' + doc.title + '</h2>' + doc.html;
+        $('modal').classList.add('active');
+    };
+
+    window.closeModal = function() {
+        $('modal').classList.remove('active');
+    };
+
+    // Fermer modal au clic exterieur
+    $('modal').addEventListener('click', function(e) {
+        if (e.target === this) closeModal();
+    });
+
+    // ════════════════════════════════════════
+    // INIT
+    // ════════════════════════════════════════
+    $('stu-date').value = new Date().toISOString().split('T')[0];
+
+    // Charger accessibilite
+    if (localStorage.getItem('inerweb-a11y') === '1') {
+        document.body.classList.add('accessibility-mode');
+    }
+
+})();
+</script>
+</body>
+</html>
