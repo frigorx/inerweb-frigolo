@@ -30,7 +30,7 @@
   // ════════════════════════════════════════════
   // URL DU COLLECTEUR UNIVERSEL
   // ════════════════════════════════════════════
-  var SHEET_URL = 'https://script.google.com/macros/s/AKfycbwnVGxTLglUfjbuC6hcN-phEmAc4QYsTY6hXems1ELNGnENCLE1j-o7QTJ2KiGIV242/exec';
+  var SHEET_URL = 'https://script.google.com/macros/s/AKfycbz5Bkn1tacs98bJezjnnYt38Yuy6QiHh7qWuEk1KRxS4UMIjl0yFOA0FVakLwCAJhZ5/exec';
 
   // Clé localStorage
   var STORAGE_KEY = 'inerweb-results';
