@@ -1247,6 +1247,9 @@ body {
     <p><a href="../index.html">← Retour portail FRIGOLO</a> &nbsp; <a href="prof-conversion.html" class="prof-lock" title="Espace enseignant">🔒</a></p>
 </div>
 
+<!-- Collecteur universel inerWeb -->
+<script src="../inerweb-results.js"></script>
+
 <!-- ═══════════════════════════════════════════════ -->
 <!-- SCRIPT PRINCIPAL                               -->
 <!-- ═══════════════════════════════════════════════ -->
@@ -1257,7 +1260,7 @@ body {
 // ═══════════════════════════════════════════════
 // CONFIGURATION
 // ═══════════════════════════════════════════════
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxaiwORhdONZXxFRNqXCThd5RAjcfcH9plwbfNBl0nRh9gsoEcN1tR3DSQwIZ7FX_K3/exec';
+// L'envoi se fait via inerweb-results.js (inclus en bas de page)
 
 const TUBES = [
     { pouce:'1/4',   num:1, den:4,  mm:6.35,  rayon:6.35  },
@@ -1907,42 +1910,31 @@ window.submitEval = function() {
 };
 
 // ═══════════════════════════════════════════════
-// ENVOI GOOGLE SHEETS
+// ENVOI VIA COLLECTEUR UNIVERSEL (inerweb-results.js)
 // ═══════════════════════════════════════════════
 function sendToSheets(result, note20, comps) {
-    if (!APPS_SCRIPT_URL) return;
+    if (typeof inerwebSend !== 'function') {
+        console.warn('[inerWeb] inerweb-results.js non chargé');
+        return;
+    }
 
-    const data = {
-        timestamp: new Date().toISOString(),
+    inerwebSend({
+        module: 'Conversion Pouce & Cintrage',
         nom: document.getElementById('stu-nom').value.trim(),
         prenom: document.getElementById('stu-prenom').value.trim(),
         classe: document.getElementById('stu-classe').value,
         note20: note20,
-        scoreEval: Math.round(result.pct * 100),
+        score: Math.round(result.pct * 100),
         detail: result.ok + '/' + result.total,
-        tempsSecondes: EVAL_DURATION - evalTimeLeft,
-        // Compétences TNE
-        C1_conversion: comps[0].grade.code,
-        C2_rayon: comps[1].grade.code,
-        C3_developpé: comps[2].grade.code,
-        C4_synthese: comps[3].grade.code
-    };
-
-    // Toujours sauvegarder en local (filet de sécurité)
-    const allResults = JSON.parse(localStorage.getItem('frigolo-results') || '[]');
-    allResults.push(data);
-    localStorage.setItem('frigolo-results', JSON.stringify(allResults));
-
-    // Tenter l'envoi vers Google Sheets
-    fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-    }).then(() => {
-        toast('Résultats envoyés + sauvegardés', 'success');
-    }).catch(() => {
-        toast('Sauvegardé localement (envoi Sheet échoué)', 'error');
+        temps: EVAL_DURATION - evalTimeLeft,
+        competences: {
+            C1: comps[0].grade.code,
+            C2: comps[1].grade.code,
+            C3: comps[2].grade.code,
+            C4: comps[3].grade.code
+        }
+    }).then(function(r) {
+        toast(r.status === 'sent' ? 'Résultats envoyés !' : 'Sauvegardé localement', r.status === 'sent' ? 'success' : 'error');
     });
 }
 
