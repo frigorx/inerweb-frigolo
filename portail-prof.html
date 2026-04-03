@@ -117,9 +117,48 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 
         <!-- Actions rapides -->
         <div class="quick-bar">
-            <a class="quick-btn accent" href="outils/admin.html" target="_blank">📊 Tableau de bord résultats</a>
+            <a class="quick-btn accent" href="outils/admin.html" target="_blank">📊 Dashboard résultats</a>
             <a class="quick-btn" href="https://docs.google.com/spreadsheets/d/16T1T3yL6M49OhJUQS1SmFHwW7Bywp7m2kSXDiXdmItk" target="_blank">📋 Google Sheet</a>
-            <a class="quick-btn" href="index.html" target="_blank">🌐 Portail élève frigorx</a>
+            <a class="quick-btn" href="index.html" target="_blank">🌐 Portail élève</a>
+        </div>
+
+        <!-- ═══ ÉCOSYSTÈME inerWeb ═══ -->
+        <div class="section-title">🏠 Écosystème inerWeb</div>
+        <div class="mod-grid">
+            <div class="mod-card">
+                <div class="mod-card-top" style="background:linear-gradient(135deg,#1b3a63,#ff6b35);">production</div>
+                <div class="mod-card-body">
+                    <h3>inerWeb TT-IA (Suivi CCF)</h3>
+                    <p>Suivi des CCF, PFMP, compétences. Espaces prof, élève, tuteur, admin. Version FUSION en production.</p>
+                    <div><span class="tag tag-bac">Bac Pro MFER</span> <span class="tag tag-cap">CAP IFCA</span> <span class="tag tag-tne">2nde TNE</span></div>
+                    <div class="mod-card-actions">
+                        <a class="btn-sm btn-link" href="https://frigorx.github.io/tt-ia/" target="_blank">Ouvrir TT-IA</a>
+                        <button class="btn-sm btn-qr" onclick="event.stopPropagation();showQR('inerWeb TT-IA','https://frigorx.github.io/tt-ia/');">QR Code</button>
+                    </div>
+                </div>
+            </div>
+            <div class="mod-card">
+                <div class="mod-card-top" style="background:linear-gradient(135deg,#2c3e50,#e74c3c);">local</div>
+                <div class="mod-card-body">
+                    <h3>inerWeb HAL (Le Mur)</h3>
+                    <p>Carte de progression multi-filière + IA. 26 699 fichiers TP, enrichissement Gemini. Fonctionne sur clé USB.</p>
+                    <div><span class="tag tag-bac">Bac Pro MFER</span> <span class="tag tag-cap">CAP IFCA</span> <span class="tag tag-tne">2nde TNE</span> <span class="tag tag-bts">BTS FED</span></div>
+                    <div class="mod-card-actions">
+                        <a class="btn-sm" style="background:#e74c3c;" href="file:///C:/Users/henni/OneDrive/Bureau/inerweb%20full%20ia/le-mur.html" target="_blank">Ouvrir Le Mur</a>
+                    </div>
+                </div>
+            </div>
+            <div class="mod-card">
+                <div class="mod-card-top" style="background:linear-gradient(135deg,#0f2d52,#2aafaf);">en cours</div>
+                <div class="mod-card-body">
+                    <h3>inerWeb Fluide v8</h3>
+                    <p>CERFA, gestion fluides frigorigènes, BSD. Application métier pour le suivi réglementaire F-GAZ.</p>
+                    <div><span class="tag tag-bac">Bac Pro MFER</span></div>
+                    <div class="mod-card-actions">
+                        <span style="font-size:.75rem;color:var(--muted);font-weight:600;">En développement</span>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- ═══ MODULES ÉVALUATION ═══ -->
