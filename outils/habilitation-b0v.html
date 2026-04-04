@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Habilitation B0V — inerWeb FRIGOLO</title>
+<meta name="author" content="F. Henninot">
+<meta name="description" content="Module gamifie habilitation electrique B0V pour eleves frigoristes — 6 niveaux progressifs.">
+<script src="../inerweb-results.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0f2d52;--navy2:#1a4a6e;--teal:#2aafaf;--accent:#e8914a;--accent2:#d47a35;
+  --success:#27ae60;--error:#e74c3c;--warning:#f39c12;
+  --bg:#f0f4f8;--card:#fff;--text:#2c3e50;--muted:#5a7080;
+  --shadow:0 4px 16px rgba(15,45,82,.07);
+  --radius:16px;--radius-sm:10px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Segoe UI',system-ui,sans-serif;color:var(--text);background:var(--bg);min-height:100vh;line-height:1.6}
+.app{max-width:720px;margin:0 auto;padding:0 12px 100px}
+
+/* ═══════ HEADER ═══════ */
+.hdr{position:sticky;top:0;z-index:100;background:linear-gradient(135deg,#0f2d52,#1a4a6e,#2aafaf);padding:14px 20px;border-bottom:4px solid var(--accent);box-shadow:0 4px 20px rgba(15,45,82,.2)}
+.hdr-top{display:flex;align-items:center;justify-content:space-between}
+.hdr h1{font-size:1.15rem;font-weight:800;color:#fff;letter-spacing:1px}
+.hdr h1 span{color:var(--accent)}
+.hdr .sub{font-size:.72rem;color:rgba(255,255,255,.75);margin-top:2px}
+.hdr-back{color:rgba(255,255,255,.8);text-decoration:none;font-size:.78rem;font-weight:600;padding:6px 12px;border:1px solid rgba(255,255,255,.3);border-radius:8px;transition:all .2s}
+.hdr-back:hover{background:rgba(255,255,255,.1);color:#fff}
+
+/* ═══════ BARRE XP ═══════ */
+.xp-bar-wrap{background:rgba(0,0,0,.15);padding:8px 20px 10px;margin:0 -12px}
+.xp-info{display:flex;justify-content:space-between;align-items:center;font-size:.72rem;font-weight:700;color:rgba(255,255,255,.9);margin-bottom:4px}
+.xp-bar{height:10px;background:rgba(0,0,0,.2);border-radius:99px;overflow:hidden}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--accent),#f7c948,var(--success));border-radius:99px;transition:width .6s ease;width:0}
+.xp-badges{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.xp-badge{font-size:.65rem;padding:2px 8px;border-radius:99px;background:rgba(255,255,255,.15);color:rgba(255,255,255,.7);font-weight:600;transition:all .3s}
+.xp-badge.earned{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(232,145,74,.4)}
+
+/* ═══════ NIVEAUX NAV ═══════ */
+.levels-nav{display:flex;gap:6px;padding:14px 0;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.level-dot{flex:0 0 auto;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:800;border:3px solid #dce4ec;background:#fff;color:#aab;cursor:not-allowed;transition:all .3s;position:relative}
+.level-dot.unlocked{border-color:var(--teal);color:var(--navy);cursor:pointer;box-shadow:0 2px 8px rgba(42,175,175,.2)}
+.level-dot.unlocked:hover{transform:scale(1.1)}
+.level-dot.active{border-color:var(--accent);background:var(--accent);color:#fff;box-shadow:0 4px 14px rgba(232,145,74,.35)}
+.level-dot.completed{border-color:var(--success);background:var(--success);color:#fff}
+.level-dot .lock-icon{font-size:.7rem;position:absolute;bottom:-2px;right:-2px}
+
+/* ═══════ CARDS ═══════ */
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid #e2e8f0;padding:22px 18px;margin-bottom:16px;animation:fadeUp .4s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.card-title{font-size:1.1rem;font-weight:800;color:var(--navy);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.card-title .lvl-badge{font-size:.65rem;padding:3px 10px;border-radius:99px;background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;font-weight:700}
+
+/* ═══════ COURS ═══════ */
+.cours{margin-bottom:18px}
+.cours h3{font-size:.95rem;font-weight:700;color:var(--navy);margin:14px 0 6px;display:flex;align-items:center;gap:6px}
+.cours p,.cours li{font-size:.85rem;line-height:1.7;color:var(--text)}
+.cours ul{padding-left:18px;margin:6px 0}
+.cours li{margin:4px 0}
+.info-box{background:linear-gradient(135deg,rgba(42,175,175,.08),rgba(42,175,175,.03));border:2px solid var(--teal);border-radius:var(--radius-sm);padding:14px 16px;margin:12px 0;font-size:.82rem}
+.danger-box{background:linear-gradient(135deg,rgba(231,76,60,.08),rgba(231,76,60,.03));border:2px solid var(--error);border-radius:var(--radius-sm);padding:14px 16px;margin:12px 0;font-size:.82rem}
+.warning-box{background:linear-gradient(135deg,rgba(243,156,18,.08),rgba(243,156,18,.03));border:2px solid var(--warning);border-radius:var(--radius-sm);padding:14px 16px;margin:12px 0;font-size:.82rem}
+
+/* ═══════ BOUTONS ═══════ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:12px 24px;border:none;border-radius:var(--radius-sm);font-size:.9rem;font-weight:700;font-family:inherit;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.btn:active{transform:scale(.96)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-primary{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;box-shadow:0 4px 14px rgba(15,45,82,.2)}
+.btn-accent{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 4px 14px rgba(232,145,74,.25)}
+.btn-teal{background:linear-gradient(135deg,var(--teal),#1a9090);color:#fff}
+.btn-success{background:linear-gradient(135deg,var(--success),#1e8e50);color:#fff}
+.btn-block{width:100%;margin-top:14px}
+.btn-sm{padding:8px 16px;font-size:.78rem;border-radius:8px}
+
+/* ═══════ FORMULAIRE ID ═══════ */
+.id-form{margin-bottom:16px}
+.id-form label{display:block;font-size:.78rem;font-weight:700;color:var(--navy);margin-bottom:3px;margin-top:10px}
+.id-form input,.id-form select{width:100%;padding:10px 14px;border:2px solid #dce4ec;border-radius:var(--radius-sm);font-size:.88rem;font-family:inherit;background:#fff;transition:border .2s}
+.id-form input:focus,.id-form select:focus{outline:none;border-color:var(--teal)}
+
+/* ═══════ VRAI/FAUX SWIPE ═══════ */
+.vf-container{position:relative;min-height:200px;display:flex;align-items:center;justify-content:center;margin:14px 0}
+.vf-card{position:absolute;width:100%;background:#fff;border:3px solid #dce4ec;border-radius:var(--radius);padding:24px 20px;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.1);transition:transform .4s ease,opacity .4s ease;touch-action:pan-y;user-select:none;cursor:grab}
+.vf-card.swiping{transition:none}
+.vf-card .vf-q{font-size:.95rem;font-weight:700;color:var(--navy);line-height:1.5;margin-bottom:16px}
+.vf-card .vf-num{font-size:.68rem;color:var(--muted);margin-bottom:8px}
+.vf-btns{display:flex;gap:12px;justify-content:center}
+.vf-btn{flex:1;max-width:140px;padding:14px;border:3px solid;border-radius:12px;font-size:.95rem;font-weight:800;font-family:inherit;cursor:pointer;transition:all .2s}
+.vf-btn-faux{border-color:var(--error);color:var(--error);background:rgba(231,76,60,.05)}
+.vf-btn-faux:hover{background:var(--error);color:#fff}
+.vf-btn-vrai{border-color:var(--success);color:var(--success);background:rgba(39,174,96,.05)}
+.vf-btn-vrai:hover{background:var(--success);color:#fff}
+.vf-feedback{margin-top:12px;padding:12px;border-radius:var(--radius-sm);font-size:.82rem;font-weight:600;display:none}
+.vf-feedback.ok{display:block;background:rgba(39,174,96,.1);color:var(--success);border:2px solid var(--success)}
+.vf-feedback.ko{display:block;background:rgba(231,76,60,.1);color:var(--error);border:2px solid var(--error)}
+.vf-score{text-align:center;font-size:.85rem;font-weight:700;color:var(--navy);margin-top:8px}
+
+/* ═══════ DRAG & DROP ═══════ */
+.dd-zones{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;min-height:120px}
+.dd-zone{border:3px dashed #ccd;border-radius:var(--radius);padding:12px;min-height:100px;transition:border-color .2s,background .2s}
+.dd-zone.over{border-color:var(--teal);background:rgba(42,175,175,.05)}
+.dd-zone h4{font-size:.78rem;font-weight:700;text-align:center;margin-bottom:8px;padding:6px;border-radius:8px}
+.dd-zone-danger h4{color:var(--error);background:rgba(231,76,60,.1)}
+.dd-zone-safe h4{color:var(--success);background:rgba(39,174,96,.1)}
+.dd-items{display:flex;flex-direction:column;gap:8px;margin:14px 0}
+.dd-item{padding:10px 14px;background:#fff;border:2px solid #dce4ec;border-radius:var(--radius-sm);font-size:.8rem;font-weight:600;color:var(--navy);cursor:grab;touch-action:none;user-select:none;transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.dd-item:active{cursor:grabbing;box-shadow:0 6px 20px rgba(0,0,0,.15);transform:scale(1.03)}
+.dd-item.placed{opacity:.7;font-size:.72rem;padding:7px 10px}
+.dd-item.correct{border-color:var(--success);background:rgba(39,174,96,.08)}
+.dd-item.incorrect{border-color:var(--error);background:rgba(231,76,60,.08)}
+
+/* ═══════ QCM ENRICHI ═══════ */
+.qcm-q{margin:14px 0;padding:16px;background:#fafbfc;border:2px solid #e2e8f0;border-radius:var(--radius-sm)}
+.qcm-q .q-text{font-size:.88rem;font-weight:700;color:var(--navy);margin-bottom:10px}
+.qcm-q .q-scenario{font-size:.78rem;color:var(--muted);font-style:italic;margin-bottom:8px;padding:8px;background:rgba(42,175,175,.05);border-radius:8px}
+.qcm-opts{display:flex;flex-direction:column;gap:6px}
+.qcm-opt{padding:10px 14px;border:2px solid #dce4ec;border-radius:8px;font-size:.82rem;cursor:pointer;transition:all .2s;background:#fff}
+.qcm-opt:hover{border-color:var(--teal);background:rgba(42,175,175,.03)}
+.qcm-opt.selected{border-color:var(--navy);background:rgba(15,45,82,.05);font-weight:700}
+.qcm-opt.correct{border-color:var(--success);background:rgba(39,174,96,.1)}
+.qcm-opt.wrong{border-color:var(--error);background:rgba(231,76,60,.1)}
+.qcm-opt.disabled{pointer-events:none;opacity:.85}
+.q-feedback{font-size:.75rem;margin-top:6px;padding:8px;border-radius:6px;display:none}
+.q-feedback.show{display:block}
+
+/* ═══════ ASSOCIATION (PAIRES) ═══════ */
+.assoc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.assoc-item{padding:12px;border:2px solid #dce4ec;border-radius:var(--radius-sm);text-align:center;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;background:#fff;user-select:none}
+.assoc-item:hover{border-color:var(--teal)}
+.assoc-item.sel{border-color:var(--accent);background:rgba(232,145,74,.08);box-shadow:0 0 0 3px rgba(232,145,74,.15)}
+.assoc-item.matched{border-color:var(--success);background:rgba(39,174,96,.1);pointer-events:none;opacity:.85}
+.assoc-item.wrong-flash{animation:wrongShake .4s ease}
+@keyframes wrongShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.assoc-picto{font-size:1.8rem;display:block;margin-bottom:4px}
+
+/* ═══════ SCENARIOS ═══════ */
+.scenario{margin:14px 0;padding:16px;background:linear-gradient(135deg,rgba(15,45,82,.03),rgba(42,175,175,.03));border:2px solid #d0d8e0;border-radius:var(--radius);position:relative}
+.scenario .sc-num{position:absolute;top:-10px;left:14px;background:var(--navy);color:#fff;font-size:.65rem;font-weight:700;padding:2px 10px;border-radius:99px}
+.scenario .sc-text{font-size:.85rem;line-height:1.7;margin:8px 0 12px;font-weight:600;color:var(--navy)}
+.sc-choices{display:flex;flex-direction:column;gap:8px}
+.sc-choice{padding:12px 14px;border:2px solid #dce4ec;border-radius:var(--radius-sm);font-size:.8rem;cursor:pointer;transition:all .2s;background:#fff}
+.sc-choice:hover{border-color:var(--teal)}
+.sc-choice.selected{border-color:var(--navy);font-weight:700}
+.sc-choice.best{border-color:var(--success);background:rgba(39,174,96,.1)}
+.sc-choice.bad{border-color:var(--error);background:rgba(231,76,60,.08)}
+.sc-choice.disabled{pointer-events:none;opacity:.85}
+.sc-result{font-size:.78rem;margin-top:8px;padding:10px;border-radius:8px;display:none}
+.sc-result.show{display:block}
+
+/* ═══════ TIMER ═══════ */
+.timer-bar{display:flex;align-items:center;gap:8px;margin-bottom:14px;padding:10px 14px;background:#fff;border:2px solid #e2e8f0;border-radius:var(--radius-sm)}
+.timer-bar .timer-icon{font-size:1.1rem}
+.timer-bar .timer-text{font-size:.88rem;font-weight:700;color:var(--navy);flex:1}
+.timer-bar .timer-count{font-size:1rem;font-weight:800;font-variant-numeric:tabular-nums}
+.timer-bar.urgent{border-color:var(--error)}
+.timer-bar.urgent .timer-count{color:var(--error);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ═══════ RESULTATS ═══════ */
+.result-card{text-align:center;padding:30px 20px}
+.result-score{font-size:3rem;font-weight:900;margin:10px 0}
+.result-score.good{color:var(--success)}
+.result-score.mid{color:var(--warning)}
+.result-score.bad{color:var(--error)}
+.result-detail{font-size:.85rem;color:var(--muted);margin:8px 0}
+.comp-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0;text-align:left}
+.comp-item{padding:10px;border-radius:8px;font-size:.75rem;border:2px solid #e2e8f0}
+.comp-item.M{border-color:var(--success);background:rgba(39,174,96,.08)}
+.comp-item.ECA{border-color:var(--warning);background:rgba(243,156,18,.08)}
+.comp-item.NI{border-color:var(--error);background:rgba(231,76,60,.08)}
+.comp-label{font-weight:700;color:var(--navy);display:block;margin-bottom:2px}
+.comp-val{font-weight:800}
+
+/* ═══════ CONFETTI CANVAS ═══════ */
+#confetti-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999}
+
+/* ═══════ LEVEL VICTORY ═══════ */
+.victory-overlay{position:fixed;inset:0;background:rgba(15,45,82,.85);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .4s}
+.victory-overlay.show{opacity:1;pointer-events:auto}
+.victory-box{background:#fff;border-radius:20px;padding:30px 24px;text-align:center;max-width:340px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.3);transform:scale(.8);transition:transform .4s}
+.victory-overlay.show .victory-box{transform:scale(1)}
+.victory-icon{font-size:3rem;margin-bottom:8px}
+.victory-title{font-size:1.2rem;font-weight:800;color:var(--navy);margin-bottom:4px}
+.victory-sub{font-size:.82rem;color:var(--muted);margin-bottom:6px}
+.victory-xp{font-size:1.1rem;font-weight:800;color:var(--accent);margin:8px 0}
+.victory-badge{display:inline-block;padding:6px 16px;border-radius:99px;background:var(--accent);color:#fff;font-size:.78rem;font-weight:700;margin:8px 0}
+
+/* ═══════ CADENAS PROF ═══════ */
+.prof-lock{position:fixed;bottom:12px;right:12px;z-index:50;opacity:.3;transition:opacity .3s;text-decoration:none;font-size:1.1rem;padding:6px 10px;background:rgba(255,255,255,.9);border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.prof-lock:hover{opacity:1}
+
+/* ═══════ PANNEAU DOCUMENTS RESSOURCES ═══════ */
+.res-toggle{position:fixed;bottom:60px;right:12px;z-index:150;background:linear-gradient(135deg,#0f2d52,#1a4a6e);color:#fff;border:none;border-radius:12px;padding:10px 14px;font-size:.78rem;font-weight:700;font-family:inherit;cursor:pointer;box-shadow:0 4px 16px rgba(15,45,82,.3);display:flex;align-items:center;gap:6px;transition:transform .2s,box-shadow .2s}
+.res-toggle:hover{transform:scale(1.05);box-shadow:0 6px 20px rgba(15,45,82,.4)}
+.res-toggle .res-icon{font-size:1.1rem}
+.res-panel{position:fixed;top:0;right:-380px;width:360px;max-width:90vw;height:100vh;background:#fff;z-index:200;box-shadow:-8px 0 30px rgba(0,0,0,.2);transition:right .35s ease;overflow-y:auto;display:flex;flex-direction:column}
+.res-panel.open{right:0}
+.res-panel-hdr{position:sticky;top:0;background:linear-gradient(135deg,#0f2d52,#1a4a6e);padding:16px 18px;display:flex;align-items:center;justify-content:space-between;z-index:1}
+.res-panel-hdr h2{color:#fff;font-size:1rem;font-weight:800;margin:0}
+.res-panel-close{background:none;border:none;color:rgba(255,255,255,.8);font-size:1.3rem;cursor:pointer;padding:4px 8px}
+.res-panel-close:hover{color:#fff}
+.res-panel-body{padding:14px 16px;flex:1}
+.res-ch{margin-bottom:10px}
+.res-ch a{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f8fafc;border:2px solid #e2e8f0;border-radius:10px;text-decoration:none;color:var(--navy);font-size:.8rem;font-weight:600;transition:all .2s;line-height:1.4}
+.res-ch a:hover{border-color:var(--teal);background:rgba(42,175,175,.05)}
+.res-ch a .res-ch-icon{font-size:1.1rem;flex:0 0 auto}
+.res-ch a .res-ch-num{font-size:.65rem;font-weight:700;color:var(--accent);display:block;margin-bottom:1px}
+.res-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:190;opacity:0;pointer-events:none;transition:opacity .3s}
+.res-overlay.open{opacity:1;pointer-events:auto}
+
+/* ═══════ REFERENCE DOC INLINE ═══════ */
+.doc-ref{display:inline-flex;align-items:center;gap:4px;font-size:.72rem;color:var(--navy2);background:rgba(42,175,175,.08);border:1px solid rgba(42,175,175,.25);border-radius:6px;padding:3px 8px;margin:6px 0 2px;text-decoration:none;transition:all .2s;cursor:pointer}
+.doc-ref:hover{background:rgba(42,175,175,.15);border-color:var(--teal);color:var(--navy)}
+.doc-ref .doc-ref-icon{font-size:.85rem}
+
+/* ═══════ SECTION HIDE ═══════ */
+.section{display:none}
+.section.active{display:block}
+
+/* ═══════ RESPONSIVE ═══════ */
+@media(max-width:480px){
+  .hdr h1{font-size:1rem}
+  .card{padding:16px 14px}
+  .dd-zones{grid-template-columns:1fr}
+  .assoc-grid{grid-template-columns:1fr 1fr}
+  .comp-grid{grid-template-columns:1fr}
+  .vf-card{padding:18px 14px}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-top">
+    <div>
+      <h1>inerWeb <span>FRIGOLO</span></h1>
+      <div class="sub">Habilitation B0V — Risque Electrique</div>
+    </div>
+    <a href="../index.html" class="hdr-back">Retour</a>
+  </div>
+  <div class="xp-bar-wrap">
+    <div class="xp-info">
+      <span id="xp-label">0 XP</span>
+      <span id="xp-level">Niveau 1/6</span>
+    </div>
+    <div class="xp-bar"><div class="xp-fill" id="xp-fill"></div></div>
+    <div class="xp-badges" id="badges-bar">
+      <span class="xp-badge" data-badge="1">Premier Pas</span>
+      <span class="xp-badge" data-badge="2">Detecteur</span>
+      <span class="xp-badge" data-badge="3">Reglementeur</span>
+      <span class="xp-badge" data-badge="4">Secouriste</span>
+      <span class="xp-badge" data-badge="5">Terrain</span>
+      <span class="xp-badge" data-badge="6">Certifie B0V</span>
+    </div>
+  </div>
+</header>
+
+<div class="app">
+
+<!-- NAV NIVEAUX -->
+<div class="levels-nav" id="levels-nav">
+  <div class="level-dot unlocked active" data-lv="0" onclick="goLevel(0)">1</div>
+  <div class="level-dot" data-lv="1"><span class="lock-icon">&#128274;</span>2</div>
+  <div class="level-dot" data-lv="2"><span class="lock-icon">&#128274;</span>3</div>
+  <div class="level-dot" data-lv="3"><span class="lock-icon">&#128274;</span>4</div>
+  <div class="level-dot" data-lv="4"><span class="lock-icon">&#128274;</span>5</div>
+  <div class="level-dot" data-lv="5"><span class="lock-icon">&#128274;</span>6</div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SECTION IDENTIFICATION -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section active" id="sec-id">
+  <div class="card">
+    <div class="card-title">Identification</div>
+    <div class="id-form">
+      <label for="inp-nom">Nom</label>
+      <input type="text" id="inp-nom" placeholder="Votre nom" autocomplete="off">
+      <label for="inp-prenom">Prenom</label>
+      <input type="text" id="inp-prenom" placeholder="Votre prenom" autocomplete="off">
+      <label for="inp-classe">Classe</label>
+      <select id="inp-classe">
+        <option value="">— Choisir —</option>
+        <option>CAP1 IFCA</option>
+        <option>CAP2 IFCA</option>
+        <option>2nde TNE</option>
+        <option>2nde MFER</option>
+        <option>1ere MFER</option>
+        <option>Tle MFER</option>
+        <option>1ere MV</option>
+        <option>Tle MV</option>
+        <option>BTS1 FED</option>
+        <option>BTS2 FED</option>
+        <option>Autre</option>
+      </select>
+    </div>
+    <button class="btn btn-accent btn-block" onclick="startModule()">Commencer la formation</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- NIVEAU 1 — Le Danger Invisible -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section" id="sec-1">
+  <div class="card">
+    <div class="card-title"><span class="lvl-badge">Niveau 1</span> Le Danger Invisible</div>
+    <div class="cours">
+      <a class="doc-ref" href="ressources-b0v/02_Ch01_Dangers_electricite_accidents_incidents_p05-p08.pdf" target="_blank"><span class="doc-ref-icon">&#128214;</span> Voir Chapitre 1, p.5-8 — Dangers de l'electricite</a>
+
+      <h3>L'electricite : un danger invisible</h3>
+      <p>L'electricite est le seul risque professionnel qui est <strong>totalement invisible</strong> : on ne la voit pas, on ne l'entend pas, elle n'a pas d'odeur. C'est ce qui la rend si dangereuse.</p>
+      <p>En tant que frigoriste, vous etes expose quotidiennement : raccordement d'equipements, travaux en toiture a proximite de lignes electriques, utilisation d'outillage electroportatif.</p>
+
+      <div class="danger-box">
+        <strong>Chiffres cles :</strong> En France, on recense environ 200 accidents du travail d'origine electrique par an, dont une dizaine mortels. Les metiers du froid sont particulierement concernes.
+      </div>
+
+      <h3>Les 4 effets du courant sur le corps</h3>
+      <ul>
+        <li><strong>Effet thermique (brulures)</strong> — Le courant echauffe les tissus qu'il traverse. Les brulures electriques sont profondes et souvent tres graves. Un arc electrique peut atteindre 20 000 degres C.</li>
+        <li><strong>Effet musculaire (tetanisation)</strong> — Les muscles se contractent involontairement. La victime ne peut plus lacher le conducteur. A partir de 10 mA, le seuil de non-lacher est atteint.</li>
+        <li><strong>Effet electrochimique (electrolyse)</strong> — Le courant decompose les liquides du corps (sang, lymphe). Cela provoque des dommages cellulaires internes invisibles.</li>
+        <li><strong>Effet de blast (arc electrique)</strong> — L'arc electrique provoque une onde de choc, un flash lumineux intense et une projection de metal en fusion. Risques : surdite, brulures, projection.</li>
+      </ul>
+
+      <h3>Electrisation ou electrocution ?</h3>
+      <div class="info-box">
+        <strong>Electrisation</strong> = passage du courant dans le corps (la personne survit).<br>
+        <strong>Electrocution</strong> = electrisation <strong>mortelle</strong> (deces de la victime).<br><br>
+        A partir de <strong>30 mA</strong>, risque de fibrillation cardiaque.<br>
+        A partir de <strong>1 A (1000 mA)</strong>, arret du coeur quasi certain.
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Mini-jeu : VRAI ou FAUX ?</div>
+    <a class="doc-ref" href="ressources-b0v/02_Ch01_Dangers_electricite_accidents_incidents_p05-p08.pdf" target="_blank"><span class="doc-ref-icon">&#128214;</span> Consultez le Chapitre 1 (p.5-8) pour trouver les reponses</a>
+    <p style="font-size:.78rem;color:var(--muted);margin-bottom:8px">Repondez a 8 affirmations. Score minimum : 6/8 pour passer au niveau suivant.</p>
+    <div class="vf-score" id="vf1-score"></div>
+    <div class="vf-container" id="vf1-container"></div>
+    <div id="vf1-feedback" class="vf-feedback"></div>
+    <div id="vf1-end" style="display:none;text-align:center;margin-top:14px">
+      <div id="vf1-final" style="font-size:.9rem;font-weight:700;margin-bottom:10px"></div>
+      <button class="btn btn-accent" id="vf1-next" style="display:none" onclick="completeLevel(1)">Niveau suivant</button>
+      <button class="btn btn-primary" id="vf1-retry" style="display:none" onclick="retryVF(1)">Reessayer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- NIVEAU 2 — Situations Dangereuses -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section" id="sec-2">
+  <div class="card">
+    <div class="card-title"><span class="lvl-badge">Niveau 2</span> Situations Dangereuses</div>
+    <div class="cours">
+      <a class="doc-ref" href="ressources-b0v/02_Ch01_Dangers_electricite_accidents_incidents_p05-p08.pdf" target="_blank"><span class="doc-ref-icon">&#128214;</span> Voir Chapitre 1, p.5-8 — Accidents et incidents</a>
+      <a class="doc-ref" href="ressources-b0v/03_Ch02_Mesures_de_protection_p09-p13.pdf" target="_blank" style="margin-left:4px"><span class="doc-ref-icon">&#128214;</span> Voir Chapitre 2, p.9-13 — Mesures de protection</a>
+
+      <h3>Situations dangereuses pour un frigoriste</h3>
+      <p>Un frigoriste intervient regulierement dans des environnements a risque electrique :</p>
+      <ul>
+        <li><strong>Raccordement electrique</strong> d'un groupe froid, d'une CTA, d'un split</li>
+        <li><strong>Travaux en toiture</strong> a proximite de lignes aeriennes</li>
+        <li><strong>Outillage electroportatif</strong> : perceuse, meuleuse, sertisseuse</li>
+        <li><strong>Intervention en local technique</strong> avec armoires electriques</li>
+        <li><strong>Environnement humide</strong> : chambre froide, condensation, nettoyage</li>
+      </ul>
+
+      <h3>Contact direct vs contact indirect</h3>
+      <div class="info-box">
+        <strong>Contact direct</strong> = la personne touche un element <strong>normalement sous tension</strong> (cable denude, borne, jeu de barres).<br><br>
+        <strong>Contact indirect</strong> = la personne touche une <strong>masse metallique</strong> mise accidentellement sous tension (coffret, carcasse moteur, tuyau) suite a un defaut d'isolement.
+      </div>
+      <p>Le contact indirect est le plus frequent et le plus sournois : l'element touche n'est pas <em>cense</em> etre sous tension.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Mini-jeu : Classez les situations</div>
+    <a class="doc-ref" href="ressources-b0v/02_Ch01_Dangers_electricite_accidents_incidents_p05-p08.pdf" target="_blank"><span class="doc-ref-icon">&#128214;</span> Chapitre 1, p.5-8</a>
+    <a class="doc-ref" href="ressources-b0v/03_Ch02_Mesures_de_protection_p09-p13.pdf" target="_blank" style="margin-left:4px"><span class="doc-ref-icon">&#128214;</span> Chapitre 2, p.9-13</a>
+    <a class="doc-ref" href="ressources-b0v/04_Ch03_Limites_zones_operations_liees_p14-p16.pdf" target="_blank" style="margin-left:4px"><span class="doc-ref-icon">&#128214;</span> Chapitre 3, p.14-16</a>
+    <p style="font-size:.78rem;color:var(--muted);margin-bottom:8px">Faites glisser chaque situation dans la bonne zone. Score minimum : 6/8.</p>
+    <div class="dd-items" id="dd2-items"></div>
+    <div class="dd-zones">
+      <div class="dd-zone dd-zone-danger" id="dd2-danger">
+        <h4>DANGEREUX</h4>
+      </div>
+      <div class="dd-zone dd-zone-safe" id="dd2-safe">
+        <h4>SANS RISQUE</h4>
+      </div>
+    </div>
+    <div id="dd2-feedback" style="display:none;margin-top:10px"></div>
+    <button class="btn btn-primary btn-block" id="dd2-check" onclick="checkDD(2)" disabled>Verifier mes reponses</button>
+    <div id="dd2-end" style="display:none;text-align:center;margin-top:14px">
+      <button class="btn btn-accent" id="dd2-next" style="display:none" onclick="completeLevel(2)">Niveau suivant</button>
+      <button class="btn btn-primary" id="dd2-retry" style="display:none" onclick="retryDD(2)">Reessayer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- NIVEAU 3 — B0V C'est quoi ? -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section" id="sec-3">
+  <div class="card">
+    <div class="card-title"><span class="lvl-badge">Niveau 3</span> B0V — C'est quoi ?</div>
+    <div class="cours">
+      <a class="doc-ref" href="ressources-b0v/09_Ch08_Habilitations_et_acteurs_p27-p30.pdf" target="_blank"><span class="doc-ref-icon">&#128214;</span> Voir Chapitre 8, p.27-30 — Habilitations et acteurs</a>
+      <a class="doc-ref" href="ressources-b0v/04_Ch03_Limites_zones_operations_liees_p14-p16.pdf" target="_blank" style="margin-left:4px"><span class="doc-ref-icon">&#128214;</span> Voir Chapitre 3, p.14-16 — Zones et operations</a>
+
+      <h3>Decoder le sigle B0V</h3>
+      <div class="info-box">
+        <strong>B</strong> = domaine <strong>Basse Tension</strong> (BT, jusqu'a 1000 V en alternatif)<br>
+        <strong>0</strong> = indice <strong>0 = non-electricien</strong> (pas de travaux electriques autorises)<br>
+        <strong>V</strong> = attribut <strong>Voisinage</strong> (peut s'approcher d'une installation electrique)
+      </div>
+
+      <h3>Qui delivre l'habilitation ?</h3>
+      <p>L'habilitation electrique est delivree par <strong>l'employeur</strong>, apres :</p>
+      <ul>
+        <li>Une <strong>formation</strong> adaptee au niveau d'habilitation vise</li>
+        <li>Un <strong>avis medical</strong> favorable du medecin du travail</li>
+        <li>Un <strong>avis</strong> favorable du formateur</li>
+      </ul>
+      <p>Elle est materialisee par un <strong>titre d'habilitation</strong> (carnet individuel) et doit etre <strong>recyclee tous les 3 ans</strong>.</p>
+
+      <h3>Que permet le B0V ?</h3>
+      <div class="info-box">
+        <strong>AUTORISE :</strong>
+        <ul>
+          <li>Executer des travaux d'ordre non electrique dans le <strong>voisinage</strong> d'installations BT</li>
+          <li>Acceder sans surveillance a un local electrique BT (sous conditions)</li>
+          <li>Manoeuvrer des dispositifs de commande (interrupteurs, boutons)</li>
+        </ul>
+      </div>
+      <div class="danger-box">
+        <strong>INTERDIT :</strong>
+        <ul>
+          <li>Realiser des <strong>travaux electriques</strong> (branchement, cablage, depannage)</li>
+          <li>Ouvrir un <strong>coffret electrique</strong> sous tension</li>
+          <li>Intervenir sur des <strong>pieces nues sous tension</strong></li>
+          <li>Realiser des <strong>mesures electriques</strong></li>
+        </ul>
+      </div>
+
+      <h3>Le carnet de prescriptions</h3>
+      <p>Tout travailleur habilite doit recevoir un <strong>carnet de prescriptions de securite electrique</strong>. Ce document rappelle les regles de securite, les procedures et les conduites a tenir. Il est <strong>obligatoire</strong> et doit etre accessible a tout moment.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Mini-jeu : QCM Reglementation</div>
+    <a class="doc-ref" href="ressources-b0v/09_Ch08_Habilitations_et_acteurs_p27-p30.pdf" target="_blank"><span class="doc-ref-icon">&#128214;</span> Chapitre 8, p.27-30 — Habilitations</a>
+    <a class="doc-ref" href="ressources-b0v/ed6127-inrs.pdf" target="_blank" style="margin-left:4px"><span class="doc-ref-icon">&#128214;</span> Norme INRS ED 6127</a>
+    <p style="font-size:.78rem;color:var(--muted);margin-bottom:8px">6 questions sur la reglementation B0V. Score minimum : 4/6.</p>
+    <div id="qcm3-container"></div>
+    <button class="btn btn-primary btn-block" id="qcm3-check" onclick="checkQCM(3)" disabled>Valider mes reponses</button>
+    <div id="qcm3-end" style="display:none;text-align:center;margin-top:14px">
+      <div id="qcm3-score" style="font-size:.9rem;font-weight:700;margin-bottom:10px"></div>
+      <button class="btn btn-accent" id="qcm3-next" style="display:none" onclick="completeLevel(3)">Niveau suivant</button>
+      <button class="btn btn-primary" id="qcm3-retry" style="display:none" onclick="retryQCM(3)">Reessayer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- NIVEAU 4 — Les Gestes qui Sauvent -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section" id="sec-4">
+  <div class="card">
+    <div class="card-title"><span class="lvl-badge">Niveau 4</span> Les Gestes qui Sauvent</div>
+    <div class="cours">
+      <a class="doc-ref" href="ressources-b0v/10_Ch09_En_cas_d_accident_p31-p32.pdf" target="_blank"><span class="doc-ref-icon">&#128214;</span> Voir Chapitre 9, p.31-32 — En cas d'accident</a>
+      <a class="doc-ref" href="ressources-b0v/05_Ch04_Equipements_de_protection_EPC_EPI_p17-p19.pdf" target="_blank" style="margin-left:4px"><span class="doc-ref-icon">&#128214;</span> Voir Chapitre 4, p.17-19 — EPI / EPC</a>
+      <a class="doc-ref" href="ressources-b0v/06_Ch05_Travaux_hors_tension_consignation_p20-p21.pdf" target="_blank" style="margin-left:4px"><span class="doc-ref-icon">&#128214;</span> Voir Chapitre 5, p.20-21 — Consignation</a>
+
+      <h3>Conduite a tenir face a un accident electrique</h3>
+      <div class="warning-box">
+        <strong>P.A.S. — Proteger, Alerter, Secourir</strong><br>
+        La regle absolue : ne JAMAIS toucher une victime qui est encore en contact avec la source electrique !
+      </div>
+      <ol style="padding-left:18px;margin:10px 0">
+        <li><strong>COUPER</strong> le courant (disjoncteur, interrupteur, prise) — sans se mettre en danger</li>
+        <li><strong>PROTEGER</strong> la zone (baliser, empecher les curieux d'approcher)</li>
+        <li><strong>ALERTER</strong> les secours (15 SAMU, 18 Pompiers, 112 numero europeen)</li>
+        <li><strong>SECOURIR</strong> la victime (PLS si inconsciente, RCP si arret cardiaque, DAE si disponible)</li>
+      </ol>
+
+      <h3>Les EPI obligatoires</h3>
+      <ul>
+        <li><strong>Gants isolants</strong> — adaptes a la tension de service, verifies avant chaque utilisation</li>
+        <li><strong>Tapis isolant</strong> — place devant les armoires electriques</li>
+        <li><strong>Casque avec ecran facial</strong> — protection contre l'arc electrique</li>
+        <li><strong>Lunettes de protection</strong> — contre les projections</li>
+        <li><strong>Chaussures de securite isolantes</strong></li>
+        <li><strong>Vetements de travail</strong> — coton (pas de synthethique qui fond)</li>
+      </ul>
+      <div class="danger-box">
+        <strong>INTERDIT</strong> lors d'une intervention : montres, bagues, chaines, bracelets metalliques. Tout objet conducteur est un danger mortel.
+      </div>
+
+      <h3>Les 5 regles d'or de la consignation</h3>
+      <div class="info-box">
+        <ol style="padding-left:18px">
+          <li><strong>Separation</strong> — isoler l'installation du reseau (ouvrir le sectionneur)</li>
+          <li><strong>Condamnation</strong> — verrouiller en position ouverte (cadenas + pancarte)</li>
+          <li><strong>Identification</strong> — verifier qu'on travaille sur le bon circuit</li>
+          <li><strong>VAT</strong> — Verification d'Absence de Tension (avec un VAT, pas un multimetre !)</li>
+          <li><strong>Mise a la terre et en court-circuit</strong> — evacuer les charges residuelles (HT surtout)</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Mini-jeu : Associez les pictogrammes</div>
+    <a class="doc-ref" href="ressources-b0v/05_Ch04_Equipements_de_protection_EPC_EPI_p17-p19.pdf" target="_blank"><span class="doc-ref-icon">&#128214;</span> Chapitre 4, p.17-19 — EPI</a>
+    <a class="doc-ref" href="ressources-b0v/10_Ch09_En_cas_d_accident_p31-p32.pdf" target="_blank" style="margin-left:4px"><span class="doc-ref-icon">&#128214;</span> Chapitre 9, p.31-32 — Accidents</a>
+    <p style="font-size:.78rem;color:var(--muted);margin-bottom:8px">Reliez chaque pictogramme a sa signification en cliquant sur les paires. Score minimum : 4/6.</p>
+    <div class="assoc-grid" id="assoc4-grid"></div>
+    <div id="assoc4-score" class="vf-score"></div>
+    <div id="assoc4-end" style="display:none;text-align:center;margin-top:14px">
+      <button class="btn btn-accent" id="assoc4-next" style="display:none" onclick="completeLevel(4)">Niveau suivant</button>
+      <button class="btn btn-primary" id="assoc4-retry" style="display:none" onclick="retryAssoc(4)">Reessayer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- NIVEAU 5 — Scenario Chantier -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section" id="sec-5">
+  <div class="card">
+    <div class="card-title"><span class="lvl-badge">Niveau 5</span> Scenario Chantier</div>
+    <a class="doc-ref" href="ressources-b0v/10_Ch09_En_cas_d_accident_p31-p32.pdf" target="_blank"><span class="doc-ref-icon">&#128214;</span> Chapitre 9, p.31-32 — Accidents</a>
+    <a class="doc-ref" href="ressources-b0v/07_Ch06_Interventions_p22-p23.pdf" target="_blank" style="margin-left:4px"><span class="doc-ref-icon">&#128214;</span> Chapitre 6, p.22-23 — Interventions</a>
+    <a class="doc-ref" href="ressources-b0v/03_Ch02_Mesures_de_protection_p09-p13.pdf" target="_blank" style="margin-left:4px"><span class="doc-ref-icon">&#128214;</span> Chapitre 2, p.9-13 — Protection</a>
+    <p style="font-size:.82rem;color:var(--muted);margin-bottom:14px">3 mises en situation reelles. Pour chaque scenario, choisissez la meilleure reaction. Score minimum : 2/3.</p>
+    <div id="sc5-container"></div>
+    <button class="btn btn-primary btn-block" id="sc5-check" onclick="checkScenarios(5)" disabled>Valider mes reponses</button>
+    <div id="sc5-end" style="display:none;text-align:center;margin-top:14px">
+      <div id="sc5-score" style="font-size:.9rem;font-weight:700;margin-bottom:10px"></div>
+      <button class="btn btn-accent" id="sc5-next" style="display:none" onclick="completeLevel(5)">Niveau suivant</button>
+      <button class="btn btn-primary" id="sc5-retry" style="display:none" onclick="retryScenarios(5)">Reessayer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- NIVEAU 6 — Evaluation Finale -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section" id="sec-6">
+  <div class="card">
+    <div class="card-title"><span class="lvl-badge">Niveau 6</span> Evaluation Finale — Certification</div>
+    <div class="timer-bar" id="timer-bar">
+      <span class="timer-icon">&#9200;</span>
+      <span class="timer-text">Temps restant</span>
+      <span class="timer-count" id="timer-count">10:00</span>
+    </div>
+    <a class="doc-ref" href="ressources-b0v/02_Ch01_Dangers_electricite_accidents_incidents_p05-p08.pdf" target="_blank"><span class="doc-ref-icon">&#128214;</span> Ch.1</a>
+    <a class="doc-ref" href="ressources-b0v/03_Ch02_Mesures_de_protection_p09-p13.pdf" target="_blank" style="margin-left:2px"><span class="doc-ref-icon">&#128214;</span> Ch.2</a>
+    <a class="doc-ref" href="ressources-b0v/05_Ch04_Equipements_de_protection_EPC_EPI_p17-p19.pdf" target="_blank" style="margin-left:2px"><span class="doc-ref-icon">&#128214;</span> Ch.4</a>
+    <a class="doc-ref" href="ressources-b0v/06_Ch05_Travaux_hors_tension_consignation_p20-p21.pdf" target="_blank" style="margin-left:2px"><span class="doc-ref-icon">&#128214;</span> Ch.5</a>
+    <a class="doc-ref" href="ressources-b0v/09_Ch08_Habilitations_et_acteurs_p27-p30.pdf" target="_blank" style="margin-left:2px"><span class="doc-ref-icon">&#128214;</span> Ch.8</a>
+    <a class="doc-ref" href="ressources-b0v/10_Ch09_En_cas_d_accident_p31-p32.pdf" target="_blank" style="margin-left:2px"><span class="doc-ref-icon">&#128214;</span> Ch.9</a>
+    <p style="font-size:.78rem;color:var(--muted);margin-bottom:14px">12 questions mixtes. Chronometre 10 minutes. Consultez vos documents pour repondre. Votre note /20 sera envoyee au collecteur.</p>
+    <div id="eval6-container"></div>
+    <button class="btn btn-accent btn-block" id="eval6-submit" onclick="submitEval()">Soumettre l'evaluation</button>
+  </div>
+
+  <div class="card result-card" id="result-card" style="display:none">
+    <div class="card-title" style="justify-content:center">Resultats</div>
+    <div class="result-score" id="res-note">--/20</div>
+    <div class="result-detail" id="res-detail"></div>
+    <div class="result-detail" id="res-temps"></div>
+    <div class="comp-grid" id="res-comp"></div>
+    <button class="btn btn-success btn-block" id="res-send" onclick="sendResults()" style="display:none">Envoyer mes resultats</button>
+    <button class="btn btn-primary btn-block btn-sm" onclick="location.reload()" style="margin-top:8px">Recommencer</button>
+  </div>
+</div>
+
+</div><!-- .app -->
+
+<!-- BOUTON DOCUMENTS RESSOURCES -->
+<button class="res-toggle" onclick="toggleResPanel()" title="Documents ressources du livret stagiaire">
+  <span class="res-icon">&#128214;</span> Documents
+</button>
+
+<!-- OVERLAY FOND -->
+<div class="res-overlay" id="res-overlay" onclick="toggleResPanel()"></div>
+
+<!-- PANNEAU DOCUMENTS RESSOURCES -->
+<div class="res-panel" id="res-panel">
+  <div class="res-panel-hdr">
+    <h2>&#128214; Livret Stagiaire</h2>
+    <button class="res-panel-close" onclick="toggleResPanel()">&#10005;</button>
+  </div>
+  <div class="res-panel-body">
+    <p style="font-size:.75rem;color:var(--muted);margin-bottom:12px;line-height:1.5">Consultez ces documents pour repondre aux questions. Chaque chapitre correspond a une partie du livret d'habilitation electrique.</p>
+    <div class="res-ch"><a href="ressources-b0v/02_Ch01_Dangers_electricite_accidents_incidents_p05-p08.pdf" target="_blank"><span class="res-ch-icon">&#128196;</span><div><span class="res-ch-num">Chapitre 1 — p.5-8</span>Dangers de l'electricite, accidents et incidents</div></a></div>
+    <div class="res-ch"><a href="ressources-b0v/03_Ch02_Mesures_de_protection_p09-p13.pdf" target="_blank"><span class="res-ch-icon">&#128196;</span><div><span class="res-ch-num">Chapitre 2 — p.9-13</span>Mesures de protection</div></a></div>
+    <div class="res-ch"><a href="ressources-b0v/04_Ch03_Limites_zones_operations_liees_p14-p16.pdf" target="_blank"><span class="res-ch-icon">&#128196;</span><div><span class="res-ch-num">Chapitre 3 — p.14-16</span>Limites, zones et operations liees</div></a></div>
+    <div class="res-ch"><a href="ressources-b0v/05_Ch04_Equipements_de_protection_EPC_EPI_p17-p19.pdf" target="_blank"><span class="res-ch-icon">&#128196;</span><div><span class="res-ch-num">Chapitre 4 — p.17-19</span>Equipements de protection EPC / EPI</div></a></div>
+    <div class="res-ch"><a href="ressources-b0v/06_Ch05_Travaux_hors_tension_consignation_p20-p21.pdf" target="_blank"><span class="res-ch-icon">&#128196;</span><div><span class="res-ch-num">Chapitre 5 — p.20-21</span>Travaux hors tension et consignation</div></a></div>
+    <div class="res-ch"><a href="ressources-b0v/07_Ch06_Interventions_p22-p23.pdf" target="_blank"><span class="res-ch-icon">&#128196;</span><div><span class="res-ch-num">Chapitre 6 — p.22-23</span>Interventions</div></a></div>
+    <div class="res-ch"><a href="ressources-b0v/09_Ch08_Habilitations_et_acteurs_p27-p30.pdf" target="_blank"><span class="res-ch-icon">&#128196;</span><div><span class="res-ch-num">Chapitre 8 — p.27-30</span>Habilitations et acteurs</div></a></div>
+    <div class="res-ch"><a href="ressources-b0v/10_Ch09_En_cas_d_accident_p31-p32.pdf" target="_blank"><span class="res-ch-icon">&#128196;</span><div><span class="res-ch-num">Chapitre 9 — p.31-32</span>En cas d'accident</div></a></div>
+    <div class="res-ch"><a href="ressources-b0v/11_Ch10_Procedure_en_cas_d_incendie_p33-p33.pdf" target="_blank"><span class="res-ch-icon">&#128196;</span><div><span class="res-ch-num">Chapitre 10 — p.33</span>Procedure en cas d'incendie</div></a></div>
+    <div class="res-ch"><a href="ressources-b0v/ed6127-inrs.pdf" target="_blank"><span class="res-ch-icon">&#128218;</span><div><span class="res-ch-num">Norme INRS</span>ED 6127 — Habilitation electrique</div></a></div>
+  </div>
+</div>
+
+<!-- VICTORY OVERLAY -->
+<div class="victory-overlay" id="victory-overlay">
+  <div class="victory-box">
+    <div class="victory-icon" id="v-icon"></div>
+    <div class="victory-title" id="v-title"></div>
+    <div class="victory-sub" id="v-sub"></div>
+    <div class="victory-xp" id="v-xp"></div>
+    <div class="victory-badge" id="v-badge"></div>
+    <button class="btn btn-accent" style="margin-top:14px" onclick="closeVictory()">Continuer</button>
+  </div>
+</div>
+
+<!-- CONFETTI -->
+<canvas id="confetti-canvas"></canvas>
+
+<!-- CADENAS PROF -->
+<a href="prof-b0v.html" class="prof-lock" title="Espace professeur">&#128274;</a>
+
+<script>
+/* ═══════════════════════════════════════════════════
+   PANNEAU DOCUMENTS RESSOURCES
+   ═══════════════════════════════════════════════════ */
+function toggleResPanel(){
+  document.getElementById('res-panel').classList.toggle('open');
+  document.getElementById('res-overlay').classList.toggle('open');
+}
+
+/* ═══════════════════════════════════════════════════
+   VARIABLES GLOBALES
+   ═══════════════════════════════════════════════════ */
+let studentNom='',studentPrenom='',studentClasse='';
+let totalXP=0, maxXP=500;
+let currentLevel=0; // 0=id, 1-6=niveaux
+let levelsCompleted=[false,false,false,false,false,false];
+let levelScores=[0,0,0,0,0,0];
+let startTime=0, evalTimer=null, evalSeconds=600;
+
+const BADGES=[
+  {id:1,name:'Premier Pas',icon:'&#9889;'},
+  {id:2,name:'Detecteur de Danger',icon:'&#128269;'},
+  {id:3,name:'Reglementeur',icon:'&#128203;'},
+  {id:4,name:'Secouriste',icon:'&#127973;'},
+  {id:5,name:'Terrain',icon:'&#9888;&#65039;'},
+  {id:6,name:'Certifie B0V',icon:'&#127942;'}
+];
+
+/* ═══════════════════════════════════════════════════
+   DONNEES PEDAGOGIQUES
+   ═══════════════════════════════════════════════════ */
+
+// NIVEAU 1 — Vrai/Faux
+const VF1_DATA=[
+  {q:"D'apres le chapitre 1 du livret (p.5), l'electricite ne se voit pas, ne s'entend pas et n'a pas d'odeur.",ans:true,expl:"C'est exact, c'est ce qui rend l'electricite si dangereuse (voir livret Ch.1 p.5)."},
+  {q:"Selon le chapitre 1 (p.6), un frigoriste n'est pas concerne par le risque electrique car il ne fait pas d'electricite.",ans:false,expl:"Faux ! Un frigoriste travaille regulierement a proximite d'installations electriques (voir livret Ch.1 p.6)."},
+  {q:"D'apres le livret (Ch.1, p.5-6), l'effet thermique du courant peut provoquer des brulures profondes.",ans:true,expl:"Les brulures electriques sont internes et tres graves. L'arc electrique peut atteindre 20 000 degres (livret Ch.1 p.5)."},
+  {q:"Selon le chapitre 1 (p.7), l'electrocution est un simple choc electrique sans gravite.",ans:false,expl:"Faux ! L'electrocution designe une electrisation MORTELLE. Le simple choc s'appelle electrisation (livret Ch.1 p.7)."},
+  {q:"D'apres le chapitre 1 du livret (p.6), le seuil de non-lacher se situe aux alentours de 10 mA.",ans:true,expl:"A 10 mA, les muscles se contractent involontairement et la victime ne peut plus lacher le conducteur (livret Ch.1 p.6)."},
+  {q:"Selon le livret (Ch.1, p.5), un arc electrique ne presente aucun danger car il ne touche pas le corps.",ans:false,expl:"Faux ! L'arc electrique provoque un blast (onde de choc), un flash lumineux et des projections de metal en fusion (livret Ch.1 p.5)."},
+  {q:"D'apres le chapitre 1 (p.6), a partir de 30 mA, il y a un risque de fibrillation cardiaque.",ans:true,expl:"30 mA pendant quelques secondes peuvent suffire a provoquer une fibrillation ventriculaire mortelle (livret Ch.1 p.6)."},
+  {q:"Selon le chapitre 1 du livret (p.7), l'electrisation designe le passage du courant dans le corps, la personne survit.",ans:true,expl:"L'electrisation = passage du courant (survie). L'electrocution = mort par electrisation (livret Ch.1 p.7)."}
+];
+
+// NIVEAU 2 — Drag & Drop
+const DD2_DATA=[
+  {text:"Ouvrir un coffret electrique sous tension pour regarder (voir Ch.3 p.14-16)",danger:true,expl:"Contact direct possible avec des pieces nues sous tension (livret Ch.3 p.14-16)."},
+  {text:"Utiliser une perceuse avec un cable denude (voir Ch.1 p.5-8)",danger:true,expl:"Cable endommage = risque de contact direct et d'electrisation (livret Ch.1 p.5-8)."},
+  {text:"Raccorder un groupe froid sans couper l'alimentation (voir Ch.2 p.9-13)",danger:true,expl:"Travailler sous tension est interdit pour un B0V (livret Ch.2 p.9-13)."},
+  {text:"Travailler en toiture pres d'une ligne electrique aerienne (voir Ch.3 p.14-16)",danger:true,expl:"Distance de securite non respectee = risque d'amorcage (livret Ch.3 p.14-16)."},
+  {text:"Intervenir avec de l'eau au sol pres du tableau electrique (voir Ch.2 p.9-13)",danger:true,expl:"L'eau est conductrice, le risque de contact indirect est maximal (livret Ch.2 p.9-13)."},
+  {text:"Appuyer sur un bouton Marche/Arret d'un equipement (voir Ch.8 p.27-30)",danger:false,expl:"Action de commande autorisee pour un B0V (livret Ch.8 p.27-30)."},
+  {text:"Lire les valeurs sur un manometre frigorifique",danger:false,expl:"Aucun lien avec l'electricite, zero risque electrique."},
+  {text:"Effectuer une charge en fluide sur un circuit consigne (voir Ch.5 p.20-21)",danger:false,expl:"Circuit consigne = hors tension, travail d'ordre non electrique autorise (livret Ch.5 p.20-21)."}
+];
+
+// NIVEAU 3 — QCM Reglementation
+const QCM3_DATA=[
+  {q:"D'apres le chapitre 8 du livret (p.27), que signifie le 'B' dans B0V ?",opts:["Bobine","Basse Tension","Batterie","Bureau"],ans:1,expl:"B = domaine Basse Tension, jusqu'a 1000 V en alternatif (livret Ch.8 p.27)."},
+  {q:"Selon le chapitre 8 (p.27-28), que signifie le '0' dans B0V ?",opts:["Zero risque","Non-electricien","Niveau zero de formation","Tension nulle"],ans:1,expl:"0 = indice de non-electricien. Le titulaire ne peut PAS faire de travaux electriques (livret Ch.8 p.27-28)."},
+  {q:"D'apres le chapitre 8 (p.28-29), qui delivre l'habilitation electrique ?",opts:["L'inspection du travail","Le medecin du travail","L'employeur","Le formateur"],ans:2,expl:"C'est l'EMPLOYEUR qui delivre l'habilitation, apres formation et avis medical favorable (livret Ch.8 p.28-29)."},
+  {q:"Selon le livret (Ch.8, p.29), tous les combien faut-il recycler l'habilitation B0V ?",opts:["Chaque annee","Tous les 3 ans","Tous les 5 ans","Tous les 10 ans"],ans:1,expl:"Le recyclage est recommande tous les 3 ans (livret Ch.8 p.29)."},
+  {q:"D'apres le chapitre 3 (p.14-16), un titulaire B0V peut-il ouvrir un coffret electrique sous tension ?",opts:["Oui, s'il porte des gants","Non, c'est interdit","Oui, s'il est accompagne","Oui, rapidement"],ans:1,expl:"Interdit ! Le B0V ne permet aucune intervention sur des pieces nues sous tension (livret Ch.3 p.14-16)."},
+  {q:"Selon le chapitre 8 (p.30), le carnet de prescriptions de securite electrique est :",opts:["Facultatif","Obligatoire pour tout habilite","Reserve aux electriciens","Fourni uniquement en BTS"],ans:1,expl:"Obligatoire ! Il doit etre remis a tout travailleur habilite et etre accessible a tout moment (livret Ch.8 p.30)."}
+];
+
+// NIVEAU 4 — Association pictogrammes
+const ASSOC4_DATA=[
+  {picto:"\u26A0\uFE0F",pictoLabel:"Triangle jaune",meaning:"Danger electrique — avertissement"},
+  {picto:"\u{1F9E4}",pictoLabel:"Gants",meaning:"Porter des gants isolants obligatoire"},
+  {picto:"\u{1F6AB}",pictoLabel:"Cercle rouge barre",meaning:"Interdiction — ne pas toucher"},
+  {picto:"\u2B55",pictoLabel:"Cercle vert",meaning:"Bouton d'arret d'urgence — couper"},
+  {picto:"\u{1F4DE}",pictoLabel:"Telephone",meaning:"Alerter les secours (15, 18, 112)"},
+  {picto:"\u{1F9BA}",pictoLabel:"Casque de securite",meaning:"Protection obligatoire de la tete"}
+];
+
+// NIVEAU 5 — Scenarios
+const SC5_DATA=[
+  {
+    text:"Vous arrivez sur un chantier pour raccorder un groupe froid. Le tableau electrique est ouvert, des fils sont accessibles. D'apres le chapitre 6 (p.22-23) et le chapitre 3 (p.14-16), que faites-vous ?",
+    choices:[
+      {text:"Je raccorde rapidement le groupe en faisant attention a ne pas toucher les fils.",best:false,feedback:"MAUVAIS CHOIX. Travailler a proximite de pieces nues sous tension est extremement dangereux et interdit pour un B0V."},
+      {text:"Je signale la situation au responsable et j'attends que le tableau soit referme et securise avant d'intervenir.",best:true,feedback:"BONNE REACTION. Un B0V ne doit JAMAIS intervenir a proximite de pieces nues sous tension. Signaler et attendre la securisation."},
+      {text:"Je referme moi-meme le coffret electrique.",best:false,feedback:"MAUVAIS CHOIX. Vous n'etes pas habilite a manipuler un coffret electrique ouvert. C'est le travail d'un electricien habilite."},
+      {text:"Je demande a un collegue non-electricien de refermer le coffret.",best:false,feedback:"MAUVAIS CHOIX. Un non-electricien ne peut pas intervenir sur un coffret ouvert, meme pour le refermer."}
+    ]
+  },
+  {
+    text:"Un collegue recoit une decharge electrique en touchant un coffret metallique. Il tombe au sol et ne bouge plus. En vous appuyant sur le chapitre 9 (p.31-32), que faites-vous ?",
+    choices:[
+      {text:"Je me precipite pour le tirer par les bras.",best:false,feedback:"DANGER ! La victime peut encore etre en contact avec la source. Vous risquez l'electrisation vous aussi."},
+      {text:"Je COUPE le courant au disjoncteur general, je PROTEGE la zone, j'ALERTE les secours (15 ou 18), puis je SECOURS la victime.",best:true,feedback:"PARFAIT ! C'est la procedure P.A.S. : Proteger (couper + baliser), Alerter (secours), Secourir (PLS ou RCP + DAE)."},
+      {text:"J'arrose la victime avec de l'eau pour la rafraichir.",best:false,feedback:"TRES DANGEREUX ! L'eau est conductrice d'electricite. Vous aggraverez la situation et risquez votre vie."}
+    ]
+  },
+  {
+    text:"Vous devez intervenir sur la tuyauterie d'une chambre froide. Il y a de l'eau au sol pres du tableau electrique. Selon les chapitres 2 (p.9-13) et 9 (p.31-32), que faites-vous ?",
+    choices:[
+      {text:"Je commence mon intervention, c'est juste de l'eau.",best:false,feedback:"DANGEREUX ! L'eau au sol cree un risque majeur de contact indirect. En cas de defaut d'isolement, le courant passera par l'eau et votre corps."},
+      {text:"Je signale le probleme, je demande le sechage de la zone ET la verification de l'installation electrique avant toute intervention.",best:true,feedback:"EXCELLENT ! L'eau et l'electricite sont un melange mortel. Il faut assainir la zone et verifier l'installation avant toute intervention."},
+      {text:"Je mets des bottes en caoutchouc et j'y vais.",best:false,feedback:"INSUFFISANT. Des bottes standard ne sont pas des EPI electriques certifies. Le risque reste present et la procedure n'est pas respectee."}
+    ]
+  }
+];
+
+// NIVEAU 6 — Evaluation finale (12 questions mixtes)
+const EVAL6_DATA=[
+  {type:'qcm',q:"(Ch.1 p.5) Pourquoi l'electricite est-elle particulierement dangereuse ?",opts:["Elle fait du bruit","Elle ne se voit pas, ne s'entend pas, n'a pas d'odeur","Elle est coloree"],ans:1,comp:'C1'},
+  {type:'vf',q:"(Ch.1 p.7) L'electrocution designe une electrisation mortelle.",ans:true,comp:'C1'},
+  {type:'qcm',q:"(Ch.1 p.6) A partir de quelle intensite y a-t-il risque d'arret du coeur ?",opts:["10 mA","30 mA","1 A (1000 mA)"],ans:2,comp:'C1'},
+  {type:'qcm',q:"(Ch.8 p.27-28) Que signifie l'habilitation B0V ?",opts:["Basse tension, Electricien, Voisinage","Basse tension, Non-electricien, Voisinage","Batterie, Operateur, Verification"],ans:1,comp:'C2'},
+  {type:'vf',q:"(Ch.8 p.28-29) L'habilitation electrique est delivree par le medecin du travail.",ans:false,comp:'C2'},
+  {type:'qcm',q:"(Ch.8 p.29) Tous les combien faut-il recycler l'habilitation B0V ?",opts:["1 an","3 ans","10 ans"],ans:1,comp:'C2'},
+  {type:'qcm',q:"(Ch.5 p.20-21) Quelle est la regle d'or pour travailler en securite ?",opts:["Travailler rapidement","Travailler HORS TENSION","Porter des gants en plastique"],ans:1,comp:'C3'},
+  {type:'qcm',q:"(Ch.5 p.20) Que signifie VAT ?",opts:["Voltmetre Automatique Technique","Verificateur d'Absence de Tension","Validation Avant Travaux"],ans:1,comp:'C3'},
+  {type:'vf',q:"(Ch.8 p.30) Le carnet de prescriptions de securite est obligatoire pour tout habilite.",ans:true,comp:'C3'},
+  {type:'qcm',q:"(Ch.9 p.31-32) En cas d'accident electrique, que faire AVANT de porter secours ?",opts:["Toucher immediatement la victime","Couper le courant SANS toucher la victime","Arroser la victime avec de l'eau"],ans:1,comp:'C4'},
+  {type:'qcm',q:"(Ch.3 p.15) Quelle est la distance minimale de securite avec un reseau aerien < 50 kV ?",opts:["1 metre","3 metres","5 metres"],ans:1,comp:'C4'},
+  {type:'vf',q:"(Ch.4 p.17-19) On peut porter des bijoux metalliques lors d'une intervention electrique.",ans:false,comp:'C4'}
+];
+
+/* ═══════════════════════════════════════════════════
+   IDENTIFICATION
+   ═══════════════════════════════════════════════════ */
+function startModule(){
+  studentNom=document.getElementById('inp-nom').value.trim();
+  studentPrenom=document.getElementById('inp-prenom').value.trim();
+  studentClasse=document.getElementById('inp-classe').value;
+  if(!studentNom||!studentPrenom||!studentClasse){alert('Veuillez remplir tous les champs.');return;}
+  startTime=Date.now();
+  showSection('sec-1');
+  currentLevel=1;
+  updateNav();
+  initVF(1);
+}
+
+/* ═══════════════════════════════════════════════════
+   NAVIGATION
+   ═══════════════════════════════════════════════════ */
+function showSection(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function goLevel(lv){
+  if(lv===0){showSection('sec-id');currentLevel=0;updateNav();return;}
+  if(lv>1&&!levelsCompleted[lv-2])return;
+  currentLevel=lv;
+  showSection('sec-'+lv);
+  updateNav();
+  // Init mini-jeux
+  if(lv===1)initVF(1);
+  if(lv===2)initDD(2);
+  if(lv===3)initQCM(3);
+  if(lv===4)initAssoc(4);
+  if(lv===5)initScenarios(5);
+  if(lv===6)initEval();
+}
+
+function updateNav(){
+  document.querySelectorAll('.level-dot').forEach(d=>{
+    const lv=parseInt(d.dataset.lv);
+    d.classList.remove('active','unlocked','completed');
+    d.innerHTML=''+(lv+1);
+    if(lv===currentLevel-1)d.classList.add('active','unlocked');
+    else if(lv<levelsCompleted.length&&levelsCompleted[lv])d.classList.add('completed','unlocked');
+    else if(lv===0||(lv>0&&levelsCompleted[lv-1])){d.classList.add('unlocked');}
+    else{d.innerHTML='<span class="lock-icon">&#128274;</span>'+(lv+1);}
+  });
+  document.getElementById('xp-level').textContent='Niveau '+Math.min(currentLevel,6)+'/6';
+}
+
+function addXP(pts){
+  totalXP+=pts;
+  document.getElementById('xp-label').textContent=totalXP+' XP';
+  const pct=Math.min(totalXP/maxXP*100,100);
+  document.getElementById('xp-fill').style.width=pct+'%';
+}
+
+function earnBadge(n){
+  const el=document.querySelector('.xp-badge[data-badge="'+n+'"]');
+  if(el)el.classList.add('earned');
+}
+
+function completeLevel(lv){
+  levelsCompleted[lv-1]=true;
+  earnBadge(lv);
+
+  const names=['','Premier Pas','Detecteur de Danger','Reglementeur','Secouriste','Terrain','Certifie B0V'];
+  const icons=['','&#9889;','&#128269;','&#128203;','&#127973;','&#9888;&#65039;','&#127942;'];
+  const subs=['','Vous connaissez les bases du risque electrique.','Vous savez identifier les situations dangereuses.','Vous maitrisez la reglementation B0V.','Vous connaissez les gestes de securite.','Vous savez reagir sur le terrain.','Vous etes certifie B0V !'];
+
+  document.getElementById('v-icon').innerHTML=icons[lv];
+  document.getElementById('v-title').textContent='Niveau '+lv+' termine !';
+  document.getElementById('v-sub').textContent=subs[lv];
+  document.getElementById('v-xp').textContent='+'+levelScores[lv-1]*10+' XP gagnes';
+  document.getElementById('v-badge').textContent='Badge : '+names[lv];
+  document.getElementById('victory-overlay').classList.add('show');
+
+  addXP(levelScores[lv-1]*10);
+  updateNav();
+}
+
+function closeVictory(){
+  document.getElementById('victory-overlay').classList.remove('show');
+  const nextLv=currentLevel+1;
+  if(nextLv<=6){goLevel(nextLv);}
+}
+
+/* ═══════════════════════════════════════════════════
+   NIVEAU 1 — VRAI / FAUX
+   ═══════════════════════════════════════════════════ */
+let vf1Index=0,vf1Score=0,vf1Data=[];
+
+function initVF(lv){
+  vf1Index=0;vf1Score=0;
+  vf1Data=[...VF1_DATA];
+  document.getElementById('vf1-score').textContent='0/'+vf1Data.length;
+  document.getElementById('vf1-end').style.display='none';
+  document.getElementById('vf1-feedback').className='vf-feedback';
+  document.getElementById('vf1-feedback').textContent='';
+  showVFCard();
+}
+
+function showVFCard(){
+  const c=document.getElementById('vf1-container');
+  if(vf1Index>=vf1Data.length){endVF(1);return;}
+  const d=vf1Data[vf1Index];
+  c.innerHTML=`
+    <div class="vf-card" id="vf-active">
+      <div class="vf-num">Question ${vf1Index+1}/${vf1Data.length}</div>
+      <div class="vf-q">${d.q}</div>
+      <div class="vf-btns">
+        <button class="vf-btn vf-btn-faux" onclick="answerVF(false)">FAUX</button>
+        <button class="vf-btn vf-btn-vrai" onclick="answerVF(true)">VRAI</button>
+      </div>
+    </div>`;
+}
+
+function answerVF(ans){
+  const d=vf1Data[vf1Index];
+  const fb=document.getElementById('vf1-feedback');
+  if(ans===d.ans){
+    vf1Score++;
+    fb.className='vf-feedback ok';
+    fb.textContent='Bonne reponse ! '+d.expl;
+    addXP(10);
+  } else {
+    fb.className='vf-feedback ko';
+    fb.textContent='Mauvaise reponse. '+d.expl;
+  }
+  document.getElementById('vf1-score').textContent=vf1Score+'/'+(vf1Index+1);
+  vf1Index++;
+  setTimeout(()=>{
+    fb.className='vf-feedback';
+    showVFCard();
+  },2200);
+}
+
+function endVF(lv){
+  document.getElementById('vf1-container').innerHTML='';
+  document.getElementById('vf1-end').style.display='block';
+  levelScores[0]=vf1Score;
+  const el=document.getElementById('vf1-final');
+  el.textContent='Score : '+vf1Score+'/'+vf1Data.length;
+  if(vf1Score>=6){
+    el.style.color='var(--success)';
+    document.getElementById('vf1-next').style.display='inline-flex';
+    document.getElementById('vf1-retry').style.display='none';
+  } else {
+    el.style.color='var(--error)';
+    el.textContent+=' — Minimum 6/8 requis.';
+    document.getElementById('vf1-next').style.display='none';
+    document.getElementById('vf1-retry').style.display='inline-flex';
+  }
+}
+
+function retryVF(lv){initVF(lv);}
+
+/* ═══════════════════════════════════════════════════
+   NIVEAU 2 — DRAG & DROP
+   ═══════════════════════════════════════════════════ */
+let dd2Placed={};
+
+function initDD(lv){
+  dd2Placed={};
+  const itemsEl=document.getElementById('dd2-items');
+  const dangerEl=document.getElementById('dd2-danger');
+  const safeEl=document.getElementById('dd2-safe');
+  // Reset zones
+  dangerEl.innerHTML='<h4>DANGEREUX</h4>';
+  safeEl.innerHTML='<h4>SANS RISQUE</h4>';
+  document.getElementById('dd2-feedback').style.display='none';
+  document.getElementById('dd2-end').style.display='none';
+  document.getElementById('dd2-check').disabled=true;
+
+  // Shuffle
+  const shuffled=[...DD2_DATA].sort(()=>Math.random()-.5);
+  itemsEl.innerHTML='';
+  shuffled.forEach((d,i)=>{
+    const el=document.createElement('div');
+    el.className='dd-item';
+    el.textContent=d.text;
+    el.dataset.idx=DD2_DATA.indexOf(d);
+    el.draggable=true;
+    // Desktop drag
+    el.addEventListener('dragstart',e=>{e.dataTransfer.setData('text/plain',el.dataset.idx);el.style.opacity='.5';});
+    el.addEventListener('dragend',()=>{el.style.opacity='1';});
+    // Touch
+    addTouchDrag(el);
+    itemsEl.appendChild(el);
+  });
+
+  // Drop zones
+  [dangerEl,safeEl].forEach(zone=>{
+    zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('over');});
+    zone.addEventListener('dragleave',()=>zone.classList.remove('over'));
+    zone.addEventListener('drop',e=>{
+      e.preventDefault();zone.classList.remove('over');
+      const idx=e.dataTransfer.getData('text/plain');
+      dropItem(idx,zone===dangerEl?'danger':'safe');
+    });
+  });
+}
+
+function addTouchDrag(el){
+  let clone=null,startX,startY,ox,oy;
+  el.addEventListener('touchstart',e=>{
+    const t=e.touches[0];
+    startX=t.clientX;startY=t.clientY;
+    const r=el.getBoundingClientRect();
+    ox=t.clientX-r.left;oy=t.clientY-r.top;
+    clone=el.cloneNode(true);
+    clone.style.cssText='position:fixed;z-index:999;pointer-events:none;opacity:.85;width:'+r.width+'px;';
+    clone.style.left=(t.clientX-ox)+'px';
+    clone.style.top=(t.clientY-oy)+'px';
+    document.body.appendChild(clone);
+  },{passive:true});
+  el.addEventListener('touchmove',e=>{
+    if(!clone)return;
+    e.preventDefault();
+    const t=e.touches[0];
+    clone.style.left=(t.clientX-ox)+'px';
+    clone.style.top=(t.clientY-oy)+'px';
+  },{passive:false});
+  el.addEventListener('touchend',e=>{
+    if(!clone){return;}
+    const t=e.changedTouches[0];
+    clone.remove();clone=null;
+    // Check which zone
+    const dangerR=document.getElementById('dd2-danger').getBoundingClientRect();
+    const safeR=document.getElementById('dd2-safe').getBoundingClientRect();
+    if(t.clientX>=dangerR.left&&t.clientX<=dangerR.right&&t.clientY>=dangerR.top&&t.clientY<=dangerR.bottom){
+      dropItem(el.dataset.idx,'danger');
+    } else if(t.clientX>=safeR.left&&t.clientX<=safeR.right&&t.clientY>=safeR.top&&t.clientY<=safeR.bottom){
+      dropItem(el.dataset.idx,'safe');
+    }
+  });
+}
+
+function dropItem(idx,zone){
+  idx=parseInt(idx);
+  dd2Placed[idx]=zone;
+  const d=DD2_DATA[idx];
+  // Move element visually
+  const src=document.querySelector('.dd-item[data-idx="'+idx+'"]');
+  if(!src)return;
+  src.classList.add('placed');
+  src.draggable=false;
+  const target=zone==='danger'?document.getElementById('dd2-danger'):document.getElementById('dd2-safe');
+  target.appendChild(src);
+  // Check if all placed
+  if(Object.keys(dd2Placed).length>=DD2_DATA.length){
+    document.getElementById('dd2-check').disabled=false;
+  }
+}
+
+function checkDD(lv){
+  let score=0;
+  DD2_DATA.forEach((d,i)=>{
+    const placed=dd2Placed[i];
+    const el=document.querySelector('.dd-item[data-idx="'+i+'"]');
+    if(!el)return;
+    const correct=(d.danger&&placed==='danger')||(!d.danger&&placed==='safe');
+    if(correct){score++;el.classList.add('correct');}
+    else{el.classList.add('incorrect');}
+    el.title=d.expl;
+  });
+  levelScores[1]=score;
+  document.getElementById('dd2-check').disabled=true;
+  document.getElementById('dd2-feedback').style.display='block';
+  document.getElementById('dd2-feedback').innerHTML='<div style="font-size:.88rem;font-weight:700;margin-bottom:8px;color:var(--navy)">Score : '+score+'/'+DD2_DATA.length+'</div>';
+  document.getElementById('dd2-end').style.display='block';
+  if(score>=6){
+    addXP(score*10);
+    document.getElementById('dd2-next').style.display='inline-flex';
+    document.getElementById('dd2-retry').style.display='none';
+  } else {
+    document.getElementById('dd2-next').style.display='none';
+    document.getElementById('dd2-retry').style.display='inline-flex';
+    document.getElementById('dd2-feedback').innerHTML+='<div style="font-size:.78rem;color:var(--error)">Minimum 6/8 requis. Touchez les elements pour voir les explications.</div>';
+  }
+}
+
+function retryDD(lv){initDD(lv);}
+
+/* ═══════════════════════════════════════════════════
+   NIVEAU 3 — QCM ENRICHI
+   ═══════════════════════════════════════════════════ */
+let qcm3Answers={};
+
+function initQCM(lv){
+  qcm3Answers={};
+  const c=document.getElementById('qcm3-container');
+  document.getElementById('qcm3-check').disabled=true;
+  document.getElementById('qcm3-end').style.display='none';
+  let html='';
+  QCM3_DATA.forEach((q,i)=>{
+    html+=`<div class="qcm-q" id="qcm3-q${i}">
+      <div class="q-text">${i+1}. ${q.q}</div>
+      <div class="qcm-opts">`;
+    q.opts.forEach((o,j)=>{
+      html+=`<div class="qcm-opt" data-qi="${i}" data-oi="${j}" onclick="selectQCM(3,${i},${j})">${o}</div>`;
+    });
+    html+=`</div><div class="q-feedback" id="qcm3-fb${i}"></div></div>`;
+  });
+  c.innerHTML=html;
+}
+
+function selectQCM(lv,qi,oi){
+  // Deselect others
+  document.querySelectorAll('.qcm-opt[data-qi="'+qi+'"]').forEach(o=>o.classList.remove('selected'));
+  document.querySelector('.qcm-opt[data-qi="'+qi+'"][data-oi="'+oi+'"]').classList.add('selected');
+  qcm3Answers[qi]=oi;
+  if(Object.keys(qcm3Answers).length>=QCM3_DATA.length){
+    document.getElementById('qcm3-check').disabled=false;
+  }
+}
+
+function checkQCM(lv){
+  let score=0;
+  QCM3_DATA.forEach((q,i)=>{
+    const sel=qcm3Answers[i];
+    const opts=document.querySelectorAll('.qcm-opt[data-qi="'+i+'"]');
+    opts.forEach(o=>{o.classList.add('disabled');});
+    if(sel===q.ans){
+      score++;
+      opts[sel].classList.add('correct');
+    } else {
+      if(sel!==undefined)opts[sel].classList.add('wrong');
+      opts[q.ans].classList.add('correct');
+    }
+    const fb=document.getElementById('qcm3-fb'+i);
+    fb.className='q-feedback show';
+    fb.style.background=sel===q.ans?'rgba(39,174,96,.1)':'rgba(231,76,60,.1)';
+    fb.style.color=sel===q.ans?'var(--success)':'var(--error)';
+    fb.textContent=q.expl;
+  });
+  levelScores[2]=score;
+  document.getElementById('qcm3-check').disabled=true;
+  document.getElementById('qcm3-end').style.display='block';
+  const el=document.getElementById('qcm3-score');
+  el.textContent='Score : '+score+'/'+QCM3_DATA.length;
+  if(score>=4){
+    el.style.color='var(--success)';
+    addXP(score*10);
+    document.getElementById('qcm3-next').style.display='inline-flex';
+    document.getElementById('qcm3-retry').style.display='none';
+  } else {
+    el.style.color='var(--error)';
+    el.textContent+=' — Minimum 4/6 requis.';
+    document.getElementById('qcm3-next').style.display='none';
+    document.getElementById('qcm3-retry').style.display='inline-flex';
+  }
+}
+
+function retryQCM(lv){initQCM(lv);}
+
+/* ═══════════════════════════════════════════════════
+   NIVEAU 4 — ASSOCIATION PICTOGRAMMES
+   ═══════════════════════════════════════════════════ */
+let assoc4Sel=null,assoc4Matched=0,assoc4Score=0,assoc4Tries=0;
+
+function initAssoc(lv){
+  assoc4Sel=null;assoc4Matched=0;assoc4Score=0;assoc4Tries=0;
+  document.getElementById('assoc4-score').textContent='0/'+ASSOC4_DATA.length+' paires trouvees';
+  document.getElementById('assoc4-end').style.display='none';
+  const grid=document.getElementById('assoc4-grid');
+
+  // Build items: pictos on left column, meanings on right, shuffled
+  const pictos=ASSOC4_DATA.map((d,i)=>({type:'picto',idx:i,html:'<span class="assoc-picto">'+d.picto+'</span>'+d.pictoLabel}));
+  const meanings=ASSOC4_DATA.map((d,i)=>({type:'meaning',idx:i,html:d.meaning}));
+  // Shuffle each independently
+  const shuffledP=[...pictos].sort(()=>Math.random()-.5);
+  const shuffledM=[...meanings].sort(()=>Math.random()-.5);
+  // Interleave: picto, meaning, picto, meaning...
+  let items=[];
+  const maxLen=Math.max(shuffledP.length,shuffledM.length);
+  for(let i=0;i<maxLen;i++){
+    if(shuffledP[i])items.push(shuffledP[i]);
+    if(shuffledM[i])items.push(shuffledM[i]);
+  }
+
+  grid.innerHTML='';
+  items.forEach(it=>{
+    const el=document.createElement('div');
+    el.className='assoc-item';
+    el.innerHTML=it.html;
+    el.dataset.type=it.type;
+    el.dataset.idx=it.idx;
+    el.onclick=()=>clickAssoc(el);
+    grid.appendChild(el);
+  });
+}
+
+function clickAssoc(el){
+  if(el.classList.contains('matched'))return;
+  if(assoc4Sel&&assoc4Sel===el){assoc4Sel.classList.remove('sel');assoc4Sel=null;return;}
+  if(!assoc4Sel){
+    assoc4Sel=el;el.classList.add('sel');return;
+  }
+  // Check pair
+  const t1=assoc4Sel.dataset.type,i1=parseInt(assoc4Sel.dataset.idx);
+  const t2=el.dataset.type,i2=parseInt(el.dataset.idx);
+  if(t1===t2){
+    // Same type, switch selection
+    assoc4Sel.classList.remove('sel');
+    assoc4Sel=el;el.classList.add('sel');
+    return;
+  }
+  assoc4Tries++;
+  if(i1===i2){
+    // Match!
+    assoc4Matched++;assoc4Score++;
+    assoc4Sel.classList.remove('sel');
+    assoc4Sel.classList.add('matched');
+    el.classList.add('matched');
+    addXP(10);
+    document.getElementById('assoc4-score').textContent=assoc4Matched+'/'+ASSOC4_DATA.length+' paires trouvees';
+    assoc4Sel=null;
+    if(assoc4Matched>=ASSOC4_DATA.length)endAssoc(4);
+  } else {
+    // Wrong
+    el.classList.add('wrong-flash');
+    assoc4Sel.classList.add('wrong-flash');
+    const prev=assoc4Sel;
+    setTimeout(()=>{prev.classList.remove('wrong-flash','sel');el.classList.remove('wrong-flash');},400);
+    assoc4Sel=null;
+  }
+}
+
+function endAssoc(lv){
+  levelScores[3]=assoc4Score;
+  document.getElementById('assoc4-end').style.display='block';
+  if(assoc4Score>=4){
+    document.getElementById('assoc4-next').style.display='inline-flex';
+    document.getElementById('assoc4-retry').style.display='none';
+  } else {
+    document.getElementById('assoc4-next').style.display='none';
+    document.getElementById('assoc4-retry').style.display='inline-flex';
+  }
+}
+
+function retryAssoc(lv){initAssoc(lv);}
+
+/* ═══════════════════════════════════════════════════
+   NIVEAU 5 — SCENARIOS
+   ═══════════════════════════════════════════════════ */
+let sc5Answers={};
+
+function initScenarios(lv){
+  sc5Answers={};
+  document.getElementById('sc5-check').disabled=true;
+  document.getElementById('sc5-end').style.display='none';
+  const c=document.getElementById('sc5-container');
+  let html='';
+  SC5_DATA.forEach((s,i)=>{
+    html+=`<div class="scenario" id="sc5-s${i}">
+      <span class="sc-num">Scenario ${i+1}</span>
+      <div class="sc-text">${s.text}</div>
+      <div class="sc-choices">`;
+    s.choices.forEach((ch,j)=>{
+      html+=`<div class="sc-choice" data-si="${i}" data-ci="${j}" onclick="selectSC(5,${i},${j})">${ch.text}</div>`;
+    });
+    html+=`</div><div class="sc-result" id="sc5-r${i}"></div></div>`;
+  });
+  c.innerHTML=html;
+}
+
+function selectSC(lv,si,ci){
+  document.querySelectorAll('.sc-choice[data-si="'+si+'"]').forEach(c=>c.classList.remove('selected'));
+  document.querySelector('.sc-choice[data-si="'+si+'"][data-ci="'+ci+'"]').classList.add('selected');
+  sc5Answers[si]=ci;
+  if(Object.keys(sc5Answers).length>=SC5_DATA.length)document.getElementById('sc5-check').disabled=false;
+}
+
+function checkScenarios(lv){
+  let score=0;
+  SC5_DATA.forEach((s,i)=>{
+    const sel=sc5Answers[i];
+    const choices=document.querySelectorAll('.sc-choice[data-si="'+i+'"]');
+    choices.forEach((c,j)=>{
+      c.classList.add('disabled');
+      if(s.choices[j].best)c.classList.add('best');
+      else if(j===sel&&!s.choices[j].best)c.classList.add('bad');
+    });
+    if(s.choices[sel].best)score++;
+    const r=document.getElementById('sc5-r'+i);
+    r.className='sc-result show';
+    r.style.background=s.choices[sel].best?'rgba(39,174,96,.1)':'rgba(231,76,60,.1)';
+    r.style.color=s.choices[sel].best?'var(--success)':'var(--error)';
+    r.textContent=s.choices[sel].feedback;
+  });
+  levelScores[4]=score;
+  document.getElementById('sc5-check').disabled=true;
+  document.getElementById('sc5-end').style.display='block';
+  const el=document.getElementById('sc5-score');
+  el.textContent='Score : '+score+'/'+SC5_DATA.length;
+  if(score>=2){
+    el.style.color='var(--success)';
+    addXP(score*10);
+    document.getElementById('sc5-next').style.display='inline-flex';
+    document.getElementById('sc5-retry').style.display='none';
+  } else {
+    el.style.color='var(--error)';
+    el.textContent+=' — Minimum 2/3 requis.';
+    document.getElementById('sc5-next').style.display='none';
+    document.getElementById('sc5-retry').style.display='inline-flex';
+  }
+}
+
+function retryScenarios(lv){initScenarios(lv);}
+
+/* ═══════════════════════════════════════════════════
+   NIVEAU 6 — EVALUATION FINALE
+   ═══════════════════════════════════════════════════ */
+let eval6Answers={};
+
+function initEval(){
+  eval6Answers={};
+  evalSeconds=600;
+  document.getElementById('result-card').style.display='none';
+  document.getElementById('eval6-submit').disabled=false;
+  updateTimer();
+  evalTimer=setInterval(()=>{
+    evalSeconds--;
+    updateTimer();
+    if(evalSeconds<=0){clearInterval(evalTimer);submitEval();}
+  },1000);
+
+  const c=document.getElementById('eval6-container');
+  let html='';
+  EVAL6_DATA.forEach((q,i)=>{
+    if(q.type==='qcm'){
+      html+=`<div class="qcm-q">
+        <div class="q-text">${i+1}. ${q.q}</div>
+        <div class="qcm-opts">`;
+      q.opts.forEach((o,j)=>{
+        html+=`<div class="qcm-opt" data-qi="e${i}" data-oi="${j}" onclick="selectEval(${i},${j})">${o}</div>`;
+      });
+      html+=`</div></div>`;
+    } else {
+      // VF
+      html+=`<div class="qcm-q">
+        <div class="q-text">${i+1}. ${q.q}</div>
+        <div class="qcm-opts">
+          <div class="qcm-opt" data-qi="e${i}" data-oi="0" onclick="selectEval(${i},0)">VRAI</div>
+          <div class="qcm-opt" data-qi="e${i}" data-oi="1" onclick="selectEval(${i},1)">FAUX</div>
+        </div></div>`;
+    }
+  });
+  c.innerHTML=html;
+}
+
+function selectEval(qi,oi){
+  document.querySelectorAll('.qcm-opt[data-qi="e'+qi+'"]').forEach(o=>o.classList.remove('selected'));
+  document.querySelector('.qcm-opt[data-qi="e'+qi+'"][data-oi="'+oi+'"]').classList.add('selected');
+  eval6Answers[qi]=oi;
+}
+
+function updateTimer(){
+  const m=Math.floor(evalSeconds/60);
+  const s=evalSeconds%60;
+  document.getElementById('timer-count').textContent=m+':'+(s<10?'0':'')+s;
+  if(evalSeconds<=60)document.getElementById('timer-bar').classList.add('urgent');
+}
+
+function submitEval(){
+  if(evalTimer)clearInterval(evalTimer);
+  const elapsed=600-evalSeconds;
+  let score=0;
+  const compScores={C1:0,C2:0,C3:0,C4:0};
+  const compTotal={C1:0,C2:0,C3:0,C4:0};
+
+  EVAL6_DATA.forEach((q,i)=>{
+    compTotal[q.comp]++;
+    const sel=eval6Answers[i];
+    let correct=false;
+    if(q.type==='qcm'){
+      correct=(sel===q.ans);
+    } else {
+      // VF: 0=VRAI,1=FAUX
+      correct=(q.ans===true&&sel===0)||(q.ans===false&&sel===1);
+    }
+    if(correct){score++;compScores[q.comp]++;}
+    // Visual feedback
+    const opts=document.querySelectorAll('.qcm-opt[data-qi="e'+i+'"]');
+    opts.forEach(o=>o.classList.add('disabled'));
+    if(q.type==='qcm'){
+      if(sel!==undefined&&!correct)opts[sel].classList.add('wrong');
+      opts[q.ans].classList.add('correct');
+    } else {
+      const correctIdx=q.ans?0:1;
+      if(sel!==undefined&&sel!==correctIdx)opts[sel].classList.add('wrong');
+      opts[correctIdx].classList.add('correct');
+    }
+  });
+
+  const note20=Math.round(score/EVAL6_DATA.length*20*2)/2;
+  levelScores[5]=score;
+  document.getElementById('eval6-submit').disabled=true;
+
+  // Resultats
+  const rc=document.getElementById('result-card');
+  rc.style.display='block';
+  const rn=document.getElementById('res-note');
+  rn.textContent=note20+'/20';
+  rn.className='result-score '+(note20>=14?'good':note20>=10?'mid':'bad');
+  document.getElementById('res-detail').textContent=score+'/'+EVAL6_DATA.length+' bonnes reponses';
+  document.getElementById('res-temps').textContent='Temps : '+Math.floor(elapsed/60)+'min '+elapsed%60+'s';
+
+  // Competences
+  function evalComp(s,t){
+    const p=s/t;
+    if(p>=0.75)return{val:'Maitrise',cls:'M'};
+    if(p>=0.5)return{val:'En cours',cls:'ECA'};
+    return{val:'Non acquis',cls:'NI'};
+  }
+  const comps={};
+  const compNames={C1:'Identifier les risques',C2:'Reglementation B0V',C3:'Procedures de securite',C4:'Reagir face a un accident'};
+  const compHTML=document.getElementById('res-comp');
+  compHTML.innerHTML='';
+  ['C1','C2','C3','C4'].forEach(k=>{
+    const r=evalComp(compScores[k],compTotal[k]);
+    comps[k]=r.val;
+    compHTML.innerHTML+=`<div class="comp-item ${r.cls}"><span class="comp-label">${compNames[k]}</span><span class="comp-val">${r.val}</span></div>`;
+  });
+
+  // Badge final
+  if(note20>=14){
+    levelsCompleted[5]=true;
+    earnBadge(6);
+    addXP(score*10);
+    updateNav();
+    launchConfetti();
+  }
+
+  // Prepare send
+  rc.querySelector('#res-send').style.display='inline-flex';
+  rc.querySelector('#res-send').onclick=()=>{
+    const totalTime=Math.round((Date.now()-startTime)/1000);
+    if(typeof inerwebSend==='function'){
+      inerwebSend({
+        module:'Habilitation B0V',
+        nom:studentNom,
+        prenom:studentPrenom,
+        classe:studentClasse,
+        note20:note20,
+        score:Math.round(score/EVAL6_DATA.length*100),
+        detail:score+'/'+EVAL6_DATA.length,
+        temps:totalTime,
+        competences:comps
+      });
+      rc.querySelector('#res-send').textContent='Envoye !';
+      rc.querySelector('#res-send').disabled=true;
+    } else {
+      alert('Erreur : collecteur non disponible.');
+    }
+  };
+
+  rc.scrollIntoView({behavior:'smooth'});
+}
+
+/* ═══════════════════════════════════════════════════
+   CONFETTI
+   ═══════════════════════════════════════════════════ */
+function launchConfetti(){
+  const canvas=document.getElementById('confetti-canvas');
+  const ctx=canvas.getContext('2d');
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
+  const particles=[];
+  const colors=['#e8914a','#2aafaf','#27ae60','#0f2d52','#f39c12','#e74c3c','#f7c948'];
+  for(let i=0;i<120;i++){
+    particles.push({
+      x:Math.random()*canvas.width,
+      y:Math.random()*canvas.height-canvas.height,
+      w:Math.random()*8+4,
+      h:Math.random()*6+3,
+      color:colors[Math.floor(Math.random()*colors.length)],
+      vy:Math.random()*3+2,
+      vx:(Math.random()-.5)*2,
+      rot:Math.random()*360,
+      rv:Math.random()*6-3
+    });
+  }
+  let frames=0;
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    particles.forEach(p=>{
+      p.y+=p.vy;p.x+=p.vx;p.rot+=p.rv;
+      ctx.save();
+      ctx.translate(p.x,p.y);
+      ctx.rotate(p.rot*Math.PI/180);
+      ctx.fillStyle=p.color;
+      ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+      ctx.restore();
+    });
+    frames++;
+    if(frames<180)requestAnimationFrame(draw);
+    else ctx.clearRect(0,0,canvas.width,canvas.height);
+  }
+  draw();
+}
+
+/* ═══════════════════════════════════════════════════
+   INIT
+   ═══════════════════════════════════════════════════ */
+window.addEventListener('resize',()=>{
+  const c=document.getElementById('confetti-canvas');
+  c.width=window.innerWidth;c.height=window.innerHeight;
+});
+</script>
+</body>
+</html>
