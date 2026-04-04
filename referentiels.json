@@ -1,0 +1,66 @@
+{
+  "_doc": "Table de correspondance multi-référentiel — inerWeb frigorx",
+  "_usage": "Chaque module envoie des compétences C1-C6 au collecteur. Ce fichier mappe chaque C vers les vrais codes des 3 diplômes.",
+  "_version": "1.0",
+  "_date": "2026-04-04",
+
+  "diplomes": {
+    "CAP_IFCA": {
+      "nom": "CAP Installateur en Froid et Conditionnement d'Air",
+      "epreuves": {
+        "EP2": "Réalisation d'une installation (CCF, coeff 4)",
+        "EP3": "Mise en service et maintenance (CCF, coeff 4)"
+      }
+    },
+    "BAC_MFER": {
+      "nom": "Bac Pro Métiers du Froid et des Énergies Renouvelables",
+      "epreuves": {
+        "E31": "Réalisation et mise en service (CCF, coeff 3)",
+        "E32": "Diagnostic et maintenance (CCF, coeff 3)",
+        "E33": "Dossier professionnel (CCF, coeff 2)"
+      }
+    },
+    "TNE": {
+      "nom": "2nde Transitions Numérique et Énergétique",
+      "epreuves": {
+        "CT": "Compétences transversales de découverte"
+      }
+    }
+  },
+
+  "modules": {
+    "Conversion Pouce & Cintrage": {
+      "C1": { "label": "Convertir pouce/mm", "CAP_IFCA": "C3.4", "BAC_MFER": "C3.3", "TNE": "CT.7" },
+      "C2": { "label": "Rayon de cintrage",  "CAP_IFCA": "C3.4", "BAC_MFER": "C3.3", "TNE": "CT.7" },
+      "C3": { "label": "Calculer développé", "CAP_IFCA": "C3.4", "BAC_MFER": "C3.3", "TNE": "CT.4" },
+      "C4": { "label": "Problème tuyauterie", "CAP_IFCA": "C3.4", "BAC_MFER": "C3.3", "TNE": "CT.7" }
+    },
+    "QCM Frigoriste": {
+      "C1": { "label": "Thermodynamique",   "CAP_IFCA": "C4.5", "BAC_MFER": "C4.5", "TNE": "CT.4" },
+      "C2": { "label": "Circuit frigorifique","CAP_IFCA": "C4.4", "BAC_MFER": "C5.1", "TNE": "CT.1" },
+      "C3": { "label": "Fluides frigorigènes","CAP_IFCA": "C4.2", "BAC_MFER": "C4.2", "TNE": "CT.1" },
+      "C4": { "label": "Électricité froid",   "CAP_IFCA": "C3.6", "BAC_MFER": "C3.5", "TNE": "CT.4" },
+      "C5": { "label": "Réglementation",      "CAP_IFCA": "C4.3", "BAC_MFER": "C2.4b","TNE": "CT.2" }
+    },
+    "TP Manomètres — Préparation": {
+      "C1": { "label": "Sécuriser intervention", "CAP_IFCA": "C3.1", "BAC_MFER": "C3.1", "TNE": "CT.2" },
+      "C2": { "label": "Organiser poste",        "CAP_IFCA": "C3.1", "BAC_MFER": "C3.1", "TNE": "CT.3" },
+      "C3": { "label": "Manipuler fluides",       "CAP_IFCA": "C4.2", "BAC_MFER": "C4.2", "TNE": "CT.1" },
+      "C4": { "label": "Raccorder équipements",   "CAP_IFCA": "C4.7", "BAC_MFER": "C4.4", "TNE": "CT.7" }
+    },
+    "TP Manomètres — Formatif": {
+      "C1": { "label": "Sécuriser intervention", "CAP_IFCA": "C3.1", "BAC_MFER": "C3.1", "TNE": "CT.2" },
+      "C2": { "label": "Organiser poste",        "CAP_IFCA": "C3.1", "BAC_MFER": "C3.1", "TNE": "CT.3" },
+      "C3": { "label": "Manipuler fluides",       "CAP_IFCA": "C4.2", "BAC_MFER": "C4.2", "TNE": "CT.1" },
+      "C4": { "label": "Raccorder équipements",   "CAP_IFCA": "C4.7", "BAC_MFER": "C4.4", "TNE": "CT.7" }
+    },
+    "Mission F-GAZ": {
+      "C1": { "label": "Environnement & réglementation", "CAP_IFCA": "C4.3", "BAC_MFER": "C2.4b", "TNE": "CT.2" },
+      "C2": { "label": "Fluides & propriétés",           "CAP_IFCA": "C4.2", "BAC_MFER": "C4.2",  "TNE": "CT.1" },
+      "C3": { "label": "Cycle & composants",              "CAP_IFCA": "C4.4", "BAC_MFER": "C5.1",  "TNE": "CT.1" },
+      "C4": { "label": "Manipulation & pratiques",        "CAP_IFCA": "C4.7", "BAC_MFER": "C4.4",  "TNE": "CT.7" },
+      "C5": { "label": "Contrôle & traçabilité",          "CAP_IFCA": "C4.3", "BAC_MFER": "C4.3",  "TNE": "CT.2" },
+      "C6": { "label": "Sécurité & habilitation",         "CAP_IFCA": "C3.1", "BAC_MFER": "C3.1",  "TNE": "CT.2" }
+    }
+  }
+}
