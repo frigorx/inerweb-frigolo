@@ -161,6 +161,10 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
             </div>
         </div>
 
+        <!-- ═══ ÉLECTROTECHNIQUE ═══ -->
+        <div class="section-title">⚡ Électrotechnique — inerWeb Schéma</div>
+        <div class="mod-grid" id="grid-schema"></div>
+
         <!-- ═══ MODULES ÉVALUATION ═══ -->
         <div class="section-title">🎯 Modules avec évaluation (résultats dans le Sheet)</div>
         <div class="mod-grid" id="grid-eval"></div>
@@ -209,6 +213,29 @@ var BASE = 'https://frigorx.github.io/';
 
 // ═══ MODULES DATA ═══
 var MODULES = {
+    schema: [
+        {
+            title: 'inerWeb Schéma — Parcours guidé',
+            desc: 'Compagnon électrotechnique sur 2 ans : observer, colorier, câbler. Du simple allumage au pump down. Login nominatif + résultats au Sheet.',
+            url: 'inerweb-schema/inerweb_schema_v002.html',
+            cat: 'cat-eval',
+            tags: ['tag-bac', 'tag-cap', 'tag-tne']
+        },
+        {
+            title: 'inerWeb Schéma — Mode libre',
+            desc: 'Éditeur libre de schémas électriques. 220 symboles SVG normalisés, drag-drop, fils éditables, sauvegarde JSON.',
+            url: 'inerweb-schema/inerweb_schema_v001.html',
+            cat: 'cat-outils',
+            tags: ['tag-all']
+        },
+        {
+            title: 'Bibliothèque Symboles',
+            desc: '348 symboles électriques & frigorifiques SVG. Recherche par famille, copie SVG, export JSON.',
+            url: 'inerweb-schema/logo_inerweb_schema.html',
+            cat: 'cat-outils',
+            tags: ['tag-all']
+        }
+    ],
     eval: [
         {
             title: 'Conversion Pouce & Cintrage',

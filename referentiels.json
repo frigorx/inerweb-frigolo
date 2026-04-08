@@ -54,6 +54,12 @@
       "C3": { "label": "Manipuler fluides",       "CAP_IFCA": "C4.2", "BAC_MFER": "C4.2", "TNE": "CT.1" },
       "C4": { "label": "Raccorder équipements",   "CAP_IFCA": "C4.7", "BAC_MFER": "C4.4", "TNE": "CT.7" }
     },
+    "inerWeb Schéma": {
+      "C1": { "label": "Identifier les composants", "CAP_IFCA": "C3.6", "BAC_MFER": "C3.5", "TNE": "CT.4" },
+      "C2": { "label": "Lire un schéma",            "CAP_IFCA": "C3.6", "BAC_MFER": "C3.5", "TNE": "CT.4" },
+      "C3": { "label": "Réaliser un câblage",       "CAP_IFCA": "C3.6", "BAC_MFER": "C3.5", "TNE": "CT.7" },
+      "C4": { "label": "Analyser un circuit",       "CAP_IFCA": "C3.6", "BAC_MFER": "C3.5", "TNE": "CT.4" }
+    },
     "Mission F-GAZ": {
       "C1": { "label": "Environnement & réglementation", "CAP_IFCA": "C4.3", "BAC_MFER": "C2.4b", "TNE": "CT.2" },
       "C2": { "label": "Fluides & propriétés",           "CAP_IFCA": "C4.2", "BAC_MFER": "C4.2",  "TNE": "CT.1" },
