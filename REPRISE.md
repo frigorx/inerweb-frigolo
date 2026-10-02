@@ -1,5 +1,7 @@
 # REPRISE — inerweb-frigolo
 
+> **02/10/2026** — `outils/reglette-fluides.html` : pressions de bulle recalculées avec CoolProp 8.0 (35 fluides sur 48 faux, jusqu'à 75 %). Tables de référence : `C:/git/Iner.web-tools-beta/outils/tables-coolprop.py`.
+
 > ⚠️ **Fiche amorcée automatiquement le 30/08/2026.** Ce dépôt n'avait aucun point
 > d'entrée : une session neuve ne pouvait pas savoir où il en était. Tout ce qui suit
 > est **lu dans le dépôt**, rien n'est deviné. **À compléter par F. Henninot** :
